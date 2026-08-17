@@ -1,0 +1,2317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Level 13 — Tiger's Den</title>
+
+<style>
+
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    min-height: 100vh;
+
+    overflow-x: hidden;
+
+    font-family: Arial, sans-serif;
+
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at 50% 15%,
+            #304c32 0%,
+            #14251a 35%,
+            #07100a 75%,
+            #030604 100%
+        );
+
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+header {
+
+    height: 68px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 25px;
+
+    background:
+        rgba(3,8,5,.94);
+
+    border-bottom:
+        1px solid #304633;
+
+    position: relative;
+
+    z-index: 10;
+
+}
+
+.logo {
+
+    font-family: Georgia, serif;
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+    color: #d6b75d;
+
+}
+
+.logo span {
+
+    color: white;
+
+}
+
+.level-label {
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    color: #7f9180;
+
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.container {
+
+    width:
+        min(1100px, calc(100% - 20px));
+
+    margin: auto;
+
+    padding: 18px 0 40px;
+
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.title {
+
+    text-align: center;
+
+    margin-bottom: 15px;
+
+}
+
+.title small {
+
+    color: #d0ae57;
+
+    letter-spacing: 3px;
+
+    font-size: 10px;
+
+}
+
+.title h1 {
+
+    font-family: Georgia, serif;
+
+    font-size:
+        clamp(27px, 5vw, 42px);
+
+    margin: 6px 0;
+
+}
+
+.title p {
+
+    color: #91a094;
+
+    font-size: 12px;
+
+}
+
+
+/* =====================================================
+   STATS
+===================================================== */
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 8px;
+
+    margin-bottom: 12px;
+
+}
+
+.stat {
+
+    background:
+        rgba(10,18,12,.88);
+
+    border:
+        1px solid #304632;
+
+    border-radius: 10px;
+
+    text-align: center;
+
+    padding: 10px;
+
+}
+
+.stat span {
+
+    display: block;
+
+    color: #718073;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 4px;
+
+}
+
+.stat strong {
+
+    color: #d6bd70;
+
+    font-family: Georgia, serif;
+
+    font-size: 18px;
+
+}
+
+
+/* =====================================================
+   GAME
+===================================================== */
+
+.game {
+
+    position: relative;
+
+    height: 570px;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    border:
+        1px solid #415943;
+
+    background:
+
+        radial-gradient(
+            ellipse at 50% 30%,
+            rgba(77,104,55,.45),
+            transparent 45%
+        ),
+
+        linear-gradient(
+            180deg,
+            #132318,
+            #0a140d 50%,
+            #071009
+        );
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.65);
+
+}
+
+
+/* =====================================================
+   MOON
+===================================================== */
+
+.moon {
+
+    position: absolute;
+
+    width: 75px;
+
+    height: 75px;
+
+    border-radius: 50%;
+
+    background:
+        #e5dca8;
+
+    top: 45px;
+
+    right: 12%;
+
+    box-shadow:
+        0 0 45px rgba(225,220,160,.25);
+
+}
+
+
+/* =====================================================
+   TREES
+===================================================== */
+
+.tree {
+
+    position: absolute;
+
+    bottom: 90px;
+
+    width: 0;
+
+    height: 0;
+
+    border-left:
+        65px solid transparent;
+
+    border-right:
+        65px solid transparent;
+
+    border-bottom:
+        180px solid #0c1c10;
+
+    opacity: .9;
+
+}
+
+.tree:after {
+
+    content: "";
+
+    position: absolute;
+
+    left: -50px;
+
+    top: 45px;
+
+    width: 0;
+
+    height: 0;
+
+    border-left:
+        50px solid transparent;
+
+    border-right:
+        50px solid transparent;
+
+    border-bottom:
+        130px solid #102718;
+
+}
+
+.tree1 {
+    left: 2%;
+}
+
+.tree2 {
+    left: 20%;
+    transform: scale(.8);
+}
+
+.tree3 {
+    right: 4%;
+    transform: scale(1.1);
+}
+
+.tree4 {
+    right: 23%;
+    transform: scale(.7);
+}
+
+
+/* =====================================================
+   GROUND
+===================================================== */
+
+.ground {
+
+    position: absolute;
+
+    bottom: 0;
+
+    left: 0;
+
+    right: 0;
+
+    height: 135px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #182a17,
+            #091009
+        );
+
+    border-top:
+        1px solid #253b25;
+
+}
+
+
+/* =====================================================
+   ROCKS
+===================================================== */
+
+.rock {
+
+    position: absolute;
+
+    bottom: 82px;
+
+    width: 55px;
+
+    height: 25px;
+
+    border-radius:
+        50% 50% 35% 35%;
+
+    background:
+        #27372a;
+
+    box-shadow:
+        inset 5px 5px 8px rgba(255,255,255,.04);
+
+}
+
+.rock1 {
+    left: 12%;
+}
+
+.rock2 {
+    right: 13%;
+    width: 70px;
+}
+
+
+/* =====================================================
+   TIGER
+===================================================== */
+
+.tiger {
+
+    position: absolute;
+
+    left: 50%;
+
+    bottom: 115px;
+
+    width: 155px;
+
+    height: 125px;
+
+    transform:
+        translateX(-50%);
+
+    transition:
+        transform .35s ease,
+        left .35s ease,
+        bottom .35s ease;
+
+    z-index: 5;
+
+}
+
+
+/* BODY */
+
+.tiger-body {
+
+    position: absolute;
+
+    width: 125px;
+
+    height: 72px;
+
+    left: 18px;
+
+    top: 42px;
+
+    border-radius:
+        55% 45% 45% 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #d98d2b,
+            #a85c1c
+        );
+
+    box-shadow:
+        inset -8px -10px 15px rgba(0,0,0,.25);
+
+}
+
+
+/* STRIPES */
+
+.stripe {
+
+    position: absolute;
+
+    width: 8px;
+
+    height: 48px;
+
+    background: #23150c;
+
+    transform:
+        rotate(25deg);
+
+    border-radius: 10px;
+
+}
+
+.s1 {
+    left: 48px;
+    top: 51px;
+}
+
+.s2 {
+    left: 67px;
+    top: 47px;
+}
+
+.s3 {
+    left: 88px;
+    top: 49px;
+}
+
+.s4 {
+    left: 106px;
+    top: 55px;
+}
+
+
+/* HEAD */
+
+.tiger-head {
+
+    position: absolute;
+
+    width: 76px;
+
+    height: 70px;
+
+    left: -3px;
+
+    top: 17px;
+
+    border-radius:
+        48% 48% 45% 45%;
+
+    background:
+        #dc8e2d;
+
+    z-index: 4;
+
+}
+
+
+/* EARS */
+
+.ear {
+
+    position: absolute;
+
+    width: 27px;
+
+    height: 28px;
+
+    top: -10px;
+
+    background:
+        #b9641d;
+
+    clip-path:
+        polygon(
+            0 100%,
+            50% 0,
+            100% 100%
+        );
+
+}
+
+.ear1 {
+    left: 3px;
+}
+
+.ear2 {
+    right: 3px;
+}
+
+
+/* EYES */
+
+.eye {
+
+    position: absolute;
+
+    width: 10px;
+
+    height: 10px;
+
+    top: 25px;
+
+    border-radius: 50%;
+
+    background:
+        #d9e878;
+
+    box-shadow:
+        0 0 10px #d9e878;
+
+}
+
+.eye:after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 3px;
+
+    height: 8px;
+
+    background: #111;
+
+    left: 3px;
+
+}
+
+.eye1 {
+    left: 18px;
+}
+
+.eye2 {
+    right: 18px;
+}
+
+
+/* MUZZLE */
+
+.muzzle {
+
+    position: absolute;
+
+    left: 20px;
+
+    top: 38px;
+
+    width: 37px;
+
+    height: 25px;
+
+    border-radius: 50%;
+
+    background:
+        #e4b67a;
+
+}
+
+.nose {
+
+    position: absolute;
+
+    left: 13px;
+
+    top: 3px;
+
+    width: 12px;
+
+    height: 8px;
+
+    border-radius: 50%;
+
+    background:
+        #251510;
+
+}
+
+
+/* TAIL */
+
+.tail {
+
+    position: absolute;
+
+    width: 75px;
+
+    height: 22px;
+
+    right: -55px;
+
+    top: 54px;
+
+    border-radius: 50%;
+
+    border-top:
+        8px solid #bd7022;
+
+    transform:
+        rotate(-18deg);
+
+    transform-origin: left center;
+
+}
+
+
+/* LEGS */
+
+.leg {
+
+    position: absolute;
+
+    width: 18px;
+
+    height: 48px;
+
+    background:
+        #b96820;
+
+    bottom: -22px;
+
+    border-radius: 10px;
+
+}
+
+.leg1 {
+    left: 38px;
+}
+
+.leg2 {
+    left: 78px;
+}
+
+
+/* =====================================================
+   TIGER ANIMATIONS
+===================================================== */
+
+.tiger.idle {
+
+    animation:
+        tigerBreath 1.8s infinite ease-in-out;
+
+}
+
+@keyframes tigerBreath {
+
+    0%,100% {
+        transform:
+            translateX(-50%)
+            scaleY(1);
+    }
+
+    50% {
+        transform:
+            translateX(-50%)
+            scaleY(.96);
+    }
+
+}
+
+
+.tiger.attack {
+
+    animation:
+        tigerAttack .55s ease;
+
+}
+
+@keyframes tigerAttack {
+
+    0% {
+        left: 50%;
+        transform:
+            translateX(-50%)
+            scale(1);
+    }
+
+    45% {
+        left: 50%;
+        transform:
+            translateX(-50%)
+            scale(1.35);
+    }
+
+    100% {
+        left: 50%;
+        transform:
+            translateX(-50%)
+            scale(1);
+    }
+
+}
+
+
+.tiger.jump {
+
+    animation:
+        tigerJump .7s ease;
+
+}
+
+@keyframes tigerJump {
+
+    0% {
+        bottom: 115px;
+    }
+
+    45% {
+        bottom: 190px;
+    }
+
+    100% {
+        bottom: 115px;
+    }
+
+}
+
+
+/* =====================================================
+   PLAYER
+===================================================== */
+
+.player {
+
+    position: absolute;
+
+    bottom: 92px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    font-size: 70px;
+
+    z-index: 6;
+
+    transition:
+        left .3s ease,
+        transform .3s ease;
+
+}
+
+
+/* =====================================================
+   ACTION MESSAGE
+===================================================== */
+
+.message {
+
+    position: absolute;
+
+    top: 18px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    width:
+        min(90%,600px);
+
+    text-align: center;
+
+    padding: 12px 15px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(4,9,5,.85);
+
+    border:
+        1px solid #445d44;
+
+    color: #c2cdbf;
+
+    font-size: 12px;
+
+    z-index: 8;
+
+}
+
+
+/* =====================================================
+   CONTROLS
+===================================================== */
+
+.controls {
+
+    position: absolute;
+
+    bottom: 16px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    width:
+        min(95%,760px);
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 8px;
+
+    z-index: 10;
+
+}
+
+.action {
+
+    min-height: 58px;
+
+    border:
+        1px solid #526c4e;
+
+    border-radius: 10px;
+
+    background:
+        rgba(8,16,10,.94);
+
+    color: white;
+
+    cursor: pointer;
+
+    transition:
+        .15s;
+
+    font-weight: bold;
+
+    font-size: 11px;
+
+}
+
+.action:hover {
+
+    transform:
+        translateY(-3px);
+
+    border-color:
+        #d0ad5b;
+
+    background:
+        #18291b;
+
+}
+
+.action:active {
+
+    transform:
+        scale(.95);
+
+}
+
+.action span {
+
+    display: block;
+
+    font-size: 23px;
+
+    margin-bottom: 3px;
+
+}
+
+
+/* =====================================================
+   HEALTH BARS
+===================================================== */
+
+.health-area {
+
+    margin-top: 12px;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 10px;
+
+}
+
+.health-box {
+
+    background:
+        rgba(7,13,8,.9);
+
+    border:
+        1px solid #304631;
+
+    padding: 10px;
+
+    border-radius: 10px;
+
+}
+
+.health-label {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    color: #879489;
+
+    font-size: 10px;
+
+    margin-bottom: 6px;
+
+}
+
+.bar {
+
+    height: 10px;
+
+    background:
+        #101611;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+}
+
+.fill {
+
+    height: 100%;
+
+    width: 100%;
+
+    transition:
+        width .35s ease;
+
+}
+
+.player-fill {
+
+    background:
+        linear-gradient(
+            90deg,
+            #3c9a4c,
+            #8bd04d
+        );
+
+}
+
+.tiger-fill {
+
+    background:
+        linear-gradient(
+            90deg,
+            #b65d27,
+            #e29a35
+        );
+
+}
+
+
+/* =====================================================
+   LOG
+===================================================== */
+
+.log {
+
+    margin-top: 12px;
+
+    padding: 12px;
+
+    min-height: 45px;
+
+    background:
+        rgba(5,10,6,.8);
+
+    border:
+        1px solid #293c2b;
+
+    border-radius: 9px;
+
+    color: #7f8d81;
+
+    font-size: 10px;
+
+}
+
+
+/* =====================================================
+   RESULT
+===================================================== */
+
+.result {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(2,5,3,.95);
+
+    z-index: 100;
+
+}
+
+.result.show {
+
+    display: flex;
+
+}
+
+.result-card {
+
+    width:
+        min(570px,100%);
+
+    text-align: center;
+
+    padding: 35px 25px;
+
+    background:
+        #101912;
+
+    border:
+        1px solid #4b674d;
+
+    border-radius: 20px;
+
+}
+
+.result-icon {
+
+    font-size: 70px;
+
+}
+
+.result-card h2 {
+
+    font-family: Georgia, serif;
+
+    font-size: 32px;
+
+    color: #ddc06c;
+
+    margin: 10px 0;
+
+}
+
+.result-card p {
+
+    color: #8d9a8f;
+
+    line-height: 1.7;
+
+    font-size: 13px;
+
+}
+
+.final-score {
+
+    font-size: 48px;
+
+    color: #d8bd64;
+
+    font-family: Georgia, serif;
+
+    margin: 15px;
+
+}
+
+.continue {
+
+    width: 100%;
+
+    margin-top: 18px;
+
+    padding: 14px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #496a45,
+            #9b7d3c
+        );
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:700px) {
+
+    header {
+        padding: 0 14px;
+    }
+
+    .level-label {
+        display: none;
+    }
+
+    .stats {
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .game {
+        height: 620px;
+    }
+
+    .controls {
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .health-area {
+        grid-template-columns:
+            1fr;
+    }
+
+    .tiger {
+        transform:
+            translateX(-50%)
+            scale(.85);
+    }
+
+    .player {
+        font-size: 55px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        PJ<span>Land</span>
+    </div>
+
+    <div class="level-label">
+        LEVEL 13 • TIGER'S DEN
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<div class="title">
+
+    <small>LEVEL 13</small>
+
+    <h1>🐅 Tiger's Den</h1>
+
+    <p>
+        Survive the encounter. You have 20 moves.
+    </p>
+
+</div>
+
+
+
+<!-- =====================================================
+     STATS
+===================================================== -->
+
+<div class="stats">
+
+    <div class="stat">
+
+        <span>Your Health</span>
+
+        <strong id="healthText">
+            100
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>Tiger</span>
+
+        <strong id="tigerHealthText">
+            100
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>Moves</span>
+
+        <strong id="movesText">
+            20
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>Score</span>
+
+        <strong id="scoreText">
+            100
+        </strong>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     GAME ARENA
+===================================================== -->
+
+<div class="game">
+
+
+    <div class="moon"></div>
+
+
+    <div class="tree tree1"></div>
+
+    <div class="tree tree2"></div>
+
+    <div class="tree tree3"></div>
+
+    <div class="tree tree4"></div>
+
+
+    <div class="rock rock1"></div>
+
+    <div class="rock rock2"></div>
+
+
+    <div class="ground"></div>
+
+
+    <div
+        class="message"
+        id="message">
+
+        The tiger is watching you...
+
+    </div>
+
+
+
+    <!-- TIGER -->
+
+    <div
+        class="tiger idle"
+        id="tiger">
+
+
+        <div class="tiger-body"></div>
+
+        <div class="stripe s1"></div>
+
+        <div class="stripe s2"></div>
+
+        <div class="stripe s3"></div>
+
+        <div class="stripe s4"></div>
+
+
+        <div class="tail"></div>
+
+
+        <div class="leg leg1"></div>
+
+        <div class="leg leg2"></div>
+
+
+        <div class="tiger-head">
+
+            <div class="ear ear1"></div>
+
+            <div class="ear ear2"></div>
+
+
+            <div class="eye eye1"></div>
+
+            <div class="eye eye2"></div>
+
+
+            <div class="muzzle">
+
+                <div class="nose"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- PLAYER -->
+
+    <div
+        class="player"
+        id="player">
+
+        🧍
+
+    </div>
+
+
+
+    <!-- ACTIONS -->
+
+    <div class="controls">
+
+
+        <button
+            class="action"
+            onclick="action('dodge')">
+
+            <span>↪️</span>
+
+            DODGE
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="action('block')">
+
+            <span>🛡️</span>
+
+            BLOCK
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="action('rock')">
+
+            <span>🪨</span>
+
+            THROW ROCK
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="action('branch')">
+
+            <span>🪵</span>
+
+            USE BRANCH
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="action('climb')">
+
+            <span>🌳</span>
+
+            CLIMB
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="action('torch')">
+
+            <span>🔥</span>
+
+            TORCH
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="action('observe')">
+
+            <span>👁️</span>
+
+            OBSERVE
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="action('retreat')">
+
+            <span>↩️</span>
+
+            RETREAT
+
+        </button>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     HEALTH
+===================================================== -->
+
+<div class="health-area">
+
+
+    <div class="health-box">
+
+        <div class="health-label">
+
+            <span>
+                YOU
+            </span>
+
+            <span id="healthLabel">
+                100 / 100
+            </span>
+
+        </div>
+
+        <div class="bar">
+
+            <div
+                class="fill player-fill"
+                id="playerBar">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="health-box">
+
+        <div class="health-label">
+
+            <span>
+                TIGER
+            </span>
+
+            <span id="tigerLabel">
+                100 / 100
+            </span>
+
+        </div>
+
+        <div class="bar">
+
+            <div
+                class="fill tiger-fill"
+                id="tigerBar">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<div
+    class="log"
+    id="log">
+
+    🐅 The tiger growls...
+
+</div>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     RESULT
+===================================================== -->
+
+<div
+    class="result"
+    id="result">
+
+
+    <div class="result-card">
+
+
+        <div
+            class="result-icon"
+            id="resultIcon">
+
+            🏆
+
+        </div>
+
+
+        <h2
+            id="resultTitle">
+
+            You Survived!
+
+        </h2>
+
+
+        <div
+            class="final-score"
+            id="finalScore">
+
+            100
+
+        </div>
+
+
+        <p
+            id="resultText">
+
+            You successfully survived the tiger encounter.
+
+        </p>
+
+
+        <button
+            class="continue"
+            onclick="nextLevel()">
+
+            ENTER LEVEL 14 →
+
+        </button>
+
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =====================================================
+   GAME VARIABLES
+===================================================== */
+
+let playerHealth = 100;
+
+let tigerHealth = 100;
+
+let moves = 20;
+
+let score = 100;
+
+let gameOver = false;
+
+let tigerPattern = 0;
+
+
+/* =====================================================
+   DOM
+===================================================== */
+
+const tiger =
+    document.getElementById("tiger");
+
+const player =
+    document.getElementById("player");
+
+const message =
+    document.getElementById("message");
+
+const log =
+    document.getElementById("log");
+
+
+/* =====================================================
+   TIGER BEHAVIOR
+===================================================== */
+
+const tigerMoves = [
+
+    "pounce",
+
+    "swipe",
+
+    "feint",
+
+    "roar"
+
+];
+
+
+/* =====================================================
+   ACTION
+===================================================== */
+
+function action(type) {
+
+    if (gameOver)
+        return;
+
+
+    if (moves <= 0) {
+
+        finish(
+            false,
+            "You ran out of moves."
+        );
+
+        return;
+
+    }
+
+
+    moves--;
+
+
+    document
+        .getElementById("movesText")
+        .textContent =
+        moves;
+
+
+    let damage = 0;
+
+    let tigerDamage = 0;
+
+    let text = "";
+
+
+    /* =========================================
+       DODGE
+    ========================================= */
+
+    if (type === "dodge") {
+
+        player.style.left =
+            "30%";
+
+        setTimeout(
+            () => {
+
+                player.style.left =
+                    "50%";
+
+            },
+            400
+        );
+
+
+        if (
+            tigerPattern === 0 ||
+            tigerPattern === 2
+        ) {
+
+            damage = 0;
+
+            text =
+                "Perfect dodge! You avoided the tiger's attack.";
+
+            score += 5;
+
+        }
+
+        else {
+
+            damage = 8;
+
+            text =
+                "You dodged too early and the tiger clipped you.";
+
+        }
+
+    }
+
+
+    /* =========================================
+       BLOCK
+    ========================================= */
+
+    if (type === "block") {
+
+        player.style.transform =
+            "translateX(-50%) scale(.9)";
+
+
+        setTimeout(
+            () => {
+
+                player.style.transform =
+                    "translateX(-50%)";
+
+            },
+            350
+        );
+
+
+        damage = 4;
+
+        text =
+            "You blocked the attack and reduced the damage.";
+
+        score += 2;
+
+    }
+
+
+    /* =========================================
+       ROCK
+    ========================================= */
+
+    if (type === "rock") {
+
+        tigerDamage = 15;
+
+        text =
+            "You threw a rock. The tiger backed away!";
+
+        tiger.classList.remove(
+            "idle"
+        );
+
+        tiger.classList.add(
+            "jump"
+        );
+
+        setTimeout(
+            () => {
+
+                tiger.classList.remove(
+                    "jump"
+                );
+
+                tiger.classList.add(
+                    "idle"
+                );
+
+            },
+            700
+        );
+
+        score += 6;
+
+    }
+
+
+    /* =========================================
+       BRANCH
+    ========================================= */
+
+    if (type === "branch") {
+
+        tigerDamage = 10;
+
+        damage = 3;
+
+        text =
+            "You swing the branch and force the tiger back.";
+
+        score += 4;
+
+    }
+
+
+    /* =========================================
+       CLIMB
+    ========================================= */
+
+    if (type === "climb") {
+
+        if (
+            tigerPattern === 0 ||
+            tigerPattern === 1
+        ) {
+
+            damage = 0;
+
+            text =
+                "You climbed the tree just in time.";
+
+            score += 8;
+
+        }
+
+        else {
+
+            damage = 12;
+
+            text =
+                "The tiger predicted your move.";
+
+        }
+
+    }
+
+
+    /* =========================================
+       TORCH
+    ========================================= */
+
+    if (type === "torch") {
+
+        if (
+            Math.random() > .25
+        ) {
+
+            tigerDamage = 18;
+
+            text =
+                "The tiger fears the flame and retreats.";
+
+            score += 8;
+
+        }
+
+        else {
+
+            damage = 6;
+
+            text =
+                "The tiger wasn't intimidated.";
+
+        }
+
+    }
+
+
+    /* =========================================
+       OBSERVE
+    ========================================= */
+
+    if (type === "observe") {
+
+        score += 10;
+
+        text =
+            "You study the tiger's body language. Its next attack looks like a pounce.";
+
+        tigerPattern = 0;
+
+    }
+
+
+    /* =========================================
+       RETREAT
+    ========================================= */
+
+    if (type === "retreat") {
+
+        if (
+            tigerHealth < 50
+        ) {
+
+            score += 15;
+
+            text =
+                "The tiger is weakened. You successfully retreat.";
+
+            tigerHealth = 0;
+
+        }
+
+        else {
+
+            damage = 10;
+
+            text =
+                "You try to retreat, but the tiger follows.";
+
+        }
+
+    }
+
+
+    /* =========================================
+       APPLY DAMAGE
+    ========================================= */
+
+    playerHealth -= damage;
+
+    tigerHealth -= tigerDamage;
+
+
+    playerHealth =
+        Math.max(
+            0,
+            playerHealth
+        );
+
+    tigerHealth =
+        Math.max(
+            0,
+            tigerHealth
+        );
+
+
+    score =
+        Math.max(
+            0,
+            Math.min(
+                150,
+                score
+            )
+        );
+
+
+    updateUI();
+
+
+    addLog(
+        text
+    );
+
+
+    showMessage(
+        text
+    );
+
+
+    /* =========================================
+       TIGER ANIMATION
+    ========================================= */
+
+    if (
+        damage > 0 ||
+        tigerDamage === 0
+    ) {
+
+        tiger.classList.remove(
+            "idle"
+        );
+
+        tiger.classList.add(
+            "attack"
+        );
+
+
+        setTimeout(
+            () => {
+
+                tiger.classList.remove(
+                    "attack"
+                );
+
+                tiger.classList.add(
+                    "idle"
+                );
+
+            },
+            600
+        );
+
+    }
+
+
+    /* =========================================
+       CHECK RESULT
+    ========================================= */
+
+    if (
+        tigerHealth <= 0
+    ) {
+
+        finish(
+            true,
+            "You outsmarted the tiger and escaped the den."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        playerHealth <= 0
+    ) {
+
+        finish(
+            false,
+            "The tiger overwhelmed you."
+        );
+
+        return;
+
+    }
+
+
+    /* =========================================
+       NEXT TIGER PATTERN
+    ========================================= */
+
+    tigerPattern =
+        Math.floor(
+            Math.random() * 4
+        );
+
+}
+
+
+/* =====================================================
+   UPDATE UI
+===================================================== */
+
+function updateUI() {
+
+    document
+        .getElementById(
+            "healthText"
+        )
+        .textContent =
+        playerHealth;
+
+
+    document
+        .getElementById(
+            "tigerHealthText"
+        )
+        .textContent =
+        tigerHealth;
+
+
+    document
+        .getElementById(
+            "scoreText"
+        )
+        .textContent =
+        score;
+
+
+    document
+        .getElementById(
+            "healthLabel"
+        )
+        .textContent =
+
+        playerHealth +
+        " / 100";
+
+
+    document
+        .getElementById(
+            "tigerLabel"
+        )
+        .textContent =
+
+        tigerHealth +
+        " / 100";
+
+
+    document
+        .getElementById(
+            "playerBar"
+        )
+        .style.width =
+
+        playerHealth +
+        "%";
+
+
+    document
+        .getElementById(
+            "tigerBar"
+        )
+        .style.width =
+
+        tigerHealth +
+        "%";
+
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(
+    text
+) {
+
+    message.textContent =
+        text;
+
+}
+
+
+/* =====================================================
+   LOG
+===================================================== */
+
+function addLog(
+    text
+) {
+
+    log.innerHTML =
+        "• " +
+        text;
+
+}
+
+
+/* =====================================================
+   FINISH
+===================================================== */
+
+function finish(
+    win,
+    text
+) {
+
+    if (gameOver)
+        return;
+
+
+    gameOver = true;
+
+
+    document
+        .getElementById(
+            "resultIcon"
+        )
+        .textContent =
+
+        win
+            ? "🏆"
+            : "🐅";
+
+
+    document
+        .getElementById(
+            "resultTitle"
+        )
+        .textContent =
+
+        win
+            ? "You Survived!"
+            : "You Were Defeated";
+
+
+    document
+        .getElementById(
+            "finalScore"
+        )
+        .textContent =
+
+        score +
+        " POINTS";
+
+
+    document
+        .getElementById(
+            "resultText"
+        )
+        .textContent =
+        text;
+
+
+    document
+        .getElementById(
+            "result"
+        )
+        .classList
+        .add("show");
+
+}
+
+
+/* =====================================================
+   NEXT LEVEL
+===================================================== */
+
+function nextLevel() {
+
+    window.location.href =
+        "level14.html";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+updateUI();
+
+</script>
+
+</body>
+
+</html>

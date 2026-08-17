@@ -1,0 +1,2076 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Level 19 — The People's Crown</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    color:#eee;
+
+    background:
+        radial-gradient(circle at 50% 0%,#18352b,#09140f 45%,#040706);
+}
+
+
+/* HEADER */
+
+header{
+    height:70px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 28px;
+
+    background:#050908;
+
+    border-bottom:1px solid #284d3c;
+}
+
+.logo{
+    font-family:Georgia,serif;
+
+    font-size:21px;
+    font-weight:bold;
+
+    color:#83d4a8;
+}
+
+.logo span{
+    color:white;
+}
+
+.level{
+    font-size:10px;
+
+    letter-spacing:3px;
+
+    color:#668675;
+}
+
+
+/* MAIN */
+
+.container{
+    width:min(1100px,calc(100% - 24px));
+
+    margin:auto;
+
+    padding:25px 0 50px;
+}
+
+
+/* TITLE */
+
+.title{
+    text-align:center;
+
+    margin-bottom:20px;
+}
+
+.title small{
+    color:#72c999;
+
+    letter-spacing:3px;
+
+    font-size:10px;
+}
+
+.title h1{
+    font-family:Georgia,serif;
+
+    font-size:clamp(30px,5vw,46px);
+
+    color:#c6f0d7;
+
+    margin:7px 0;
+}
+
+.title p{
+    color:#789084;
+
+    font-size:13px;
+}
+
+
+/* STATS */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(5,1fr);
+
+    gap:7px;
+
+    margin-bottom:14px;
+}
+
+.stat{
+
+    padding:10px;
+
+    text-align:center;
+
+    background:#08100c;
+
+    border:1px solid #28503c;
+
+    border-radius:9px;
+}
+
+.stat .icon{
+    font-size:18px;
+}
+
+.stat span{
+    display:block;
+
+    margin-top:3px;
+
+    color:#658071;
+
+    font-size:8px;
+}
+
+.stat strong{
+    display:block;
+
+    margin-top:3px;
+
+    font-family:Georgia,serif;
+
+    color:#8bd8ad;
+
+    font-size:16px;
+}
+
+
+/* GAME */
+
+.game{
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 370px;
+
+    gap:12px;
+}
+
+
+/* KINGDOM */
+
+.kingdom{
+
+    position:relative;
+
+    min-height:620px;
+
+    overflow:hidden;
+
+    border-radius:17px;
+
+    border:1px solid #35634d;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #10281d,
+            #07110c
+        );
+}
+
+
+/* SKY */
+
+.sky{
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        radial-gradient(
+            circle at 70% 20%,
+            rgba(140,220,170,.12),
+            transparent 30%
+        );
+}
+
+
+/* SUN */
+
+.sun{
+
+    position:absolute;
+
+    top:50px;
+
+    right:70px;
+
+    width:75px;
+
+    height:75px;
+
+    border-radius:50%;
+
+    background:#d9cf91;
+
+    box-shadow:
+        0 0 40px
+        rgba(220,210,140,.25);
+}
+
+
+/* MOUNTAINS */
+
+.mountain{
+
+    position:absolute;
+
+    bottom:180px;
+
+    width:0;
+
+    height:0;
+
+    border-left:130px solid transparent;
+
+    border-right:130px solid transparent;
+
+    border-bottom:190px solid #0d2118;
+
+}
+
+.m1{
+    left:-60px;
+}
+
+.m2{
+    left:180px;
+
+    border-bottom-color:#10271d;
+}
+
+.m3{
+    right:-70px;
+
+    border-bottom-color:#0c1c15;
+}
+
+
+/* GROUND */
+
+.ground{
+
+    position:absolute;
+
+    bottom:0;
+
+    left:0;
+
+    right:0;
+
+    height:220px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #132e20,
+            #07100b
+        );
+}
+
+
+/* CASTLE */
+
+.castle{
+
+    position:absolute;
+
+    bottom:145px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:220px;
+
+    height:180px;
+
+    background:#24392d;
+
+    border:3px solid #42634f;
+}
+
+.castle::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-55px;
+
+    left:-20px;
+
+    width:0;
+
+    height:0;
+
+    border-left:130px solid transparent;
+
+    border-right:130px solid transparent;
+
+    border-bottom:70px solid #1b3025;
+}
+
+.tower{
+
+    position:absolute;
+
+    bottom:0;
+
+    width:55px;
+
+    height:145px;
+
+    background:#1c3025;
+
+    border:3px solid #3d5d4a;
+}
+
+.tower.left{
+    left:-55px;
+}
+
+.tower.right{
+    right:-55px;
+}
+
+.tower::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-35px;
+
+    left:-7px;
+
+    width:0;
+
+    height:0;
+
+    border-left:32px solid transparent;
+
+    border-right:32px solid transparent;
+
+    border-bottom:40px solid #17281f;
+}
+
+.castle-door{
+
+    position:absolute;
+
+    bottom:0;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:45px;
+
+    height:70px;
+
+    background:#07100b;
+
+    border:2px solid #526d5a;
+
+    border-radius:25px 25px 0 0;
+}
+
+
+/* PEOPLE */
+
+.people{
+
+    position:absolute;
+
+    bottom:75px;
+
+    left:0;
+
+    right:0;
+
+    text-align:center;
+
+    font-size:35px;
+
+    letter-spacing:14px;
+
+    opacity:.75;
+}
+
+
+/* PANEL */
+
+.panel{
+
+    background:#08100c;
+
+    border:1px solid #294b3a;
+
+    border-radius:14px;
+
+    padding:15px;
+}
+
+.panel h2{
+
+    font-family:Georgia,serif;
+
+    color:#a3dfbd;
+
+    font-size:20px;
+
+    margin-bottom:10px;
+}
+
+
+/* PROGRESS */
+
+.progress{
+
+    height:7px;
+
+    background:#17261e;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+    margin-bottom:15px;
+}
+
+.progress-bar{
+
+    height:100%;
+
+    width:0%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #3e9366,
+            #8bd6aa
+        );
+
+    transition:.4s;
+}
+
+
+/* PROBLEM */
+
+.problem{
+
+    padding:15px;
+
+    background:#0d1711;
+
+    border:1px solid #284738;
+
+    border-radius:10px;
+}
+
+.problem-number{
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    color:#62806f;
+}
+
+.problem h3{
+
+    font-family:Georgia,serif;
+
+    font-size:19px;
+
+    color:#c2ebd2;
+
+    margin:8px 0;
+}
+
+.problem p{
+
+    font-size:11px;
+
+    color:#91a397;
+
+    line-height:1.7;
+}
+
+
+/* CHOICES */
+
+.choices{
+
+    display:grid;
+
+    gap:8px;
+
+    margin-top:12px;
+}
+
+.choice{
+
+    width:100%;
+
+    padding:12px;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    color:#d9e8df;
+
+    background:#0d1611;
+
+    border:1px solid #294336;
+
+    border-radius:8px;
+
+    font-size:10px;
+
+    transition:.2s;
+}
+
+.choice:hover{
+
+    border-color:#76c99c;
+
+    background:#132119;
+
+    transform:translateX(3px);
+}
+
+
+/* LOG */
+
+.log-title{
+
+    margin-top:13px;
+
+    margin-bottom:6px;
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    color:#60756a;
+}
+
+.log{
+
+    height:110px;
+
+    overflow-y:auto;
+
+    padding:8px;
+
+    background:#050a07;
+
+    border:1px solid #1e3026;
+
+    border-radius:8px;
+}
+
+.log-entry{
+
+    padding:6px 0;
+
+    border-bottom:1px solid #142219;
+
+    color:#819087;
+
+    font-size:9px;
+
+    line-height:1.5;
+}
+
+
+/* MODAL */
+
+.modal{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(0,0,0,.9);
+
+    z-index:100;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-card{
+
+    width:min(560px,100%);
+
+    padding:30px;
+
+    text-align:center;
+
+    background:#09110c;
+
+    border:1px solid #4d765d;
+
+    border-radius:17px;
+}
+
+.modal-icon{
+    font-size:60px;
+}
+
+.modal-card h2{
+
+    font-family:Georgia,serif;
+
+    color:#bfe9cf;
+
+    margin:10px 0;
+}
+
+.modal-card p{
+
+    color:#96a89d;
+
+    font-size:11px;
+
+    line-height:1.8;
+}
+
+.modal-result{
+
+    margin-top:13px;
+
+    padding:12px;
+
+    background:#0f1a13;
+
+    border:1px solid #2c4737;
+
+    color:#b7c8bd;
+
+    font-size:11px;
+
+    line-height:1.7;
+}
+
+
+/* FINAL */
+
+.final{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(0,0,0,.96);
+
+    z-index:200;
+}
+
+.final.show{
+    display:flex;
+}
+
+.final-card{
+
+    width:min(650px,100%);
+
+    padding:35px 25px;
+
+    text-align:center;
+
+    background:#09110c;
+
+    border:1px solid #628f72;
+
+    border-radius:18px;
+}
+
+.final-icon{
+    font-size:80px;
+}
+
+.final-card h2{
+
+    font-family:Georgia,serif;
+
+    color:#c9f0d7;
+
+    font-size:32px;
+
+    margin:10px 0;
+}
+
+.final-card p{
+
+    color:#a3b1a8;
+
+    font-size:12px;
+
+    line-height:1.8;
+}
+
+.final-score{
+
+    font-family:Georgia,serif;
+
+    color:#8bd6aa;
+
+    font-size:40px;
+
+    margin:14px;
+}
+
+.next{
+
+    width:100%;
+
+    padding:13px;
+
+    margin-top:15px;
+
+    border:0;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-weight:bold;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2c6747,
+            #58a777
+        );
+}
+
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+    .game{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:650px){
+
+    .stats{
+        grid-template-columns:
+            repeat(3,1fr);
+    }
+
+    .kingdom{
+        min-height:450px;
+    }
+
+    .castle{
+        transform:
+            translateX(-50%)
+            scale(.75);
+    }
+
+}
+
+@media(max-width:450px){
+
+    .stats{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .level{
+        display:none;
+    }
+
+    header{
+        padding:0 15px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        PJ<span>Land</span>
+    </div>
+
+    <div class="level">
+        LEVEL 19 • THE PEOPLE'S CROWN
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+<div class="title">
+
+    <small>LEVEL 19</small>
+
+    <h1>🏰 The People's Crown</h1>
+
+    <p>
+        You passed the King's trials. Now you must win the people's hearts.
+    </p>
+
+</div>
+
+
+<!-- STATS -->
+
+<div class="stats">
+
+    <div class="stat">
+
+        <div class="icon">❤️</div>
+
+        <span>HAPPINESS</span>
+
+        <strong id="happiness">50</strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="icon">🤝</div>
+
+        <span>TRUST</span>
+
+        <strong id="trust">50</strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="icon">💰</div>
+
+        <span>TREASURY</span>
+
+        <strong id="treasury">50</strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="icon">🏰</div>
+
+        <span>STABILITY</span>
+
+        <strong id="stability">50</strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="icon">👑</div>
+
+        <span>TASK</span>
+
+        <strong id="task">1/20</strong>
+
+    </div>
+
+</div>
+
+
+<div class="game">
+
+
+<!-- KINGDOM VISUAL -->
+
+<div class="kingdom">
+
+    <div class="sky"></div>
+
+    <div class="sun"></div>
+
+    <div class="mountain m1"></div>
+
+    <div class="mountain m2"></div>
+
+    <div class="mountain m3"></div>
+
+    <div class="ground"></div>
+
+
+    <div class="castle">
+
+        <div class="tower left"></div>
+
+        <div class="tower right"></div>
+
+        <div class="castle-door"></div>
+
+    </div>
+
+
+    <div class="people">
+
+        🧑‍🌾 🧑‍🏭 👨‍👩‍👧 🧑‍🎓 👨‍🌾 🧑‍🔧
+
+    </div>
+
+</div>
+
+
+<!-- CONTROL PANEL -->
+
+<div class="panel">
+
+    <h2>
+        👑 Kingdom Problem
+    </h2>
+
+
+    <div class="progress">
+
+        <div
+            class="progress-bar"
+            id="progress">
+        </div>
+
+    </div>
+
+
+    <div class="problem">
+
+        <div
+            class="problem-number"
+            id="problemNumber">
+
+            TASK 1 OF 20
+
+        </div>
+
+
+        <h3
+            id="question">
+
+            The Angry Farmers
+
+        </h3>
+
+
+        <p
+            id="description">
+
+            The harvest was poor this year. Farmers
+            say they cannot afford the royal tax.
+
+        </p>
+
+    </div>
+
+
+    <div
+        class="choices"
+        id="choices">
+    </div>
+
+
+    <div class="log-title">
+        KINGDOM RECORD
+    </div>
+
+
+    <div
+        class="log"
+        id="log">
+
+        <div class="log-entry">
+
+            🏰 You have entered the kingdom.
+            The people are waiting for their future King.
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+</main>
+
+
+<!-- RESULT MODAL -->
+
+<div
+    class="modal"
+    id="modal">
+
+    <div class="modal-card">
+
+        <div
+            class="modal-icon"
+            id="modalIcon">
+
+            ❤️
+
+        </div>
+
+
+        <h2
+            id="modalTitle">
+
+            The People Respond
+
+        </h2>
+
+
+        <p>
+            Your decision has affected the kingdom.
+        </p>
+
+
+        <div
+            class="modal-result"
+            id="modalResult">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- FINAL -->
+
+<div
+    class="final"
+    id="final">
+
+    <div class="final-card">
+
+        <div
+            class="final-icon"
+            id="finalIcon">
+
+            👑
+
+        </div>
+
+
+        <h2
+            id="finalTitle">
+
+            The People's Decision
+
+        </h2>
+
+
+        <div
+            class="final-score"
+            id="finalScore">
+
+            0
+
+        </div>
+
+
+        <p
+            id="finalText">
+        </p>
+
+
+        <button
+            class="next"
+            onclick="nextLevel()">
+
+            CONTINUE TO LEVEL 20 →
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* =====================================================
+   KINGDOM VARIABLES
+===================================================== */
+
+let happiness = 50;
+
+let trust = 50;
+
+let treasury = 50;
+
+let stability = 50;
+
+let task = 0;
+
+let finished = false;
+
+
+/* =====================================================
+   20 KINGDOM TASKS
+===================================================== */
+
+const tasks = [
+
+/* 1 */
+
+{
+title:"The Angry Farmers",
+
+description:
+"The harvest was poor this year. Farmers say they cannot afford the royal tax.",
+
+answers:[
+["Collect the full tax anyway",{h:-10,t:-10,m:+10,s:-5}],
+["Temporarily reduce the tax",{h:+10,t:+10,m:-10,s:+5}],
+["Cancel all taxes forever",{h:+15,t:+15,m:-30,s:-10}]
+],
+
+message:[
+"The farmers become even more angry.",
+"The farmers appreciate that you understand their hardship.",
+"The people celebrate, but the treasury suffers badly."
+]
+},
+
+
+/* 2 */
+
+{
+title:"The Water Dispute",
+
+description:
+"Two villages depend on the same river. Both claim they deserve more water.",
+
+answers:[
+["Give all water to the larger village",{h:-10,t:-8,m:0,s:-5}],
+["Give all water to the smaller village",{h:-5,t:-5,m:0,s:-5}],
+["Create a fair water-sharing schedule",{h:+12,t:+12,m:-5,s:+8}]
+],
+
+message:[
+"The smaller village begins protesting.",
+"The larger village feels abandoned.",
+"Both villages accept the compromise."
+]
+},
+
+
+/* 3 */
+
+{
+title:"The Hospital Crisis",
+
+description:
+"The royal hospital is running out of medicine.",
+
+answers:[
+["Spend treasury on medicine",{h:+12,t:+10,m:-15,s:+5}],
+["Tell doctors to wait",{h:-15,t:-12,m:0,s:-8}],
+["Ask wealthy nobles to help fund it",{h:+8,t:+12,m:-3,s:+6}]
+],
+
+message:[
+"The sick receive the treatment they need.",
+"People become angry at the lack of action.",
+"The nobles contribute to the hospital."
+]
+},
+
+
+/* 4 */
+
+{
+title:"The Merchant Tax",
+
+description:
+"Merchants complain that the kingdom's trade tax is too high.",
+
+answers:[
+["Increase the tax",{h:-8,t:-10,m:+12,s:-3}],
+["Remove the tax completely",{h:+10,t:+8,m:-12,s:+2}],
+["Reduce it and encourage more trade",{h:+10,t:+12,m:+8,s:+8}]
+],
+
+message:[
+"Merchants threaten to leave.",
+"Trade increases but the treasury loses money.",
+"More merchants enter the kingdom."
+]
+},
+
+
+/* 5 */
+
+{
+title:"The Soldiers' Families",
+
+description:
+"Soldiers complain that their families are struggling while they protect the kingdom.",
+
+answers:[
+["Ignore the complaint",{h:-8,t:-12,m:0,s:-10}],
+["Create a family support fund",{h:+12,t:+14,m:-10,s:+8}],
+["Increase soldiers' salaries",{h:+8,t:+10,m:-15,s:+6}]
+],
+
+message:[
+"The soldiers lose confidence.",
+"Soldiers feel respected by their ruler.",
+"The army becomes more loyal."
+]
+},
+
+
+/* 6 */
+
+{
+title:"The School",
+
+description:
+"Villagers want a school for their children.",
+
+answers:[
+["Build one immediately",{h:+15,t:+12,m:-15,s:+5}],
+["Say education is unnecessary",{h:-15,t:-15,m:0,s:-5}],
+["Ask the community to help build it",{h:+12,t:+15,m:-5,s:+10}]
+],
+
+message:[
+"Children finally have a place to learn.",
+"Parents become disappointed.",
+"The people feel they helped build their own future."
+]
+},
+
+
+/* 7 */
+
+{
+title:"The Great Flood",
+
+description:
+"Heavy rain destroys homes near the river.",
+
+answers:[
+["Send royal workers immediately",{h:+15,t:+15,m:-12,s:+10}],
+["Wait until the rain stops",{h:-15,t:-12,m:0,s:-15}],
+["Ask neighboring villages for help",{h:+10,t:+14,m:-4,s:+12}]
+],
+
+message:[
+"The kingdom begins rebuilding.",
+"People accuse the court of being too slow.",
+"Villages work together."
+]
+},
+
+
+/* 8 */
+
+{
+title:"The Innocent Prisoner",
+
+description:
+"A citizen claims he was falsely imprisoned by a powerful noble.",
+
+answers:[
+["Believe the noble",{h:-12,t:-15,m:+5,s:-5}],
+["Release the prisoner immediately",{h:+10,t:+8,m:0,s:-3}],
+["Investigate the evidence first",{h:+14,t:+15,m:-3,s:+10}]
+],
+
+message:[
+"The people believe nobles control the law.",
+"The prisoner is free, but questions remain.",
+"The truth is discovered through investigation."
+]
+},
+
+
+/* 9 */
+
+{
+title:"The Broken Trade Route",
+
+description:
+"Bandits have blocked the kingdom's main trade route.",
+
+answers:[
+["Send soldiers",{h:+8,t:+12,m:-10,s:+12}],
+["Pay the bandits",{h:-8,t:-10,m:-8,s:-10}],
+["Create a safer alternative route",{h:+12,t:+15,m:-12,s:+15}]
+],
+
+message:[
+"The route becomes safe again.",
+"Bandits become even stronger.",
+"The kingdom develops a better trade network."
+]
+},
+
+
+/* 10 */
+
+{
+title:"The Bread Shortage",
+
+description:
+"Grain supplies are running low and bread prices are rising.",
+
+answers:[
+["Control the price of bread",{h:+12,t:+10,m:-8,s:+5}],
+["Let the market decide",{h:-10,t:-5,m:+5,s:-5}],
+["Release grain from the royal reserve",{h:+15,t:+15,m:-12,s:+8}]
+],
+
+message:[
+"Families can afford bread again.",
+"Prices rise further.",
+"The royal reserve saves the kingdom."
+]
+},
+
+
+/* 11 */
+
+{
+title:"The Broken Bridge",
+
+description:
+"A bridge connecting two important regions has collapsed.",
+
+answers:[
+["Build a temporary wooden bridge",{h:+10,t:+10,m:-8,s:+8}],
+["Wait for engineers",{h:-6,t:-5,m:0,s:-5}],
+["Close the route permanently",{h:-12,t:-10,m:0,s:-12}]
+],
+
+message:[
+"Trade continues while repairs begin.",
+"People complain about delays.",
+"Two regions become isolated."
+]
+},
+
+
+/* 12 */
+
+{
+title:"The Land Dispute",
+
+description:
+"Two families claim the same piece of farmland.",
+
+answers:[
+["Give it to the richer family",{h:-10,t:-12,m:+5,s:-5}],
+["Give it to the poorer family",{h:+8,t:-5,m:0,s:-3}],
+["Investigate the historical records",{h:+12,t:+15,m:-3,s:+8}]
+],
+
+message:[
+"People accuse the court of favoritism.",
+"The poorer family celebrates.",
+"The rightful owner is discovered."
+]
+},
+
+
+/* 13 */
+
+{
+title:"The Powerful Merchant",
+
+description:
+"One merchant controls almost all essential food supplies.",
+
+answers:[
+["Allow the monopoly",{h:-12,t:-10,m:+15,s:-8}],
+["Seize everything",{h:+5,t:-10,m:-10,s:-12}],
+["Create competition and fair trade laws",{h:+15,t:+15,m:+8,s:+10}]
+],
+
+message:[
+"The merchant raises prices.",
+"The kingdom fears government overreach.",
+"Competition improves the market."
+]
+},
+
+
+/* 14 */
+
+{
+title:"The Village Fire",
+
+description:
+"A fire destroys an entire village.",
+
+answers:[
+["Send royal aid",{h:+15,t:+15,m:-12,s:+8}],
+["Tell the villagers to rebuild themselves",{h:-15,t:-15,m:0,s:-10}],
+["Create a rebuilding program with local leaders",{h:+13,t:+15,m:-8,s:+12}]
+],
+
+message:[
+"The village receives food and shelter.",
+"People feel abandoned.",
+"The village rebuilds stronger than before."
+]
+},
+
+
+/* 15 */
+
+{
+title:"The Neighboring King",
+
+description:
+"A neighboring king offers peace, but demands a small amount of territory.",
+
+answers:[
+["Accept immediately",{h:+5,t:+5,m:0,s:+10}],
+["Reject and prepare for war",{h:-5,t:+8,m:-15,s:-12}],
+["Negotiate a better agreement",{h:+12,t:+15,m:-3,s:+15}]
+],
+
+message:[
+"Peace arrives, but some people dislike the agreement.",
+"The army prepares for conflict.",
+"A stronger peace agreement is reached."
+]
+},
+
+
+/* 16 */
+
+{
+title:"The Angry Nobles",
+
+description:
+"Several wealthy nobles oppose your reforms.",
+
+answers:[
+["Cancel the reforms",{h:-15,t:-15,m:+10,s:+5}],
+["Punish the nobles",{h:+5,t:-8,m:0,s:-15}],
+["Meet them and negotiate",{h:+10,t:+12,m:-3,s:+12}]
+],
+
+message:[
+"People lose faith in your leadership.",
+"The nobles become even more hostile.",
+"A compromise prevents rebellion."
+]
+},
+
+
+/* 17 */
+
+{
+title:"Land for Farmers",
+
+description:
+"Thousands of farmers demand access to unused royal land.",
+
+answers:[
+["Give away all royal land",{h:+18,t:+15,m:-20,s:-8}],
+["Refuse completely",{h:-18,t:-15,m:+5,s:-10}],
+["Create a controlled land program",{h:+15,t:+15,m:-8,s:+12}]
+],
+
+message:[
+"The farmers celebrate but the royal estate shrinks.",
+"Protests spread throughout the kingdom.",
+"Farmers receive land while the kingdom retains reserves."
+]
+},
+
+
+/* 18 */
+
+{
+title:"The Empty Treasury",
+
+description:
+"The treasury is running low. The kingdom still needs money for roads, hospitals and defense.",
+
+answers:[
+["Raise taxes",{h:-10,t:-12,m:+15,s:+5}],
+["Cut essential services",{h:-15,t:-15,m:+12,s:-10}],
+["Invest in trade and new revenue sources",{h:+10,t:+12,m:+15,s:+12}]
+],
+
+message:[
+"Revenue increases but people become unhappy.",
+"People lose important services.",
+"The kingdom becomes wealthier over time."
+]
+},
+
+
+/* 19 */
+
+{
+title:"The People's Protest",
+
+description:
+"Thousands of people gather outside the castle demanding to speak directly with you.",
+
+answers:[
+["Send soldiers to disperse them",{h:-20,t:-25,m:0,s:-20}],
+["Ignore them",{h:-15,t:-20,m:0,s:-15}],
+["Walk outside and listen to them",{h:+20,t:+25,m:-3,s:+15}]
+],
+
+message:[
+"The protest becomes a rebellion.",
+"The crowd grows larger.",
+"The people are surprised that you came to listen."
+]
+},
+
+
+/* 20 */
+
+{
+title:"The People's Final Test",
+
+description:
+"The people gather in the capital. You have solved their problems, but they ask one final question: 'Why should we accept you as our King?'",
+
+answers:[
+["Because I deserve the crown",{h:-10,t:-15,m:0,s:-5}],
+["Because I am stronger than everyone else",{h:-12,t:-20,m:0,s:-10}],
+["Because I will serve the kingdom and its people",{h:+25,t:+30,m:0,s:+20}]
+],
+
+message:[
+"The crowd remains silent.",
+"The people reject your claim.",
+"The entire capital begins cheering."
+]
+
+}
+
+];
+
+
+/* =====================================================
+   LOAD TASK
+===================================================== */
+
+function loadTask(){
+
+    if(task>=tasks.length){
+
+        finish();
+
+        return;
+    }
+
+
+    const current=
+        tasks[task];
+
+
+    document.getElementById(
+        "problemNumber"
+    ).textContent=
+        "TASK "+
+        (task+1)+
+        " OF 20";
+
+
+    document.getElementById(
+        "question"
+    ).textContent=
+        current.title;
+
+
+    document.getElementById(
+        "description"
+    ).textContent=
+        current.description;
+
+
+    document.getElementById(
+        "progress"
+    ).style.width=
+        (task/20*100)+"%";
+
+
+    document.getElementById(
+        "task"
+    ).textContent=
+        (task+1)+"/20";
+
+
+    const choices=
+        document.getElementById(
+            "choices"
+        );
+
+
+    choices.innerHTML="";
+
+
+    current.answers.forEach(
+        (answer,index)=>{
+
+            const button=
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className=
+                "choice";
+
+
+            button.textContent=
+                answer[0];
+
+
+            button.onclick=
+                ()=>choose(
+                    index,
+                    current
+                );
+
+
+            choices.appendChild(
+                button
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   CHOOSE
+===================================================== */
+
+function choose(index,current){
+
+    if(finished)
+        return;
+
+
+    const effect=
+        current.answers[index][1];
+
+
+    happiness+=effect.h;
+
+    trust+=effect.t;
+
+    treasury+=effect.m;
+
+    stability+=effect.s;
+
+
+    happiness=
+        Math.max(
+            0,
+            Math.min(100,happiness)
+        );
+
+
+    trust=
+        Math.max(
+            0,
+            Math.min(100,trust)
+        );
+
+
+    treasury=
+        Math.max(
+            0,
+            Math.min(100,treasury)
+        );
+
+
+    stability=
+        Math.max(
+            0,
+            Math.min(100,stability)
+        );
+
+
+    const message=
+        current.message[index];
+
+
+    task++;
+
+
+    updateUI();
+
+
+    log(
+        "🏰 Task "+
+        task+
+        ": "+
+        message
+    );
+
+
+    let positive=
+        effect.h+
+        effect.t+
+        effect.s>=15;
+
+
+    document.getElementById(
+        "modalIcon"
+    ).textContent=
+        positive
+        ? "❤️"
+        : "⚠️";
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent=
+        positive
+        ? "The People Approve"
+        : "The Kingdom Is Unhappy";
+
+
+    document.getElementById(
+        "modalResult"
+    ).textContent=
+        message;
+
+
+    document.getElementById(
+        "modal"
+    ).classList.add(
+        "show"
+    );
+
+
+    setTimeout(()=>{
+
+        document.getElementById(
+            "modal"
+        ).classList.remove(
+            "show"
+        );
+
+
+        if(task>=20){
+
+            finish();
+
+        }
+        else{
+
+            loadTask();
+
+        }
+
+    },1700);
+
+}
+
+
+/* =====================================================
+   UPDATE UI
+===================================================== */
+
+function updateUI(){
+
+    document.getElementById(
+        "happiness"
+    ).textContent=
+        happiness;
+
+
+    document.getElementById(
+        "trust"
+    ).textContent=
+        trust;
+
+
+    document.getElementById(
+        "treasury"
+    ).textContent=
+        treasury;
+
+
+    document.getElementById(
+        "stability"
+    ).textContent=
+        stability;
+
+}
+
+
+/* =====================================================
+   LOG
+===================================================== */
+
+function log(text){
+
+    const box=
+        document.getElementById(
+            "log"
+        );
+
+
+    const entry=
+        document.createElement(
+            "div"
+        );
+
+
+    entry.className=
+        "log-entry";
+
+
+    entry.textContent=
+        text;
+
+
+    box.prepend(entry);
+
+}
+
+
+/* =====================================================
+   FINAL
+===================================================== */
+
+function finish(){
+
+    if(finished)
+        return;
+
+
+    finished=true;
+
+
+    let title;
+
+    let icon;
+
+    let message;
+
+    const total=
+        happiness+
+        trust+
+        stability;
+
+
+    /*
+       TRUE KING ENDING
+    */
+
+    if(
+        happiness>=80 &&
+        trust>=80 &&
+        stability>=70
+    ){
+
+        icon="👑";
+
+        title=
+            "THE PEOPLE CHOOSE YOU";
+
+        message=
+            "The entire capital gathers outside the castle. Farmers, merchants, soldiers, teachers and families all stand together. The royal council has no choice. The people themselves demand that you become their King. You have finally earned the crown.";
+
+    }
+
+    /*
+       GOOD ENDING
+    */
+
+    else if(
+        happiness>=65 &&
+        trust>=65
+    ){
+
+        icon="🏰";
+
+        title=
+            "THE KINGDOM ACCEPTS YOU";
+
+        message=
+            "The people are not completely united, but most believe you are worthy of the throne. The royal council agrees to crown you as the next King.";
+
+    }
+
+    /*
+       UNCERTAIN ENDING
+    */
+
+    else if(total>=150){
+
+        icon="⚖️";
+
+        title=
+            "THE KINGDOM IS DIVIDED";
+
+        message=
+            "You solved many problems, but several groups remain unhappy. The council delays your coronation while you continue proving yourself.";
+
+    }
+
+    /*
+       BAD ENDING
+    */
+
+    else{
+
+        icon="🔥";
+
+        title=
+            "THE PEOPLE REJECT THE CROWN";
+
+        message=
+            "Despite passing the King's trials, you failed to win the trust of the kingdom. The people refuse to accept you as their ruler.";
+
+    }
+
+
+    document.getElementById(
+        "finalIcon"
+    ).textContent=
+        icon;
+
+
+    document.getElementById(
+        "finalTitle"
+    ).textContent=
+        title;
+
+
+    document.getElementById(
+        "finalScore"
+    ).textContent=
+        total+
+        " KINGDOM POINTS";
+
+
+    document.getElementById(
+        "finalText"
+    ).textContent=
+        message+
+        " Final Happiness: "+
+        happiness+
+        "%. Trust: "+
+        trust+
+        "%. Treasury: "+
+        treasury+
+        "%. Stability: "+
+        stability+
+        "%.";
+
+
+    document.getElementById(
+        "final"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   LEVEL 20
+===================================================== */
+
+function nextLevel(){
+
+    window.location.href=
+        "level20.html";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+updateUI();
+
+loadTask();
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,2964 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Level 15 — The Lost World</title>
+
+<style>
+
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    min-height: 100vh;
+
+    font-family: Arial, sans-serif;
+
+    color: #f5f1df;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #294534,
+            #0d1710 50%,
+            #050805
+        );
+
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+header {
+
+    height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 28px;
+
+    background:
+        rgba(5,9,6,.96);
+
+    border-bottom:
+        1px solid #3b503f;
+
+}
+
+.logo {
+
+    font-family: Georgia, serif;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    color: #d9bd68;
+
+}
+
+.logo span {
+
+    color: white;
+
+}
+
+.level {
+
+    color: #849187;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+}
+
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
+.container {
+
+    width:
+        min(1150px, calc(100% - 24px));
+
+    margin: auto;
+
+    padding: 23px 0 50px;
+
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.title {
+
+    text-align: center;
+
+    margin-bottom: 18px;
+
+}
+
+.title small {
+
+    color: #d1af5c;
+
+    letter-spacing: 3px;
+
+    font-size: 10px;
+
+}
+
+.title h1 {
+
+    font-family: Georgia, serif;
+
+    font-size:
+        clamp(29px,5vw,44px);
+
+    margin: 7px 0;
+
+}
+
+.title p {
+
+    color: #8b978e;
+
+    font-size: 13px;
+
+}
+
+
+/* =====================================================
+   RESOURCES
+===================================================== */
+
+.resources {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(6,1fr);
+
+    gap: 7px;
+
+    margin-bottom: 12px;
+
+}
+
+.resource {
+
+    padding: 10px;
+
+    text-align: center;
+
+    border:
+        1px solid #354735;
+
+    border-radius: 9px;
+
+    background:
+        rgba(9,15,10,.95);
+
+}
+
+.resource .icon {
+
+    font-size: 19px;
+
+}
+
+.resource span {
+
+    display: block;
+
+    color: #748077;
+
+    font-size: 8px;
+
+    margin-top: 3px;
+
+}
+
+.resource strong {
+
+    display: block;
+
+    color: #d8bc67;
+
+    font-family: Georgia, serif;
+
+    font-size: 16px;
+
+    margin-top: 2px;
+
+}
+
+
+/* =====================================================
+   MAIN GAME
+===================================================== */
+
+.game {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 320px;
+
+    gap: 12px;
+
+}
+
+
+/* =====================================================
+   MAP
+===================================================== */
+
+.map {
+
+    position: relative;
+
+    height: 610px;
+
+    overflow: hidden;
+
+    border:
+        1px solid #4b604d;
+
+    border-radius: 16px;
+
+    background:
+
+        radial-gradient(
+            circle at 30% 30%,
+            rgba(94,126,81,.35),
+            transparent 22%
+        ),
+
+        radial-gradient(
+            circle at 75% 70%,
+            rgba(62,91,70,.35),
+            transparent 25%
+        ),
+
+        linear-gradient(
+            135deg,
+            #294b34,
+            #456343 45%,
+            #263f2c
+        );
+
+}
+
+
+/* =====================================================
+   MAP TEXTURE
+===================================================== */
+
+.map::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    opacity: .25;
+
+    background-image:
+
+        radial-gradient(
+            circle,
+            #b2c68c 1px,
+            transparent 1px
+        );
+
+    background-size: 25px 25px;
+
+}
+
+
+/* =====================================================
+   RIVER
+===================================================== */
+
+.river {
+
+    position: absolute;
+
+    width: 120%;
+
+    height: 100px;
+
+    left: -10%;
+
+    top: 45%;
+
+    transform:
+        rotate(-12deg);
+
+    background:
+        rgba(52,119,156,.65);
+
+    border-top:
+        2px solid rgba(145,201,217,.5);
+
+    border-bottom:
+        2px solid rgba(20,76,104,.5);
+
+}
+
+
+/* =====================================================
+   MOUNTAINS
+===================================================== */
+
+.mountains {
+
+    position: absolute;
+
+    font-size: 55px;
+
+    opacity: .8;
+
+    letter-spacing: -12px;
+
+}
+
+.mountains.one {
+
+    top: 35px;
+
+    left: 45px;
+
+}
+
+.mountains.two {
+
+    bottom: 75px;
+
+    right: 35px;
+
+}
+
+
+/* =====================================================
+   FOREST
+===================================================== */
+
+.forest {
+
+    position: absolute;
+
+    font-size: 27px;
+
+    opacity: .75;
+
+    letter-spacing: -5px;
+
+}
+
+.forest.one {
+
+    left: 25px;
+
+    top: 250px;
+
+}
+
+.forest.two {
+
+    right: 25px;
+
+    top: 170px;
+
+}
+
+.forest.three {
+
+    left: 300px;
+
+    bottom: 30px;
+
+}
+
+
+/* =====================================================
+   LOCATION
+===================================================== */
+
+.location {
+
+    position: absolute;
+
+    width: 54px;
+
+    height: 54px;
+
+    border-radius: 50%;
+
+    border:
+        2px solid #d8bd69;
+
+    background:
+        rgba(11,22,13,.92);
+
+    color: white;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-direction: column;
+
+    z-index: 10;
+
+    transition: .2s;
+
+}
+
+.location:hover {
+
+    transform:
+        scale(1.12);
+
+    background:
+        #243c28;
+
+}
+
+.location.locked {
+
+    opacity: .35;
+
+    border-color: #687269;
+
+    filter: grayscale(1);
+
+}
+
+.location.current {
+
+    box-shadow:
+        0 0 0 5px rgba(215,188,102,.18),
+        0 0 30px rgba(215,188,102,.4);
+
+    animation:
+        pulse 1.5s infinite;
+
+}
+
+.location.visited {
+
+    border-color:
+        #6eaa72;
+
+}
+
+.location .emoji {
+
+    font-size: 22px;
+
+}
+
+.location small {
+
+    font-size: 7px;
+
+    color: #a8b1a7;
+
+    margin-top: 2px;
+
+}
+
+@keyframes pulse {
+
+    50% {
+
+        box-shadow:
+            0 0 0 10px rgba(215,188,102,.05),
+            0 0 30px rgba(215,188,102,.4);
+
+    }
+
+}
+
+
+/* =====================================================
+   SIDE PANEL
+===================================================== */
+
+.panel {
+
+    border:
+        1px solid #3c4d3d;
+
+    border-radius: 14px;
+
+    padding: 14px;
+
+    background:
+        rgba(8,14,9,.95);
+
+}
+
+.panel h2 {
+
+    font-family: Georgia, serif;
+
+    color: #d8bd67;
+
+    font-size: 20px;
+
+    margin-bottom: 10px;
+
+}
+
+
+/* =====================================================
+   LOCATION INFO
+===================================================== */
+
+.location-info {
+
+    padding: 13px;
+
+    border-radius: 9px;
+
+    background:
+        #111a12;
+
+    border:
+        1px solid #304030;
+
+    margin-bottom: 10px;
+
+}
+
+.location-info .big {
+
+    font-size: 35px;
+
+    margin-bottom: 5px;
+
+}
+
+.location-info h3 {
+
+    font-family: Georgia, serif;
+
+    font-size: 17px;
+
+    color: #e0c777;
+
+}
+
+.location-info p {
+
+    color: #89968d;
+
+    font-size: 10px;
+
+    line-height: 1.6;
+
+    margin-top: 5px;
+
+}
+
+
+/* =====================================================
+   TRAVEL
+===================================================== */
+
+.travel {
+
+    width: 100%;
+
+    padding: 12px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4a6648,
+            #947a3e
+        );
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+.travel:disabled {
+
+    opacity: .35;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =====================================================
+   INVENTORY
+===================================================== */
+
+.inventory {
+
+    margin-top: 10px;
+
+}
+
+.inventory-title {
+
+    color: #78857c;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 7px;
+
+}
+
+.items {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 6px;
+
+}
+
+.item {
+
+    padding: 8px;
+
+    background:
+        #111811;
+
+    border:
+        1px solid #303e31;
+
+    border-radius: 7px;
+
+    font-size: 9px;
+
+    color: #9ba59c;
+
+}
+
+
+/* =====================================================
+   JOURNAL
+===================================================== */
+
+.journal {
+
+    margin-top: 10px;
+
+}
+
+.journal-box {
+
+    height: 150px;
+
+    overflow-y: auto;
+
+    padding: 9px;
+
+    border-radius: 8px;
+
+    background:
+        #0b110c;
+
+    border:
+        1px solid #2c392d;
+
+}
+
+.journal-entry {
+
+    padding: 7px 0;
+
+    border-bottom:
+        1px solid #202a21;
+
+    color: #89958b;
+
+    font-size: 9px;
+
+    line-height: 1.5;
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 18px;
+
+    background:
+        rgba(2,5,3,.94);
+
+    z-index: 100;
+
+}
+
+.modal.show {
+
+    display: flex;
+
+}
+
+.modal-card {
+
+    width:
+        min(580px,100%);
+
+    padding: 27px;
+
+    border:
+        1px solid #566653;
+
+    border-radius: 17px;
+
+    background:
+        #101711;
+
+    text-align: center;
+
+}
+
+.modal-icon {
+
+    font-size: 60px;
+
+}
+
+.modal h2 {
+
+    font-family: Georgia, serif;
+
+    color: #ddc16c;
+
+    margin: 8px 0;
+
+}
+
+.modal p {
+
+    color: #98a399;
+
+    font-size: 11px;
+
+    line-height: 1.8;
+
+    margin-bottom: 14px;
+
+}
+
+
+/* =====================================================
+   CHOICES
+===================================================== */
+
+.choices {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 8px;
+
+}
+
+.choice {
+
+    padding: 13px;
+
+    border:
+        1px solid #39483a;
+
+    border-radius: 8px;
+
+    background:
+        #121a13;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 10px;
+
+    text-align: left;
+
+}
+
+.choice:hover {
+
+    border-color:
+        #c8a952;
+
+    background:
+        #1b271c;
+
+}
+
+
+/* =====================================================
+   RESULT
+===================================================== */
+
+.result {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        rgba(2,5,3,.97);
+
+    z-index: 200;
+
+    padding: 20px;
+
+}
+
+.result.show {
+
+    display: flex;
+
+}
+
+.result-card {
+
+    width:
+        min(600px,100%);
+
+    padding: 35px 25px;
+
+    text-align: center;
+
+    border:
+        1px solid #5c6b56;
+
+    border-radius: 18px;
+
+    background:
+        #101711;
+
+}
+
+.result-card .icon {
+
+    font-size: 70px;
+
+}
+
+.result-card h2 {
+
+    font-family: Georgia, serif;
+
+    color: #dec16a;
+
+    font-size: 32px;
+
+    margin: 10px 0;
+
+}
+
+.result-card p {
+
+    color: #949f96;
+
+    font-size: 12px;
+
+    line-height: 1.8;
+
+}
+
+.score {
+
+    font-family: Georgia, serif;
+
+    color: #d9bd67;
+
+    font-size: 42px;
+
+    margin: 15px;
+
+}
+
+.continue {
+
+    width: 100%;
+
+    padding: 13px;
+
+    margin-top: 12px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4c6749,
+            #947b40
+        );
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:850px) {
+
+    .game {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+    .map {
+
+        height: 520px;
+
+    }
+
+}
+
+@media(max-width:650px) {
+
+    .resources {
+
+        grid-template-columns:
+            repeat(3,1fr);
+
+    }
+
+    .map {
+
+        height: 460px;
+
+    }
+
+    .location {
+
+        width: 46px;
+
+        height: 46px;
+
+    }
+
+    .location .emoji {
+
+        font-size: 18px;
+
+    }
+
+    .mountains {
+
+        font-size: 38px;
+
+    }
+
+}
+
+@media(max-width:450px) {
+
+    .resources {
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+    .choices {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+    .level {
+
+        display: none;
+
+    }
+
+    header {
+
+        padding: 0 15px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        PJ<span>Land</span>
+    </div>
+
+    <div class="level">
+        LEVEL 15 • THE LOST WORLD
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+<!-- =====================================================
+     TITLE
+===================================================== -->
+
+<div class="title">
+
+    <small>LEVEL 15</small>
+
+    <h1>🌍 The Lost World</h1>
+
+    <p>
+        Explore the unknown. Discover what lies beyond the kingdom.
+    </p>
+
+</div>
+
+
+
+<!-- =====================================================
+     RESOURCES
+===================================================== -->
+
+<div class="resources">
+
+
+    <div class="resource">
+
+        <div class="icon">❤️</div>
+
+        <span>HEALTH</span>
+
+        <strong id="health">
+            100
+        </strong>
+
+    </div>
+
+
+    <div class="resource">
+
+        <div class="icon">🍖</div>
+
+        <span>FOOD</span>
+
+        <strong id="food">
+            100
+        </strong>
+
+    </div>
+
+
+    <div class="resource">
+
+        <div class="icon">💧</div>
+
+        <span>WATER</span>
+
+        <strong id="water">
+            100
+        </strong>
+
+    </div>
+
+
+    <div class="resource">
+
+        <div class="icon">🔥</div>
+
+        <span>SUPPLIES</span>
+
+        <strong id="supplies">
+            70
+        </strong>
+
+    </div>
+
+
+    <div class="resource">
+
+        <div class="icon">🧭</div>
+
+        <span>NAVIGATION</span>
+
+        <strong id="navigation">
+            100
+        </strong>
+
+    </div>
+
+
+    <div class="resource">
+
+        <div class="icon">🏆</div>
+
+        <span>DISCOVERIES</span>
+
+        <strong id="discoveries">
+            0
+        </strong>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     GAME
+===================================================== -->
+
+<div class="game">
+
+
+<!-- =====================================================
+     MAP
+===================================================== -->
+
+<div class="map" id="map">
+
+
+    <div class="river"></div>
+
+
+    <div class="mountains one">
+        ⛰️⛰️⛰️
+    </div>
+
+    <div class="mountains two">
+        ⛰️⛰️⛰️
+    </div>
+
+
+    <div class="forest one">
+        🌲🌲🌲🌲
+    </div>
+
+    <div class="forest two">
+        🌲🌲🌲🌲
+    </div>
+
+    <div class="forest three">
+        🌲🌲🌲🌲
+    </div>
+
+
+    <!-- LOCATIONS -->
+
+    <button class="location current"
+        id="loc0"
+        style="left:6%;top:72%;"
+        onclick="selectLocation(0)">
+
+        <span class="emoji">🏕️</span>
+        <small>Camp</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc1"
+        style="left:16%;top:55%;"
+        onclick="selectLocation(1)">
+
+        <span class="emoji">🌲</span>
+        <small>Forest</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc2"
+        style="left:8%;top:30%;"
+        onclick="selectLocation(2)">
+
+        <span class="emoji">🏔️</span>
+        <small>Mountains</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc3"
+        style="left:27%;top:15%;"
+        onclick="selectLocation(3)">
+
+        <span class="emoji">🏜️</span>
+        <small>Desert</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc4"
+        style="left:42%;top:10%;"
+        onclick="selectLocation(4)">
+
+        <span class="emoji">🏝️</span>
+        <small>Island</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc5"
+        style="left:55%;top:20%;"
+        onclick="selectLocation(5)">
+
+        <span class="emoji">🏕️</span>
+        <small>Camp</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc6"
+        style="left:72%;top:12%;"
+        onclick="selectLocation(6)">
+
+        <span class="emoji">🌊</span>
+        <small>Coast</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc7"
+        style="left:84%;top:25%;"
+        onclick="selectLocation(7)">
+
+        <span class="emoji">🗿</span>
+        <small>Ruins</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc8"
+        style="left:75%;top:43%;"
+        onclick="selectLocation(8)">
+
+        <span class="emoji">💎</span>
+        <small>Cave</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc9"
+        style="left:88%;top:58%;"
+        onclick="selectLocation(9)">
+
+        <span class="emoji">🏞️</span>
+        <small>Valley</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc10"
+        style="left:70%;top:70%;"
+        onclick="selectLocation(10)">
+
+        <span class="emoji">🐺</span>
+        <small>Wolves</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc11"
+        style="left:55%;top:82%;"
+        onclick="selectLocation(11)">
+
+        <span class="emoji">🌋</span>
+        <small>Volcano</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc12"
+        style="left:39%;top:72%;"
+        onclick="selectLocation(12)">
+
+        <span class="emoji">🌉</span>
+        <small>Bridge</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc13"
+        style="left:30%;top:57%;"
+        onclick="selectLocation(13)">
+
+        <span class="emoji">🏰</span>
+        <small>Fortress</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc14"
+        style="left:43%;top:45%;"
+        onclick="selectLocation(14)">
+
+        <span class="emoji">🌊</span>
+        <small>Temple</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc15"
+        style="left:53%;top:55%;"
+        onclick="selectLocation(15)">
+
+        <span class="emoji">🌲</span>
+        <small>Dark Wood</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc16"
+        style="left:63%;top:43%;"
+        onclick="selectLocation(16)">
+
+        <span class="emoji">🧭</span>
+        <small>Magnetic</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc17"
+        style="left:47%;top:30%;"
+        onclick="selectLocation(17)">
+
+        <span class="emoji">👽</span>
+        <small>Signal</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc18"
+        style="left:34%;top:36%;"
+        onclick="selectLocation(18)">
+
+        <span class="emoji">🏛️</span>
+        <small>Lost City</small>
+
+    </button>
+
+
+    <button class="location locked"
+        id="loc19"
+        style="left:52%;top:10%;"
+        onclick="selectLocation(19)">
+
+        <span class="emoji">💎</span>
+        <small>Temple</small>
+
+    </button>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     SIDE PANEL
+===================================================== -->
+
+<div class="panel">
+
+
+    <h2>
+        🧭 Explorer's Journal
+    </h2>
+
+
+    <div class="location-info">
+
+        <div
+            class="big"
+            id="selectedIcon">
+
+            🏕️
+
+        </div>
+
+        <h3
+            id="selectedName">
+
+            Starting Camp
+
+        </h3>
+
+        <p
+            id="selectedDescription">
+
+            Your expedition begins here.
+            The unknown world lies ahead.
+
+        </p>
+
+    </div>
+
+
+    <button
+        class="travel"
+        id="travelButton"
+        onclick="travel()">
+
+        BEGIN EXPEDITION
+
+    </button>
+
+
+    <div class="inventory">
+
+        <div class="inventory-title">
+            DISCOVERED ITEMS
+        </div>
+
+
+        <div
+            class="items"
+            id="items">
+
+            <div class="item">
+                🎒 Explorer's Bag
+            </div>
+
+            <div class="item">
+                🧭 Old Compass
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="journal">
+
+        <div class="inventory-title">
+            EXPEDITION LOG
+        </div>
+
+
+        <div
+            class="journal-box"
+            id="journal">
+
+            <div class="journal-entry">
+
+                🏕️ You have begun your
+                journey into the Lost World.
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+</div>
+
+</main>
+
+
+
+<!-- =====================================================
+     EVENT MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="modal">
+
+    <div class="modal-card">
+
+        <div
+            class="modal-icon"
+            id="modalIcon">
+
+            🌲
+
+        </div>
+
+
+        <h2
+            id="modalTitle">
+
+            The Whispering Forest
+
+        </h2>
+
+
+        <p
+            id="modalText">
+
+        </p>
+
+
+        <div
+            class="choices"
+            id="choices">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     FINAL RESULT
+===================================================== -->
+
+<div
+    class="result"
+    id="result">
+
+    <div class="result-card">
+
+        <div class="icon">
+            🏆
+        </div>
+
+        <h2>
+            The Lost World Revealed
+        </h2>
+
+        <div
+            class="score"
+            id="finalScore">
+
+            100
+
+        </div>
+
+        <p
+            id="finalText">
+
+        </p>
+
+        <button
+            class="continue"
+            onclick="nextLevel()">
+
+            ENTER LEVEL 16 →
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =====================================================
+   GAME STATE
+===================================================== */
+
+let health = 100;
+
+let food = 100;
+
+let water = 100;
+
+let supplies = 70;
+
+let navigation = 100;
+
+let discoveries = 0;
+
+let score = 100;
+
+let currentLocation = 0;
+
+let selectedLocation = 0;
+
+let visited =
+    [0];
+
+let items =
+    ["🎒 Explorer's Bag","🧭 Old Compass"];
+
+let finished = false;
+
+
+/* =====================================================
+   LOCATIONS
+===================================================== */
+
+const locations = [
+
+    {
+        name: "Starting Camp",
+        icon: "🏕️",
+        description:
+        "Your expedition begins here. The unknown world lies ahead."
+    },
+
+    {
+        name: "Whispering Forest",
+        icon: "🌲",
+        description:
+        "An enormous forest where the wind seems to whisper names."
+    },
+
+    {
+        name: "Frozen Mountains",
+        icon: "🏔️",
+        description:
+        "Snow-covered mountains. The temperature drops rapidly."
+    },
+
+    {
+        name: "Golden Desert",
+        icon: "🏜️",
+        description:
+        "A huge desert filled with ancient ruins and hidden wells."
+    },
+
+    {
+        name: "Mystery Island",
+        icon: "🏝️",
+        description:
+        "A strange island appears on no known map."
+    },
+
+    {
+        name: "Abandoned Camp",
+        icon: "🏕️",
+        description:
+        "Someone was here before you. Their supplies remain."
+    },
+
+    {
+        name: "Storm Coast",
+        icon: "🌊",
+        description:
+        "A dangerous coastline battered by enormous waves."
+    },
+
+    {
+        name: "Ancient Ruins",
+        icon: "🗿",
+        description:
+        "Stone statues stand silently among the ruins."
+    },
+
+    {
+        name: "Crystal Cave",
+        icon: "💎",
+        description:
+        "A deep cave filled with glowing crystals."
+    },
+
+    {
+        name: "Hidden Valley",
+        icon: "🏞️",
+        description:
+        "A valley hidden between enormous mountains."
+    },
+
+    {
+        name: "Wolf Territory",
+        icon: "🐺",
+        description:
+        "You can hear wolves somewhere nearby."
+    },
+
+    {
+        name: "Volcanic Mountain",
+        icon: "🌋",
+        description:
+        "The ground shakes beneath your feet."
+    },
+
+    {
+        name: "Broken Bridge",
+        icon: "🌉",
+        description:
+        "A massive river blocks your path."
+    },
+
+    {
+        name: "Abandoned Fortress",
+        icon: "🏰",
+        description:
+        "An ancient fortress covered in vines."
+    },
+
+    {
+        name: "Underwater Temple",
+        icon: "🌊",
+        description:
+        "Something enormous appears beneath the water."
+    },
+
+    {
+        name: "Dark Forest",
+        icon: "🌲",
+        description:
+        "Even sunlight seems unable to enter this forest."
+    },
+
+    {
+        name: "Magnetic Zone",
+        icon: "🧭",
+        description:
+        "Your compass begins spinning uncontrollably."
+    },
+
+    {
+        name: "Unknown Signal",
+        icon: "👽",
+        description:
+        "A strange repeating signal is coming from this area."
+    },
+
+    {
+        name: "The Lost City",
+        icon: "🏛️",
+        description:
+        "A massive city appears beyond the mountains."
+    },
+
+    {
+        name: "Forbidden Temple",
+        icon: "💎",
+        description:
+        "The final location. Something legendary may be hidden here."
+    }
+
+];
+
+
+/* =====================================================
+   EVENT DATABASE
+===================================================== */
+
+const events = [
+
+    {
+        icon: "🌲",
+
+        title: "The Forest Splits",
+
+        text:
+        "The path divides into two routes. One is short but dangerous. The other is longer and safer.",
+
+        choices: [
+
+            {
+                text:
+                "🌲 Take the short route",
+
+                action:
+                () => {
+
+                    health -= 12;
+                    supplies -= 5;
+                    score += 5;
+
+                    return "You survived the dangerous route but suffered minor injuries.";
+
+                }
+
+            },
+
+            {
+                text:
+                "🥾 Take the safe route",
+
+                action:
+                () => {
+
+                    food -= 8;
+                    water -= 8;
+                    score += 8;
+
+                    return "The longer route costs supplies but keeps you safe.";
+
+                }
+
+            }
+
+        ]
+
+    },
+
+
+    {
+        icon: "🏔️",
+
+        title: "The Frozen Pass",
+
+        text:
+        "A blizzard is approaching. You can climb quickly or wait for the storm.",
+
+        choices: [
+
+            {
+                text:
+                "🏔️ Climb immediately",
+
+                action:
+                () => {
+
+                    health -= 15;
+                    navigation -= 5;
+                    score += 10;
+
+                    return "You cross the pass before the worst of the storm.";
+
+                }
+
+            },
+
+            {
+                text:
+                "🔥 Wait for the storm",
+
+                action:
+                () => {
+
+                    supplies -= 12;
+                    food -= 10;
+                    score += 7;
+
+                    return "You wait safely, but consume valuable supplies.";
+
+                }
+
+            }
+
+        ]
+
+    },
+
+
+    {
+        icon: "🏜️",
+
+        title: "The Desert Choice",
+
+        text:
+        "You see three paths. One appears to lead toward water.",
+
+        choices: [
+
+            {
+                text:
+                "💧 Follow the old markers",
+
+                action:
+                () => {
+
+                    water += 25;
+                    navigation -= 5;
+                    score += 15;
+
+                    return "The ancient markers lead you to a hidden oasis.";
+
+                }
+
+            },
+
+            {
+                text:
+                "☀️ Walk directly toward the horizon",
+
+                action:
+                () => {
+
+                    water -= 25;
+                    health -= 10;
+                    score += 3;
+
+                    return "You lose precious water before finding shelter.";
+
+                }
+
+            }
+
+        ]
+
+    },
+
+
+    {
+        icon: "🗿",
+
+        title: "The Ancient Inscription",
+
+        text:
+        "An inscription reads: 'The road that casts no shadow leads to the treasure.'",
+
+        choices: [
+
+            {
+                text:
+                "☀️ Follow the shadowless road",
+
+                action:
+                () => {
+
+                    discoveries++;
+                    score += 20;
+
+                    addItem("🗿 Ancient Relic");
+
+                    return "You correctly interpret the clue and discover an ancient relic.";
+
+                }
+
+            },
+
+            {
+                text:
+                "🛤️ Follow the largest road",
+
+                action:
+                () => {
+
+                    navigation -= 15;
+                    score -= 5;
+
+                    return "The road leads nowhere.";
+
+                }
+
+            }
+
+        ]
+
+    },
+
+
+    {
+        icon: "🐺",
+
+        title: "Wolf Territory",
+
+        text:
+        "A pack of wolves blocks the path. They have not attacked yet.",
+
+        choices: [
+
+            {
+                text:
+                "🔥 Light a fire",
+
+                action:
+                () => {
+
+                    supplies -= 8;
+                    score += 10;
+
+                    return "The wolves retreat from the fire.";
+
+                }
+
+            },
+
+            {
+                text:
+                "🥩 Leave food behind",
+
+                action:
+                () => {
+
+                    food -= 15;
+                    score += 8;
+
+                    return "The wolves eat the food and allow you to pass.";
+
+                }
+
+            }
+
+        ]
+
+    },
+
+
+    {
+        icon: "🌋",
+
+        title: "The Volcano Trembles",
+
+        text:
+        "The ground begins shaking. You notice smoke rising from the crater.",
+
+        choices: [
+
+            {
+                text:
+                "🏃 Leave immediately",
+
+                action:
+                () => {
+
+                    supplies -= 10;
+                    score += 15;
+
+                    return "You escape before the eruption intensifies.";
+
+                }
+
+            },
+
+            {
+                text:
+                "💎 Search for crystals",
+
+                action:
+                () => {
+
+                    health -= 20;
+                    discoveries++;
+                    score += 18;
+
+                    addItem("💎 Volcanic Crystal");
+
+                    return "You find a rare crystal but barely escape.";
+
+                }
+
+            }
+
+        ]
+
+    },
+
+
+    {
+        icon: "🌉",
+
+        title: "The Broken Bridge",
+
+        text:
+        "A powerful river blocks the route. You need to find a way across.",
+
+        choices: [
+
+            {
+                text:
+                "🪵 Build a raft",
+
+                action:
+                () => {
+
+                    supplies -= 15;
+                    water -= 5;
+                    score += 12;
+
+                    return "You build a crude raft and cross safely.";
+
+                }
+
+            },
+
+            {
+                text:
+                "🏊 Swim",
+
+                action:
+                () => {
+
+                    health -= 20;
+                    supplies -= 5;
+                    score += 5;
+
+                    return "The river nearly sweeps you away.";
+
+                }
+
+            }
+
+        ]
+
+    },
+
+
+    {
+        icon: "🧭",
+
+        title: "The Magnetic Zone",
+
+        text:
+        "Your compass spins wildly. You must navigate without it.",
+
+        choices: [
+
+            {
+                text:
+                "⭐ Navigate using the stars",
+
+                action:
+                () => {
+
+                    navigation += 10;
+                    score += 18;
+
+                    return "You successfully navigate using the stars.";
+
+                }
+
+            },
+
+            {
+                text:
+                "🧭 Keep following the compass",
+
+                action:
+                () => {
+
+                    navigation -= 20;
+                    score -= 5;
+
+                    return "The magnetic field sends you in the wrong direction.";
+
+                }
+
+            }
+
+        ]
+
+    },
+
+
+    {
+        icon: "👽",
+
+        title: "The Unknown Signal",
+
+        text:
+        "The signal repeats every 17 seconds. It seems deliberate.",
+
+        choices: [
+
+            {
+                text:
+                "📡 Investigate",
+
+                action:
+                () => {
+
+                    discoveries++;
+                    score += 20;
+
+                    addItem("📡 Strange Device");
+
+                    return "You discover an ancient device producing the signal.";
+
+                }
+
+            },
+
+            {
+                text:
+                "🚶 Ignore it",
+
+                action:
+                () => {
+
+                    navigation -= 5;
+                    score += 2;
+
+                    return "You decide not to investigate.";
+
+                }
+
+            }
+
+        ]
+
+    }
+
+];
+
+
+/* =====================================================
+   SELECT LOCATION
+===================================================== */
+
+function selectLocation(index) {
+
+    if (
+        !visited.includes(index) &&
+        index !== currentLocation + 1
+    ) {
+
+        /*
+           Allow exploration of nearby
+           locations rather than jumping
+           across the entire map.
+        */
+
+        if (
+            Math.abs(index-currentLocation) > 3
+        ) {
+
+            log(
+                "🧭 You cannot reach that location yet. Explore the nearby area first."
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    selectedLocation = index;
+
+
+    const data =
+        locations[index];
+
+
+    document.getElementById(
+        "selectedIcon"
+    ).textContent =
+        data.icon;
+
+
+    document.getElementById(
+        "selectedName"
+    ).textContent =
+        data.name;
+
+
+    document.getElementById(
+        "selectedDescription"
+    ).textContent =
+        data.description;
+
+
+    const button =
+        document.getElementById(
+            "travelButton"
+        );
+
+
+    if (
+        index === currentLocation
+    ) {
+
+        button.textContent =
+            "YOU ARE HERE";
+
+        button.disabled =
+            true;
+
+    }
+
+    else {
+
+        button.textContent =
+            "TRAVEL HERE →";
+
+        button.disabled =
+            false;
+
+    }
+
+}
+
+
+/* =====================================================
+   TRAVEL
+===================================================== */
+
+function travel() {
+
+    if (
+        finished ||
+        selectedLocation === currentLocation
+    )
+        return;
+
+
+    const distance =
+        Math.max(
+            1,
+            Math.abs(
+                selectedLocation -
+                currentLocation
+            )
+        );
+
+
+    /*
+       Travel consumes resources.
+    */
+
+    food -=
+        3 * distance;
+
+    water -=
+        4 * distance;
+
+    supplies -=
+        2 * distance;
+
+    navigation -=
+        1 * distance;
+
+
+    currentLocation =
+        selectedLocation;
+
+
+    if (
+        !visited.includes(
+            currentLocation
+        )
+    ) {
+
+        visited.push(
+            currentLocation
+        );
+
+        discoveries++;
+
+    }
+
+
+    /*
+       Unlock map.
+    */
+
+    unlockNearby();
+
+
+    /*
+       Update visual.
+    */
+
+    updateMap();
+
+
+    /*
+       Add journal entry.
+    */
+
+    log(
+        "🧭 You reached " +
+        locations[currentLocation].name +
+        "."
+    );
+
+
+    updateUI();
+
+
+    /*
+       Trigger event.
+    */
+
+    triggerEvent();
+
+}
+
+
+/* =====================================================
+   UNLOCK NEARBY
+===================================================== */
+
+function unlockNearby() {
+
+    for (
+        let i = 0;
+        i < locations.length;
+        i++
+    ) {
+
+        if (
+            Math.abs(
+                i-currentLocation
+            ) <= 3
+        ) {
+
+            document
+                .getElementById(
+                    "loc" + i
+                )
+                .classList
+                .remove(
+                    "locked"
+                );
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   UPDATE MAP
+===================================================== */
+
+function updateMap() {
+
+    for (
+        let i = 0;
+        i < locations.length;
+        i++
+    ) {
+
+        const el =
+            document.getElementById(
+                "loc" + i
+            );
+
+
+        el.classList.remove(
+            "current"
+        );
+
+
+        el.classList.remove(
+            "visited"
+        );
+
+
+        if (
+            i === currentLocation
+        ) {
+
+            el.classList.add(
+                "current"
+            );
+
+        }
+
+
+        if (
+            visited.includes(i)
+        ) {
+
+            el.classList.add(
+                "visited"
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   RANDOM EVENT
+===================================================== */
+
+function triggerEvent() {
+
+    /*
+       Starting camp has no event.
+    */
+
+    if (
+        currentLocation === 0
+    )
+        return;
+
+
+    /*
+       Select event based on location,
+       but cycle through them so the
+       journey remains varied.
+    */
+
+    const event =
+        events[
+            (currentLocation - 1)
+            % events.length
+        ];
+
+
+    document.getElementById(
+        "modalIcon"
+    ).textContent =
+        event.icon;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        event.title;
+
+
+    document.getElementById(
+        "modalText"
+    ).textContent =
+        event.text;
+
+
+    const choices =
+        document.getElementById(
+            "choices"
+        );
+
+
+    choices.innerHTML = "";
+
+
+    event.choices.forEach(
+        (choice) => {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className =
+                "choice";
+
+
+            button.textContent =
+                choice.text;
+
+
+            button.onclick =
+                function() {
+
+                    const result =
+                        choice.action();
+
+
+                    log(
+                        "✨ " +
+                        result
+                    );
+
+
+                    closeModal();
+
+
+                    updateUI();
+
+
+                    checkGame();
+
+                };
+
+
+            choices.appendChild(
+                button
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        "modal"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   CLOSE MODAL
+===================================================== */
+
+function closeModal() {
+
+    document.getElementById(
+        "modal"
+    ).classList.remove(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   ADD ITEM
+===================================================== */
+
+function addItem(
+    item
+) {
+
+    if (
+        !items.includes(item)
+    ) {
+
+        items.push(item);
+
+    }
+
+
+    const container =
+        document.getElementById(
+            "items"
+        );
+
+
+    container.innerHTML = "";
+
+
+    items.forEach(
+        item => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "item";
+
+
+            div.textContent =
+                item;
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   JOURNAL
+===================================================== */
+
+function log(
+    text
+) {
+
+    const journal =
+        document.getElementById(
+            "journal"
+        );
+
+
+    const entry =
+        document.createElement(
+            "div"
+        );
+
+
+    entry.className =
+        "journal-entry";
+
+
+    entry.textContent =
+        text;
+
+
+    journal.prepend(
+        entry
+    );
+
+}
+
+
+/* =====================================================
+   UPDATE UI
+===================================================== */
+
+function updateUI() {
+
+    health =
+        Math.max(
+            0,
+            Math.min(100,health)
+        );
+
+    food =
+        Math.max(
+            0,
+            Math.min(100,food)
+        );
+
+    water =
+        Math.max(
+            0,
+            Math.min(100,water)
+        );
+
+    supplies =
+        Math.max(
+            0,
+            Math.min(100,supplies)
+        );
+
+    navigation =
+        Math.max(
+            0,
+            Math.min(100,navigation)
+        );
+
+
+    document.getElementById(
+        "health"
+    ).textContent =
+        health;
+
+
+    document.getElementById(
+        "food"
+    ).textContent =
+        food;
+
+
+    document.getElementById(
+        "water"
+    ).textContent =
+        water;
+
+
+    document.getElementById(
+        "supplies"
+    ).textContent =
+        supplies;
+
+
+    document.getElementById(
+        "navigation"
+    ).textContent =
+        navigation;
+
+
+    document.getElementById(
+        "discoveries"
+    ).textContent =
+        discoveries;
+
+
+    selectLocation(
+        selectedLocation
+    );
+
+}
+
+
+/* =====================================================
+   CHECK GAME
+===================================================== */
+
+function checkGame() {
+
+    if (
+        health <= 0 ||
+        water <= 0
+    ) {
+
+        finish(
+            false,
+            "Your expedition came to an end. The Lost World remains unexplored."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       Final temple
+    */
+
+    if (
+        currentLocation === 19 &&
+        visited.length >= 15
+    ) {
+
+        finish(
+            true,
+            "You reached the Forbidden Temple after exploring the Lost World. Your discoveries will change the kingdom's understanding of the world forever."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   FINISH
+===================================================== */
+
+function finish(
+    win,
+    text
+) {
+
+    finished = true;
+
+
+    let finalScore =
+        score +
+        discoveries * 10 +
+        visited.length * 5;
+
+
+    document.getElementById(
+        "finalScore"
+    ).textContent =
+        finalScore +
+        " POINTS";
+
+
+    document.getElementById(
+        "finalText"
+    ).textContent =
+        text +
+        " You explored " +
+        visited.length +
+        " locations and made " +
+        discoveries +
+        " major discoveries.";
+
+
+    document.getElementById(
+        "result"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   NEXT LEVEL
+===================================================== */
+
+function nextLevel() {
+
+    window.location.href =
+        "level16.html";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+unlockNearby();
+
+updateMap();
+
+updateUI();
+
+</script>
+
+</body>
+
+</html>

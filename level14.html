@@ -1,0 +1,2421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Level 14 — The Siege Commander</title>
+
+<style>
+
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    min-height: 100vh;
+
+    font-family: Arial, sans-serif;
+
+    color: #f4f1e7;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #354536 0%,
+            #111912 48%,
+            #050805 100%
+        );
+
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+header {
+
+    height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 28px;
+
+    background:
+        rgba(5,8,6,.96);
+
+    border-bottom:
+        1px solid #3c4d3e;
+
+}
+
+.logo {
+
+    font-family: Georgia, serif;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    color: #d9bc66;
+
+}
+
+.logo span {
+
+    color: white;
+
+}
+
+.level {
+
+    color: #89958b;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+}
+
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
+.container {
+
+    width:
+        min(1100px, calc(100% - 24px));
+
+    margin: auto;
+
+    padding: 24px 0 50px;
+
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.title {
+
+    text-align: center;
+
+    margin-bottom: 18px;
+
+}
+
+.title small {
+
+    color: #d1af5b;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+}
+
+.title h1 {
+
+    font-family: Georgia, serif;
+
+    font-size:
+        clamp(29px, 5vw, 45px);
+
+    margin: 7px 0;
+
+}
+
+.title p {
+
+    color: #89968c;
+
+    font-size: 13px;
+
+}
+
+
+/* =====================================================
+   RESOURCE BAR
+===================================================== */
+
+.resources {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5,1fr);
+
+    gap: 8px;
+
+    margin-bottom: 12px;
+
+}
+
+.resource {
+
+    background:
+        rgba(9,15,10,.93);
+
+    border:
+        1px solid #354636;
+
+    border-radius: 10px;
+
+    padding: 10px;
+
+    text-align: center;
+
+}
+
+.resource .icon {
+
+    font-size: 20px;
+
+}
+
+.resource span {
+
+    display: block;
+
+    color: #7f8b80;
+
+    font-size: 9px;
+
+    margin-top: 4px;
+
+}
+
+.resource strong {
+
+    display: block;
+
+    font-family: Georgia, serif;
+
+    color: #d7bd69;
+
+    font-size: 17px;
+
+    margin-top: 2px;
+
+}
+
+
+/* =====================================================
+   CASTLE
+===================================================== */
+
+.castle {
+
+    position: relative;
+
+    height: 390px;
+
+    overflow: hidden;
+
+    border:
+        1px solid #4a5c4a;
+
+    border-radius: 16px;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 20%,
+            rgba(92,108,71,.35),
+            transparent 35%
+        ),
+
+        linear-gradient(
+            180deg,
+            #18291b 0%,
+            #101a12 60%,
+            #0a100b 100%
+        );
+
+    margin-bottom: 12px;
+
+}
+
+
+/* =====================================================
+   MOON
+===================================================== */
+
+.moon {
+
+    position: absolute;
+
+    right: 10%;
+
+    top: 35px;
+
+    width: 65px;
+
+    height: 65px;
+
+    border-radius: 50%;
+
+    background:
+        #ded9a8;
+
+    box-shadow:
+        0 0 45px rgba(224,218,160,.2);
+
+}
+
+
+/* =====================================================
+   CASTLE WALL
+===================================================== */
+
+.castle-wall {
+
+    position: absolute;
+
+    left: 50%;
+
+    bottom: 65px;
+
+    transform:
+        translateX(-50%);
+
+    width: 430px;
+
+    height: 190px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #4b5148,
+            #686b5d,
+            #464a42
+        );
+
+    border-top:
+        6px solid #777667;
+
+    box-shadow:
+        0 -10px 25px rgba(0,0,0,.3);
+
+}
+
+
+/* WALL BRICKS */
+
+.castle-wall::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    opacity: .35;
+
+    background-image:
+
+        linear-gradient(
+            #252a25 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            #252a25 1px,
+            transparent 1px
+        );
+
+    background-size:
+        42px 25px;
+
+}
+
+
+/* =====================================================
+   TOWERS
+===================================================== */
+
+.tower {
+
+    position: absolute;
+
+    bottom: 55px;
+
+    width: 100px;
+
+    height: 235px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #55584f,
+            #747466,
+            #4d5049
+        );
+
+    z-index: 2;
+
+}
+
+.tower.left {
+
+    left:
+        calc(50% - 265px);
+
+}
+
+.tower.right {
+
+    right:
+        calc(50% - 265px);
+
+}
+
+
+/* TOWER TOP */
+
+.tower::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: -25px;
+
+    left: -8px;
+
+    width: 116px;
+
+    height: 27px;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #6b6c60 0 18px,
+            transparent 18px 29px
+        );
+
+}
+
+
+/* =====================================================
+   GATE
+===================================================== */
+
+.gate {
+
+    position: absolute;
+
+    bottom: 65px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    width: 90px;
+
+    height: 125px;
+
+    background:
+        #201811;
+
+    border:
+        7px solid #3c3124;
+
+    border-radius:
+        50px 50px 0 0;
+
+    z-index: 4;
+
+}
+
+.gate span {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    font-size: 35px;
+
+}
+
+
+/* =====================================================
+   FLAGS
+===================================================== */
+
+.flag {
+
+    position: absolute;
+
+    bottom: 235px;
+
+    font-size: 28px;
+
+    z-index: 5;
+
+}
+
+.flag.left {
+
+    left:
+        calc(50% - 235px);
+
+}
+
+.flag.right {
+
+    right:
+        calc(50% - 235px);
+
+}
+
+
+/* =====================================================
+   ENEMY
+===================================================== */
+
+.enemy-army {
+
+    position: absolute;
+
+    bottom: 60px;
+
+    left: 7%;
+
+    font-size: 34px;
+
+    letter-spacing: -8px;
+
+    transition:
+        transform .5s ease;
+
+}
+
+.enemy-army.attack {
+
+    transform:
+        translateX(90px);
+
+}
+
+
+/* =====================================================
+   DEFENDERS
+===================================================== */
+
+.defenders {
+
+    position: absolute;
+
+    right: 8%;
+
+    bottom: 65px;
+
+    font-size: 32px;
+
+    letter-spacing: -7px;
+
+}
+
+
+/* =====================================================
+   FIRE
+===================================================== */
+
+.fire {
+
+    position: absolute;
+
+    bottom: 75px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    font-size: 35px;
+
+    animation:
+        flicker .7s infinite alternate;
+
+}
+
+@keyframes flicker {
+
+    from {
+        transform:
+            translateX(-50%)
+            scale(.9);
+    }
+
+    to {
+        transform:
+            translateX(-50%)
+            scale(1.1);
+    }
+
+}
+
+
+/* =====================================================
+   TURN INFO
+===================================================== */
+
+.turn-box {
+
+    position: absolute;
+
+    top: 15px;
+
+    left: 15px;
+
+    padding: 10px 14px;
+
+    background:
+        rgba(5,9,6,.85);
+
+    border:
+        1px solid #485849;
+
+    border-radius: 8px;
+
+    z-index: 10;
+
+}
+
+.turn-box span {
+
+    display: block;
+
+    color: #7e8b81;
+
+    font-size: 9px;
+
+}
+
+.turn-box strong {
+
+    font-family: Georgia, serif;
+
+    color: #d9bd67;
+
+    font-size: 19px;
+
+}
+
+
+/* =====================================================
+   EVENT
+===================================================== */
+
+.event {
+
+    margin-bottom: 12px;
+
+    padding: 15px;
+
+    border-radius: 11px;
+
+    background:
+        #111a13;
+
+    border:
+        1px solid #3b4b3c;
+
+}
+
+.event h2 {
+
+    font-family: Georgia, serif;
+
+    color: #d9bd67;
+
+    font-size: 19px;
+
+    margin-bottom: 5px;
+
+}
+
+.event p {
+
+    color: #98a39a;
+
+    font-size: 11px;
+
+    line-height: 1.7;
+
+}
+
+
+/* =====================================================
+   WALL HEALTH
+===================================================== */
+
+.wall-health {
+
+    margin-bottom: 12px;
+
+}
+
+.wall-label {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    color: #89958b;
+
+    font-size: 10px;
+
+    margin-bottom: 5px;
+
+}
+
+.health-bar {
+
+    height: 12px;
+
+    background:
+        #101510;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+}
+
+.health-fill {
+
+    width: 100%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #4b964f,
+            #b3c75a
+        );
+
+    transition:
+        width .4s ease;
+
+}
+
+
+/* =====================================================
+   COMMAND PANEL
+===================================================== */
+
+.commands {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 8px;
+
+}
+
+.command {
+
+    min-height: 88px;
+
+    padding: 10px;
+
+    border-radius: 10px;
+
+    border:
+        1px solid #3b4c3c;
+
+    background:
+        #111911;
+
+    color: white;
+
+    cursor: pointer;
+
+    transition: .15s;
+
+}
+
+.command:hover {
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        #c5a653;
+
+    background:
+        #192419;
+
+}
+
+.command:active {
+
+    transform:
+        scale(.97);
+
+}
+
+.command .icon {
+
+    font-size: 25px;
+
+    margin-bottom: 5px;
+
+}
+
+.command strong {
+
+    display: block;
+
+    font-size: 10px;
+
+}
+
+.command small {
+
+    display: block;
+
+    color: #718075;
+
+    font-size: 8px;
+
+    margin-top: 4px;
+
+}
+
+
+/* =====================================================
+   LOG
+===================================================== */
+
+.log {
+
+    margin-top: 12px;
+
+    min-height: 48px;
+
+    padding: 12px;
+
+    border-radius: 9px;
+
+    background:
+        #101710;
+
+    border:
+        1px solid #304030;
+
+    color: #98a398;
+
+    font-size: 10px;
+
+    line-height: 1.6;
+
+}
+
+
+/* =====================================================
+   RESULT
+===================================================== */
+
+.result {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(2,5,3,.96);
+
+    z-index: 100;
+
+}
+
+.result.show {
+
+    display: flex;
+
+}
+
+.result-card {
+
+    width:
+        min(570px,100%);
+
+    text-align: center;
+
+    padding: 35px 25px;
+
+    border:
+        1px solid #596755;
+
+    border-radius: 18px;
+
+    background:
+        #101711;
+
+}
+
+.result-icon {
+
+    font-size: 65px;
+
+}
+
+.result-card h2 {
+
+    font-family: Georgia, serif;
+
+    font-size: 31px;
+
+    color: #ddc26c;
+
+    margin: 10px 0;
+
+}
+
+.result-card p {
+
+    color: #929d94;
+
+    font-size: 12px;
+
+    line-height: 1.8;
+
+}
+
+.final-score {
+
+    font-family: Georgia, serif;
+
+    font-size: 43px;
+
+    color: #d9bd65;
+
+    margin: 15px;
+
+}
+
+.continue {
+
+    width: 100%;
+
+    padding: 14px;
+
+    margin-top: 15px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4d6749,
+            #957c40
+        );
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:700px) {
+
+    .resources {
+
+        grid-template-columns:
+            repeat(3,1fr);
+
+    }
+
+    .castle {
+
+        height: 340px;
+
+    }
+
+    .castle-wall {
+
+        width: 300px;
+
+    }
+
+    .tower.left {
+
+        left:
+            calc(50% - 190px);
+
+    }
+
+    .tower.right {
+
+        right:
+            calc(50% - 190px);
+
+    }
+
+    .commands {
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+    .enemy-army {
+
+        left: 2%;
+
+    }
+
+    .defenders {
+
+        right: 2%;
+
+    }
+
+}
+
+@media(max-width:450px) {
+
+    .resources {
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+    .level {
+
+        display: none;
+
+    }
+
+    header {
+
+        padding: 0 15px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        PJ<span>Land</span>
+    </div>
+
+    <div class="level">
+        LEVEL 14 • THE SIEGE COMMANDER
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<!-- =====================================================
+     TITLE
+===================================================== -->
+
+<div class="title">
+
+    <small>LEVEL 14</small>
+
+    <h1>🏰 The Siege Commander</h1>
+
+    <p>
+        Twenty turns. One castle. Make the right decisions.
+    </p>
+
+</div>
+
+
+
+<!-- =====================================================
+     RESOURCES
+===================================================== -->
+
+<div class="resources">
+
+
+    <div class="resource">
+
+        <div class="icon">🪖</div>
+
+        <span>
+            SOLDIERS
+        </span>
+
+        <strong id="soldiers">
+            100
+        </strong>
+
+    </div>
+
+
+    <div class="resource">
+
+        <div class="icon">🏹</div>
+
+        <span>
+            ARCHERS
+        </span>
+
+        <strong id="archers">
+            60
+        </strong>
+
+    </div>
+
+
+    <div class="resource">
+
+        <div class="icon">🍖</div>
+
+        <span>
+            FOOD
+        </span>
+
+        <strong id="food">
+            100
+        </strong>
+
+    </div>
+
+
+    <div class="resource">
+
+        <div class="icon">🪙</div>
+
+        <span>
+            GOLD
+        </span>
+
+        <strong id="gold">
+            80
+        </strong>
+
+    </div>
+
+
+    <div class="resource">
+
+        <div class="icon">⚔️</div>
+
+        <span>
+            MORALE
+        </span>
+
+        <strong id="morale">
+            100
+        </strong>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     CASTLE
+===================================================== -->
+
+<div class="castle">
+
+
+    <div class="moon"></div>
+
+
+    <div class="turn-box">
+
+        <span>
+            CURRENT TURN
+        </span>
+
+        <strong>
+
+            <span id="turn">
+                1
+            </span>
+
+            / 20
+
+        </strong>
+
+    </div>
+
+
+    <div class="castle-wall"></div>
+
+
+    <div class="tower left"></div>
+
+    <div class="tower right"></div>
+
+
+    <div class="gate">
+
+        <span>
+            🛡️
+        </span>
+
+    </div>
+
+
+    <div class="flag left">
+        🚩
+    </div>
+
+    <div class="flag right">
+        🚩
+    </div>
+
+
+    <div
+        class="enemy-army"
+        id="enemy">
+
+        🪖🪖🪖🪖🪖
+
+    </div>
+
+
+    <div class="defenders">
+
+        🏹🪖🏹🪖
+
+    </div>
+
+
+    <div class="fire">
+
+        🔥
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     WALL HEALTH
+===================================================== -->
+
+<div class="wall-health">
+
+    <div class="wall-label">
+
+        <span>
+            🧱 CASTLE WALL
+        </span>
+
+        <span id="wallText">
+            100 / 100
+        </span>
+
+    </div>
+
+
+    <div class="health-bar">
+
+        <div
+            class="health-fill"
+            id="wallBar">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     EVENT
+===================================================== -->
+
+<div class="event">
+
+    <h2 id="eventTitle">
+        ⚠️ Enemy Scouts Approaching
+    </h2>
+
+    <p id="eventText">
+
+        Your scouts report that an enemy army
+        is approaching from the north.
+
+        You have limited information.
+
+        Choose your command carefully.
+
+    </p>
+
+</div>
+
+
+
+<!-- =====================================================
+     COMMANDS
+===================================================== -->
+
+<div class="commands">
+
+
+    <button
+        class="command"
+        onclick="command('soldiers')">
+
+        <div class="icon">
+            🪖
+        </div>
+
+        <strong>
+            Deploy Soldiers
+        </strong>
+
+        <small>
+            Strong defense, costs soldiers.
+        </small>
+
+    </button>
+
+
+    <button
+        class="command"
+        onclick="command('archers')">
+
+        <div class="icon">
+            🏹
+        </div>
+
+        <strong>
+            Deploy Archers
+        </strong>
+
+        <small>
+            Powerful against distant attacks.
+        </small>
+
+    </button>
+
+
+    <button
+        class="command"
+        onclick="command('repair')">
+
+        <div class="icon">
+            🧱
+        </div>
+
+        <strong>
+            Repair Walls
+        </strong>
+
+        <small>
+            Spend gold to restore defenses.
+        </small>
+
+    </button>
+
+
+    <button
+        class="command"
+        onclick="command('trap')">
+
+        <div class="icon">
+            🪤
+        </div>
+
+        <strong>
+            Set Trap
+        </strong>
+
+        <small>
+            Surprise the enemy.
+        </small>
+
+    </button>
+
+
+    <button
+        class="command"
+        onclick="command('scout')">
+
+        <div class="icon">
+            🔭
+        </div>
+
+        <strong>
+            Send Scouts
+        </strong>
+
+        <small>
+            Reveal the enemy's plan.
+        </small>
+
+    </button>
+
+
+    <button
+        class="command"
+        onclick="command('food')">
+
+        <div class="icon">
+            🍖
+        </div>
+
+        <strong>
+            Protect Food
+        </strong>
+
+        <small>
+            Preserve supplies.
+        </small>
+
+    </button>
+
+
+    <button
+        class="command"
+        onclick="command('morale')">
+
+        <div class="icon">
+            📯
+        </div>
+
+        <strong>
+            Rally Soldiers
+        </strong>
+
+        <small>
+            Increase morale.
+        </small>
+
+    </button>
+
+
+    <button
+        class="command"
+        onclick="command('wait')">
+
+        <div class="icon">
+            ⏳
+        </div>
+
+        <strong>
+            Hold Position
+        </strong>
+
+        <small>
+            Save resources and observe.
+        </small>
+
+    </button>
+
+
+</div>
+
+
+
+<div
+    class="log"
+    id="log">
+
+    🏰 The castle gates are closed.
+    Your first command is awaited.
+
+</div>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     RESULT
+===================================================== -->
+
+<div
+    class="result"
+    id="result">
+
+    <div class="result-card">
+
+        <div
+            class="result-icon"
+            id="resultIcon">
+
+            🏆
+
+        </div>
+
+
+        <h2
+            id="resultTitle">
+
+            The Castle Survived!
+
+        </h2>
+
+
+        <div
+            class="final-score"
+            id="finalScore">
+
+            100
+
+        </div>
+
+
+        <p
+            id="resultText">
+
+        </p>
+
+
+        <button
+            class="continue"
+            onclick="nextLevel()">
+
+            ENTER LEVEL 15 →
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =====================================================
+   GAME STATE
+===================================================== */
+
+let turn = 1;
+
+let soldiers = 100;
+
+let archers = 60;
+
+let food = 100;
+
+let gold = 80;
+
+let morale = 100;
+
+let wall = 100;
+
+let score = 100;
+
+let gameOver = false;
+
+
+/* =====================================================
+   EVENTS
+===================================================== */
+
+const events = [
+
+    {
+        title:
+            "⚠️ Enemy Scouts Approaching",
+
+        text:
+            "Your scouts report movement near the northern forest. The enemy has not attacked yet."
+    },
+
+    {
+        title:
+            "🏹 Enemy Archers Appear",
+
+        text:
+            "Enemy archers have taken positions outside the castle."
+    },
+
+    {
+        title:
+            "🌧️ Heavy Rain",
+
+        text:
+            "A sudden storm begins. Visibility is poor and archery becomes less effective."
+    },
+
+    {
+        title:
+            "🔥 Enemy Targets the Food",
+
+        text:
+            "A group of enemy soldiers is moving toward your food stores."
+    },
+
+    {
+        title:
+            "🕵️ Possible Spy",
+
+        text:
+            "Your guards believe someone inside the castle is secretly helping the enemy."
+    },
+
+    {
+        title:
+            "🐎 Enemy Cavalry",
+
+        text:
+            "Fast cavalry units have appeared on the eastern road."
+    },
+
+    {
+        title:
+            "🪨 Siege Equipment",
+
+        text:
+            "The enemy is preparing a large siege weapon."
+    },
+
+    {
+        title:
+            "🌫️ Thick Fog",
+
+        text:
+            "The battlefield is covered by fog. Your scouts cannot see everything."
+    },
+
+    {
+        title:
+            "📯 Enemy War Horn",
+
+        text:
+            "The enemy sounds its war horn. A major attack may be coming."
+    },
+
+    {
+        title:
+            "🍖 Food Supplies Falling",
+
+        text:
+            "Your soldiers have been fighting for days. Food consumption is increasing."
+    },
+
+    {
+        title:
+            "⚔️ Eastern Assault",
+
+        text:
+            "The enemy launches a concentrated attack against the eastern tower."
+    },
+
+    {
+        title:
+            "🧱 Damaged Gate",
+
+        text:
+            "The castle gate has suffered serious damage."
+    },
+
+    {
+        title:
+            "🕯️ Night Attack",
+
+        text:
+            "The enemy attempts to approach under cover of darkness."
+    },
+
+    {
+        title:
+            "🛡️ Enemy Infantry",
+
+        text:
+            "Large numbers of enemy infantry are moving toward the main gate."
+    },
+
+    {
+        title:
+            "🗡️ Enemy Commander",
+
+        text:
+            "The enemy commander has entered the battlefield."
+    },
+
+    {
+        title:
+            "🔥 Fire Arrows",
+
+        text:
+            "Enemy archers are preparing flaming arrows."
+    },
+
+    {
+        title:
+            "🪤 Possible Trap",
+
+        text:
+            "Your scouts discover something suspicious near the southern road."
+    },
+
+    {
+        title:
+            "🏰 Final Preparations",
+
+        text:
+            "The enemy is gathering its remaining forces."
+    },
+
+    {
+        title:
+            "⚠️ Massive Army",
+
+        text:
+            "Almost the entire enemy army is moving toward the castle."
+    },
+
+    {
+        title:
+            "👑 THE FINAL SIEGE",
+
+        text:
+            "This is the final attack. Every decision you made has brought you here."
+    }
+
+];
+
+
+/* =====================================================
+   UPDATE UI
+===================================================== */
+
+function updateUI() {
+
+    document.getElementById(
+        "soldiers"
+    ).textContent =
+        soldiers;
+
+
+    document.getElementById(
+        "archers"
+    ).textContent =
+        archers;
+
+
+    document.getElementById(
+        "food"
+    ).textContent =
+        food;
+
+
+    document.getElementById(
+        "gold"
+    ).textContent =
+        gold;
+
+
+    document.getElementById(
+        "morale"
+    ).textContent =
+        morale;
+
+
+    document.getElementById(
+        "turn"
+    ).textContent =
+        Math.min(turn,20);
+
+
+    document.getElementById(
+        "wallText"
+    ).textContent =
+        wall + " / 100";
+
+
+    document.getElementById(
+        "wallBar"
+    ).style.width =
+        wall + "%";
+
+}
+
+
+/* =====================================================
+   COMMAND
+===================================================== */
+
+function command(type) {
+
+    if (gameOver)
+        return;
+
+
+    let result = "";
+
+
+    /* =========================================
+       SOLDIERS
+    ========================================= */
+
+    if (type === "soldiers") {
+
+        if (soldiers >= 10) {
+
+            soldiers -= 10;
+
+            wall += 5;
+
+            morale += 3;
+
+            score += 5;
+
+            result =
+                "You deployed soldiers to the walls. The enemy attack was partially stopped.";
+
+        }
+
+        else {
+
+            result =
+                "You don't have enough soldiers.";
+
+        }
+
+    }
+
+
+    /* =========================================
+       ARCHERS
+    ========================================= */
+
+    if (type === "archers") {
+
+        if (archers >= 8) {
+
+            archers -= 8;
+
+            score += 8;
+
+            morale += 2;
+
+            result =
+                "Your archers fire from the walls and force the enemy back.";
+
+        }
+
+        else {
+
+            result =
+                "Your archer reserves are too low.";
+
+        }
+
+    }
+
+
+    /* =========================================
+       REPAIR
+    ========================================= */
+
+    if (type === "repair") {
+
+        if (gold >= 15) {
+
+            gold -= 15;
+
+            wall += 15;
+
+            score += 6;
+
+            result =
+                "Engineers repair damaged sections of the castle wall.";
+
+        }
+
+        else {
+
+            result =
+                "You don't have enough gold to repair the wall.";
+
+        }
+
+    }
+
+
+    /* =========================================
+       TRAP
+    ========================================= */
+
+    if (type === "trap") {
+
+        if (gold >= 8) {
+
+            gold -= 8;
+
+            let success =
+                Math.random() > .35;
+
+            if (success) {
+
+                score += 12;
+
+                morale += 5;
+
+                result =
+                    "The enemy walked directly into your trap. Excellent strategy!";
+
+            }
+
+            else {
+
+                result =
+                    "The enemy discovered the trap before triggering it.";
+
+            }
+
+        }
+
+        else {
+
+            result =
+                "You don't have enough gold to prepare the trap.";
+
+        }
+
+    }
+
+
+    /* =========================================
+       SCOUT
+    ========================================= */
+
+    if (type === "scout") {
+
+        score += 10;
+
+        result =
+            "Your scouts reveal that the enemy is concentrating forces near the main gate.";
+
+        document.getElementById(
+            "eventText"
+        ).textContent +=
+            " Your scouts recommend reinforcing the main gate.";
+
+    }
+
+
+    /* =========================================
+       PROTECT FOOD
+    ========================================= */
+
+    if (type === "food") {
+
+        food += 5;
+
+        score += 4;
+
+        result =
+            "You reorganize the food stores and prevent unnecessary waste.";
+
+    }
+
+
+    /* =========================================
+       RALLY
+    ========================================= */
+
+    if (type === "morale") {
+
+        morale += 12;
+
+        score += 5;
+
+        result =
+            "You rally the soldiers. The defenders regain confidence.";
+
+    }
+
+
+    /* =========================================
+       WAIT
+    ========================================= */
+
+    if (type === "wait") {
+
+        score += 2;
+
+        result =
+            "You hold your position and observe the enemy.";
+
+    }
+
+
+    /* =========================================
+       LIMITS
+    ========================================= */
+
+    wall =
+        Math.min(
+            100,
+            Math.max(0,wall)
+        );
+
+    morale =
+        Math.min(
+            100,
+            Math.max(0,morale)
+        );
+
+    food =
+        Math.max(0,food);
+
+    soldiers =
+        Math.max(0,soldiers);
+
+    archers =
+        Math.max(0,archers);
+
+    gold =
+        Math.max(0,gold);
+
+
+    /* =========================================
+       ENEMY RESPONSE
+    ========================================= */
+
+    enemyAttack();
+
+
+    updateUI();
+
+
+    document.getElementById(
+        "log"
+    ).textContent =
+        "⚔️ " + result;
+
+
+    /* =========================================
+       CHECK DEFEAT
+    ========================================= */
+
+    if (
+        wall <= 0 ||
+        morale <= 0 ||
+        soldiers <= 0
+    ) {
+
+        finish(
+            false,
+            "The castle defenses collapsed. Your decisions could not keep the kingdom safe."
+        );
+
+        return;
+
+    }
+
+
+    /* =========================================
+       NEXT TURN
+    ========================================= */
+
+    if (
+        turn >= 20
+    ) {
+
+        finalBattle();
+
+        return;
+
+    }
+
+
+    turn++;
+
+
+    loadEvent();
+
+    updateUI();
+
+}
+
+
+/* =====================================================
+   ENEMY ATTACK
+===================================================== */
+
+function enemyAttack() {
+
+    let attack =
+        4 + Math.floor(
+            Math.random() * 8
+        );
+
+
+    /*
+       Later turns become harder.
+    */
+
+    attack +=
+        Math.floor(
+            turn / 4
+        );
+
+
+    /*
+       Rain / special events.
+    */
+
+    if (
+        turn === 3
+    ) {
+
+        attack -= 2;
+
+    }
+
+
+    if (
+        turn >= 15
+    ) {
+
+        attack += 5;
+
+    }
+
+
+    /*
+       Food shortage lowers morale.
+    */
+
+    if (
+        food <= 20
+    ) {
+
+        morale -= 5;
+
+        attack += 3;
+
+    }
+
+
+    /*
+       Walls take damage.
+    */
+
+    wall -= attack;
+
+
+    /*
+       Soldiers are lost in battle.
+    */
+
+    let soldierLoss =
+        Math.floor(
+            attack / 3
+        );
+
+
+    soldiers -=
+        soldierLoss;
+
+
+    /*
+       Food consumption.
+    */
+
+    food -= 4;
+
+
+    /*
+       Morale.
+    */
+
+    morale -= 2;
+
+
+    /*
+       Random gold events.
+    */
+
+    if (
+        Math.random() > .75
+    ) {
+
+        gold += 5;
+
+    }
+
+
+    /*
+       Visual attack.
+    */
+
+    const enemy =
+        document.getElementById(
+            "enemy"
+        );
+
+    enemy.classList.add(
+        "attack"
+    );
+
+
+    setTimeout(
+        () => {
+
+            enemy.classList.remove(
+                "attack"
+            );
+
+        },
+        500
+    );
+
+}
+
+
+/* =====================================================
+   LOAD EVENT
+===================================================== */
+
+function loadEvent() {
+
+    const event =
+        events[turn - 1];
+
+
+    document.getElementById(
+        "eventTitle"
+    ).textContent =
+        event.title;
+
+
+    document.getElementById(
+        "eventText"
+    ).textContent =
+        event.text;
+
+}
+
+
+/* =====================================================
+   FINAL BATTLE
+===================================================== */
+
+function finalBattle() {
+
+    let finalScore =
+        score;
+
+
+    /*
+       Strong final defenses.
+    */
+
+    if (
+        wall >= 50
+    ) {
+
+        finalScore += 20;
+
+    }
+
+    if (
+        soldiers >= 50
+    ) {
+
+        finalScore += 15;
+
+    }
+
+    if (
+        archers >= 20
+    ) {
+
+        finalScore += 15;
+
+    }
+
+    if (
+        morale >= 60
+    ) {
+
+        finalScore += 15;
+
+    }
+
+    if (
+        food >= 30
+    ) {
+
+        finalScore += 10;
+
+    }
+
+
+    score =
+        finalScore;
+
+
+    updateUI();
+
+
+    if (
+        wall >= 25 &&
+        morale >= 30 &&
+        soldiers >= 15
+    ) {
+
+        finish(
+            true,
+            "Against overwhelming odds, you kept the castle standing. Your soldiers trusted your decisions and the kingdom survived the siege."
+        );
+
+    }
+
+    else {
+
+        finish(
+            false,
+            "The final assault was too powerful. The castle survived the earlier attacks, but your remaining defenses were not strong enough for the final siege."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   FINISH
+===================================================== */
+
+function finish(
+    win,
+    text
+) {
+
+    if (gameOver)
+        return;
+
+
+    gameOver = true;
+
+
+    document.getElementById(
+        "resultIcon"
+    ).textContent =
+        win ? "👑" : "🏰";
+
+
+    document.getElementById(
+        "resultTitle"
+    ).textContent =
+        win
+            ? "The Castle Survived!"
+            : "The Castle Has Fallen";
+
+
+    document.getElementById(
+        "finalScore"
+    ).textContent =
+        score +
+        " POINTS";
+
+
+    document.getElementById(
+        "resultText"
+    ).textContent =
+        text;
+
+
+    document.getElementById(
+        "result"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   NEXT LEVEL
+===================================================== */
+
+function nextLevel() {
+
+    window.location.href =
+        "level15.html";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadEvent();
+
+updateUI();
+
+</script>
+
+</body>
+
+</html>

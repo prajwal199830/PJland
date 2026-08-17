@@ -1,0 +1,2449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Level 17 — The Time Paradox</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    color:#eee;
+
+    background:
+        radial-gradient(circle at 50% 10%,#25204b,#100d1c 45%,#05050a);
+}
+
+/* HEADER */
+
+header{
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 28px;
+
+    background:#07070d;
+    border-bottom:1px solid #393452;
+}
+
+.logo{
+    font-family:Georgia,serif;
+    font-size:21px;
+    font-weight:bold;
+    color:#b9a6ff;
+}
+
+.logo span{
+    color:white;
+}
+
+.level{
+    font-size:10px;
+    letter-spacing:3px;
+    color:#77728e;
+}
+
+/* CONTAINER */
+
+.container{
+    width:min(1100px,calc(100% - 24px));
+    margin:auto;
+    padding:25px 0 50px;
+}
+
+/* TITLE */
+
+.title{
+    text-align:center;
+    margin-bottom:18px;
+}
+
+.title small{
+    color:#9f8cff;
+    letter-spacing:3px;
+    font-size:10px;
+}
+
+.title h1{
+    font-family:Georgia,serif;
+    font-size:clamp(30px,5vw,46px);
+    margin:7px 0;
+    color:#ddd5ff;
+}
+
+.title p{
+    color:#858095;
+    font-size:13px;
+}
+
+/* STATS */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:7px;
+    margin-bottom:12px;
+}
+
+.stat{
+    padding:10px;
+    text-align:center;
+
+    background:#0c0b13;
+    border:1px solid #332e49;
+    border-radius:9px;
+}
+
+.stat .icon{
+    font-size:18px;
+}
+
+.stat span{
+    display:block;
+    font-size:8px;
+    color:#77718b;
+    margin-top:3px;
+}
+
+.stat strong{
+    display:block;
+    margin-top:2px;
+
+    font-family:Georgia,serif;
+    font-size:16px;
+    color:#bcaeff;
+}
+
+/* GAME */
+
+.game{
+    display:grid;
+    grid-template-columns:1fr 360px;
+    gap:12px;
+}
+
+/* TIME CHAMBER */
+
+.chamber{
+    position:relative;
+    min-height:620px;
+    overflow:hidden;
+
+    border:1px solid #514b70;
+    border-radius:17px;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #252047,
+            #111022 42%,
+            #080810 80%
+        );
+}
+
+/* STARS */
+
+.star{
+    position:absolute;
+    color:#b7adff;
+    opacity:.6;
+
+    animation:
+        starMove
+        4s
+        infinite
+        alternate;
+}
+
+.s1{
+    top:8%;
+    left:15%;
+}
+
+.s2{
+    top:20%;
+    right:20%;
+}
+
+.s3{
+    top:55%;
+    left:10%;
+}
+
+.s4{
+    bottom:18%;
+    right:12%;
+}
+
+@keyframes starMove{
+
+    from{
+        opacity:.25;
+        transform:scale(.8);
+    }
+
+    to{
+        opacity:.9;
+        transform:scale(1.3);
+    }
+
+}
+
+/* PORTAL */
+
+.portal{
+    position:absolute;
+
+    left:50%;
+    top:48%;
+
+    transform:translate(-50%,-50%);
+
+    width:260px;
+    height:260px;
+
+    border-radius:50%;
+
+    border:5px solid #6f61b3;
+
+    box-shadow:
+        0 0 30px #51459b,
+        inset 0 0 35px #342a76;
+
+    animation:
+        portalPulse
+        2s
+        infinite
+        alternate;
+}
+
+.portal::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:25px;
+
+    border-radius:50%;
+
+    border:3px dashed #a394ff;
+
+    animation:
+        rotatePortal
+        8s
+        linear
+        infinite;
+}
+
+.portal::after{
+
+    content:"⏳";
+
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    font-size:65px;
+}
+
+@keyframes portalPulse{
+
+    from{
+        transform:
+            translate(-50%,-50%)
+            scale(.96);
+    }
+
+    to{
+        transform:
+            translate(-50%,-50%)
+            scale(1.04);
+    }
+
+}
+
+@keyframes rotatePortal{
+
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
+
+}
+
+/* TIMELINE */
+
+.timeline{
+
+    position:absolute;
+
+    bottom:30px;
+
+    left:7%;
+    right:7%;
+
+    height:55px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+}
+
+.timeline::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+    right:0;
+
+    height:2px;
+
+    background:#484163;
+}
+
+.timepoint{
+
+    position:relative;
+
+    z-index:2;
+
+    width:48px;
+    height:48px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    background:#151225;
+
+    border:1px solid #62588c;
+
+    font-size:20px;
+}
+
+.timepoint.active{
+
+    background:#3a3168;
+
+    border-color:#b2a4ff;
+
+    box-shadow:
+        0 0 15px #7568bd;
+}
+
+/* PANEL */
+
+.panel{
+
+    background:#0c0b12;
+
+    border:1px solid #353047;
+
+    border-radius:14px;
+
+    padding:15px;
+}
+
+.panel h2{
+
+    font-family:Georgia,serif;
+
+    color:#bcaeff;
+
+    font-size:20px;
+
+    margin-bottom:12px;
+}
+
+/* PROGRESS */
+
+.progress{
+
+    height:7px;
+
+    background:#211d2d;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+    margin-bottom:15px;
+}
+
+.progress-bar{
+
+    height:100%;
+
+    width:0%;
+
+    background:#8071d0;
+
+    transition:.4s;
+}
+
+/* SCENARIO */
+
+.scenario{
+
+    padding:15px;
+
+    background:#12101a;
+
+    border:1px solid #332d44;
+
+    border-radius:10px;
+}
+
+.scenario-number{
+
+    font-size:9px;
+
+    color:#77718b;
+
+    letter-spacing:2px;
+}
+
+.scenario h3{
+
+    font-family:Georgia,serif;
+
+    color:#c9bfff;
+
+    font-size:19px;
+
+    margin:8px 0;
+}
+
+.scenario p{
+
+    color:#9991a7;
+
+    font-size:11px;
+
+    line-height:1.7;
+}
+
+/* CHOICES */
+
+.choices{
+
+    display:grid;
+
+    gap:8px;
+
+    margin-top:12px;
+}
+
+.choice{
+
+    width:100%;
+
+    padding:12px;
+
+    background:#15121e;
+
+    color:#e4dff1;
+
+    border:1px solid #383147;
+
+    border-radius:8px;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+    font-size:10px;
+}
+
+.choice:hover{
+
+    border-color:#a397dc;
+
+    background:#1c1829;
+
+    transform:translateX(3px);
+}
+
+.choice:disabled{
+
+    opacity:.45;
+
+    cursor:not-allowed;
+
+    transform:none;
+}
+
+/* CLUES */
+
+.clues-title{
+
+    color:#716a7e;
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    margin-top:14px;
+
+    margin-bottom:6px;
+}
+
+.clues{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:5px;
+}
+
+.clue{
+
+    padding:6px 8px;
+
+    background:#171420;
+
+    border:1px solid #312c3e;
+
+    border-radius:6px;
+
+    font-size:9px;
+
+    color:#948ca4;
+}
+
+/* LOG */
+
+.log-title{
+
+    color:#716a7e;
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    margin-top:12px;
+
+    margin-bottom:6px;
+}
+
+.log{
+
+    height:95px;
+
+    overflow-y:auto;
+
+    background:#08070d;
+
+    border:1px solid #282432;
+
+    border-radius:8px;
+
+    padding:8px;
+}
+
+.log-entry{
+
+    padding:6px 0;
+
+    border-bottom:1px solid #1b1822;
+
+    color:#858091;
+
+    font-size:9px;
+
+    line-height:1.5;
+}
+
+/* MODAL */
+
+.modal{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:18px;
+
+    background:rgba(0,0,0,.9);
+
+    z-index:100;
+}
+
+.modal.show{
+
+    display:flex;
+}
+
+.modal-card{
+
+    width:min(570px,100%);
+
+    padding:30px;
+
+    text-align:center;
+
+    background:#100e17;
+
+    border:1px solid #585078;
+
+    border-radius:17px;
+}
+
+.modal-icon{
+
+    font-size:60px;
+}
+
+.modal-card h2{
+
+    font-family:Georgia,serif;
+
+    color:#c7bbff;
+
+    margin:10px 0;
+}
+
+.modal-card p{
+
+    color:#9991a5;
+
+    font-size:11px;
+
+    line-height:1.8;
+}
+
+.modal-result{
+
+    margin-top:14px;
+
+    padding:12px;
+
+    border:1px solid #393248;
+
+    background:#171421;
+
+    color:#c2bbce;
+
+    font-size:11px;
+
+    line-height:1.6;
+}
+
+/* FINAL */
+
+.final{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(0,0,0,.96);
+
+    z-index:200;
+}
+
+.final.show{
+
+    display:flex;
+}
+
+.final-card{
+
+    width:min(650px,100%);
+
+    padding:35px 25px;
+
+    text-align:center;
+
+    background:#100e17;
+
+    border:1px solid #665c89;
+
+    border-radius:18px;
+}
+
+.final-icon{
+
+    font-size:75px;
+}
+
+.final-card h2{
+
+    font-family:Georgia,serif;
+
+    color:#cfc3ff;
+
+    font-size:32px;
+
+    margin:10px 0;
+}
+
+.final-card p{
+
+    color:#aaa2b2;
+
+    font-size:12px;
+
+    line-height:1.8;
+}
+
+.final-score{
+
+    font-family:Georgia,serif;
+
+    font-size:42px;
+
+    color:#bcaeff;
+
+    margin:14px;
+}
+
+.next{
+
+    width:100%;
+
+    padding:13px;
+
+    margin-top:15px;
+
+    border:0;
+
+    border-radius:8px;
+
+    background:linear-gradient(
+        135deg,
+        #40366f,
+        #7769bc
+    );
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+.next:hover{
+
+    opacity:.9;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+    .game{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:700px){
+
+    .stats{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .chamber{
+        min-height:500px;
+    }
+
+    .portal{
+        width:210px;
+        height:210px;
+    }
+
+}
+
+@media(max-width:480px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .level{
+        display:none;
+    }
+
+    header{
+        padding:0 15px;
+    }
+
+    .timeline{
+        left:4%;
+        right:4%;
+    }
+
+    .timepoint{
+        width:40px;
+        height:40px;
+        font-size:17px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        PJ<span>Land</span>
+    </div>
+
+    <div class="level">
+        LEVEL 17 • THE TIME PARADOX
+    </div>
+
+</header>
+
+<main class="container">
+
+<div class="title">
+
+    <small>LEVEL 17</small>
+
+    <h1>⏳ The Time Paradox</h1>
+
+    <p>
+        You have entered a future that should not exist.
+    </p>
+
+</div>
+
+<!-- STATS -->
+
+<div class="stats">
+
+    <div class="stat">
+
+        <div class="icon">🌀</div>
+
+        <span>PARADOX</span>
+
+        <strong id="paradox">0</strong>
+
+    </div>
+
+    <div class="stat">
+
+        <div class="icon">🌌</div>
+
+        <span>STABILITY</span>
+
+        <strong id="stability">100</strong>
+
+    </div>
+
+    <div class="stat">
+
+        <div class="icon">🔎</div>
+
+        <span>CLUES</span>
+
+        <strong id="clues">0</strong>
+
+    </div>
+
+    <div class="stat">
+
+        <div class="icon">⏳</div>
+
+        <span>TIME</span>
+
+        <strong id="time">20</strong>
+
+    </div>
+
+    <div class="stat">
+
+        <div class="icon">🧠</div>
+
+        <span>WISDOM</span>
+
+        <strong id="wisdom">0</strong>
+
+    </div>
+
+</div>
+
+<div class="game">
+
+<!-- CHAMBER -->
+
+<div class="chamber">
+
+    <div class="star s1">✦</div>
+    <div class="star s2">✧</div>
+    <div class="star s3">✦</div>
+    <div class="star s4">✧</div>
+
+    <div class="portal"></div>
+
+    <div class="timeline">
+
+        <div class="timepoint active">
+            🏰
+        </div>
+
+        <div class="timepoint">
+            ⚔️
+        </div>
+
+        <div class="timepoint">
+            👑
+        </div>
+
+        <div class="timepoint">
+            🌆
+        </div>
+
+        <div class="timepoint">
+            🚀
+        </div>
+
+    </div>
+
+</div>
+
+<!-- PANEL -->
+
+<div class="panel">
+
+    <h2>
+        🕰️ Timeline Control
+    </h2>
+
+    <div class="progress">
+
+        <div
+            class="progress-bar"
+            id="progress">
+        </div>
+
+    </div>
+
+    <div class="scenario">
+
+        <div
+            class="scenario-number"
+            id="scenarioNumber">
+
+            EVENT 1 OF 20
+
+        </div>
+
+        <h3
+            id="question">
+
+            The Future
+
+        </h3>
+
+        <p
+            id="description">
+
+            You wake up inside a strange laboratory.
+            A digital clock reads the year 2126.
+
+        </p>
+
+    </div>
+
+    <div
+        class="choices"
+        id="choices">
+    </div>
+
+    <div class="clues-title">
+        DISCOVERED CLUES
+    </div>
+
+    <div
+        class="clues"
+        id="clueBox">
+
+        <div class="clue">
+            None yet
+        </div>
+
+    </div>
+
+    <div class="log-title">
+        TIMELINE LOG
+    </div>
+
+    <div
+        class="log"
+        id="log">
+
+        <div class="log-entry">
+            ⏳ You have entered an unstable timeline.
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+</main>
+
+<!-- RESULT MODAL -->
+
+<div
+    class="modal"
+    id="modal">
+
+    <div class="modal-card">
+
+        <div
+            class="modal-icon"
+            id="modalIcon">
+
+            🌀
+
+        </div>
+
+        <h2
+            id="modalTitle">
+
+            Timeline Changed
+
+        </h2>
+
+        <p
+            id="modalText">
+
+        </p>
+
+        <div
+            class="modal-result"
+            id="modalResult">
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- FINAL -->
+
+<div
+    class="final"
+    id="final">
+
+    <div class="final-card">
+
+        <div
+            class="final-icon"
+            id="finalIcon">
+
+            ⏳
+
+        </div>
+
+        <h2
+            id="finalTitle">
+
+            The Timeline Is Complete
+
+        </h2>
+
+        <div
+            class="final-score"
+            id="finalScore">
+
+            0
+
+        </div>
+
+        <p
+            id="finalText">
+
+        </p>
+
+        <button
+            class="next"
+            onclick="nextLevel()">
+
+            CONTINUE TO LEVEL 18 →
+
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+/* =====================================================
+   GAME VARIABLES
+===================================================== */
+
+let paradox = 0;
+let stability = 100;
+let clues = 0;
+let time = 20;
+let wisdom = 0;
+let decision = 0;
+let score = 100;
+let finished = false;
+let processingChoice = false;
+
+let discoveredClues = [];
+
+
+/* =====================================================
+   20 TIME EVENTS
+===================================================== */
+
+const events = [
+
+{
+    title:"The Future",
+
+    description:
+    "You wake up inside a strange laboratory. A digital clock reads the year 2126. A scientist tells you that your kingdom disappeared 100 years ago.",
+
+    choices:[
+
+        {
+            text:"🔎 Search the laboratory",
+
+            effect(){
+                clues++;
+                wisdom+=10;
+
+                return "You discover a photograph showing your castle in the future.";
+            }
+        },
+
+        {
+            text:"🚪 Leave immediately",
+
+            effect(){
+                paradox+=5;
+
+                return "You leave without learning what happened.";
+            }
+        },
+
+        {
+            text:"🧑‍🔬 Question the scientist",
+
+            effect(){
+                wisdom+=15;
+                clues++;
+
+                return "The scientist reveals that history changed after your reign.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Broken Statue",
+
+    description:
+    "You enter a futuristic city and see a giant statue of yourself. But the statue calls you a tyrant.",
+
+    choices:[
+
+        {
+            text:"🔎 Examine the statue",
+
+            effect(){
+                clues++;
+                wisdom+=8;
+
+                return "A hidden inscription says the statue was built by your descendants.";
+            }
+        },
+
+        {
+            text:"💥 Destroy it",
+
+            effect(){
+                paradox+=12;
+                stability-=8;
+
+                return "Destroying the statue creates a disturbance in the timeline.";
+            }
+        },
+
+        {
+            text:"🚶 Ignore it",
+
+            effect(){
+                stability-=2;
+
+                return "You continue through the city.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Future Newspaper",
+
+    description:
+    "You find an old newspaper dated 2026. It says: 'The King Will Never Exist.'",
+
+    choices:[
+
+        {
+            text:"📰 Read the entire article",
+
+            effect(){
+                clues++;
+                wisdom+=12;
+
+                return "The article says someone altered your childhood.";
+            }
+        },
+
+        {
+            text:"🔥 Destroy the newspaper",
+
+            effect(){
+                paradox+=8;
+                stability-=5;
+
+                return "The evidence disappears, but the timeline becomes unstable.";
+            }
+        },
+
+        {
+            text:"📦 Take the newspaper",
+
+            effect(){
+                clues++;
+
+                return "You keep the newspaper as evidence.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Time Machine",
+
+    description:
+    "The scientist shows you a machine capable of sending you to any moment in history.",
+
+    choices:[
+
+        {
+            text:"🏰 Visit your childhood",
+
+            effect(){
+                wisdom+=15;
+
+                return "You discover someone secretly watched you as a child.";
+            }
+        },
+
+        {
+            text:"⚔️ Visit the great war",
+
+            effect(){
+                paradox+=5;
+                clues++;
+
+                return "You see a mysterious soldier wearing your family's symbol.";
+            }
+        },
+
+        {
+            text:"👑 Visit your coronation",
+
+            effect(){
+                clues++;
+                wisdom+=18;
+
+                return "You notice someone missing from the official historical record.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Mysterious Soldier",
+
+    description:
+    "A soldier from the future approaches you. He claims to be your descendant.",
+
+    choices:[
+
+        {
+            text:"🤝 Trust him",
+
+            effect(){
+                wisdom+=15;
+                clues++;
+
+                return "He tells you your kingdom was destroyed by a time traveler.";
+            }
+        },
+
+        {
+            text:"🗡️ Attack him",
+
+            effect(){
+                paradox+=15;
+                stability-=10;
+
+                return "You accidentally change a future family line.";
+            }
+        },
+
+        {
+            text:"🕵️ Test his story",
+
+            effect(){
+                wisdom+=20;
+                clues++;
+
+                return "He proves his identity with an artifact from your castle.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Missing King",
+
+    description:
+    "Historical records show that a king ruled your kingdom after you. But his identity is completely unknown.",
+
+    choices:[
+
+        {
+            text:"🔎 Investigate",
+
+            effect(){
+                clues++;
+                wisdom+=15;
+
+                return "The missing king appears to have come from the future.";
+            }
+        },
+
+        {
+            text:"📜 Rewrite the record",
+
+            effect(){
+                paradox+=10;
+                stability-=8;
+
+                return "The historical record changes dramatically.";
+            }
+        },
+
+        {
+            text:"🚪 Move on",
+
+            effect(){
+                stability-=2;
+
+                return "You leave the mystery unsolved.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Time Police",
+
+    description:
+    "Masked agents arrive and tell you that traveling through time is forbidden.",
+
+    choices:[
+
+        {
+            text:"🏃 Escape",
+
+            effect(){
+                paradox+=8;
+
+                return "You escape into another timeline.";
+            }
+        },
+
+        {
+            text:"🤝 Negotiate",
+
+            effect(){
+                wisdom+=15;
+
+                return "The agents reveal that someone has been hunting you across time.";
+            }
+        },
+
+        {
+            text:"⚔️ Fight",
+
+            effect(){
+                paradox+=18;
+                stability-=12;
+
+                return "The timeline shakes violently after the battle.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Frozen City",
+
+    description:
+    "You arrive in a city where everyone is frozen in place.",
+
+    choices:[
+
+        {
+            text:"🔎 Search for clues",
+
+            effect(){
+                clues++;
+                wisdom+=10;
+
+                return "You find a clock frozen exactly 100 years in the future.";
+            }
+        },
+
+        {
+            text:"⏳ Touch the clock",
+
+            effect(){
+                paradox+=10;
+                stability-=8;
+
+                return "Time suddenly accelerates around you.";
+            }
+        },
+
+        {
+            text:"🚪 Leave",
+
+            effect(){
+                stability-=3;
+
+                return "You leave the frozen city behind.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"Your Future Self",
+
+    description:
+    "You meet an older version of yourself.",
+
+    choices:[
+
+        {
+            text:"🗣️ Ask what happened",
+
+            effect(){
+                wisdom+=25;
+                clues++;
+
+                return "Your future self says: 'Never trust the first person who offers you the crown.'";
+            }
+        },
+
+        {
+            text:"🤝 Work together",
+
+            effect(){
+                wisdom+=20;
+                stability+=5;
+
+                return "Your future self gives you a device capable of stabilizing time.";
+            }
+        },
+
+        {
+            text:"😨 Run away",
+
+            effect(){
+                paradox+=5;
+
+                return "You avoid confronting your future.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Crown",
+
+    description:
+    "You find a futuristic version of your royal crown.",
+
+    choices:[
+
+        {
+            text:"👑 Put it on",
+
+            effect(){
+                paradox+=5;
+                wisdom+=10;
+
+                return "The crown recognizes your identity.";
+            }
+        },
+
+        {
+            text:"🔎 Examine it",
+
+            effect(){
+                clues++;
+                wisdom+=15;
+
+                return "The crown contains a hidden message from your future self.";
+            }
+        },
+
+        {
+            text:"🚫 Leave it",
+
+            effect(){
+                stability-=2;
+
+                return "You refuse to interact with the crown.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The First Paradox",
+
+    description:
+    "You discover that someone went back in time and changed one event in your childhood.",
+
+    choices:[
+
+        {
+            text:"🔎 Find the changed event",
+
+            effect(){
+                clues++;
+                wisdom+=20;
+
+                return "You discover that the event was your first day at school.";
+            }
+        },
+
+        {
+            text:"⏳ Reverse it",
+
+            effect(){
+                paradox+=15;
+                stability-=12;
+
+                return "Reversing history creates a dangerous paradox.";
+            }
+        },
+
+        {
+            text:"🧠 Leave history alone",
+
+            effect(){
+                wisdom+=10;
+
+                return "You decide that some events should remain untouched.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Hidden Library",
+
+    description:
+    "A library contains books describing events that have not happened yet.",
+
+    choices:[
+
+        {
+            text:"📚 Read your future",
+
+            effect(){
+                clues++;
+                wisdom+=25;
+
+                return "You learn that your kingdom will face one final threat.";
+            }
+        },
+
+        {
+            text:"🔥 Burn the books",
+
+            effect(){
+                paradox+=12;
+                stability-=10;
+
+                return "The future becomes impossible to predict.";
+            }
+        },
+
+        {
+            text:"📖 Read one random book",
+
+            effect(){
+                clues++;
+                wisdom+=12;
+
+                return "You learn about a mysterious machine beneath your castle.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Time Traveler",
+
+    description:
+    "You finally meet the person who caused the original timeline change.",
+
+    choices:[
+
+        {
+            text:"🗣️ Ask why",
+
+            effect(){
+                clues++;
+                wisdom+=20;
+
+                return "He claims he changed history to prevent a terrible war.";
+            }
+        },
+
+        {
+            text:"⚔️ Stop him",
+
+            effect(){
+                paradox+=15;
+                stability-=12;
+
+                return "Removing him destabilizes several timelines.";
+            }
+        },
+
+        {
+            text:"🤝 Listen to him",
+
+            effect(){
+                wisdom+=25;
+                clues++;
+
+                return "You discover that his intentions were not evil.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Impossible Choice",
+
+    description:
+    "You discover that saving the future may erase the kingdom you built.",
+
+    choices:[
+
+        {
+            text:"👑 Save the kingdom",
+
+            effect(){
+                wisdom+=20;
+                stability-=5;
+
+                return "Your kingdom survives, but the future becomes uncertain.";
+            }
+        },
+
+        {
+            text:"🌌 Save the future",
+
+            effect(){
+                stability+=20;
+                paradox+=5;
+
+                return "The future stabilizes, but your kingdom may disappear.";
+            }
+        },
+
+        {
+            text:"🧠 Find another solution",
+
+            effect(){
+                wisdom+=30;
+                clues++;
+
+                return "You realize the timeline may not require a sacrifice.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Time Storm",
+
+    description:
+    "A massive temporal storm begins destroying the timeline.",
+
+    choices:[
+
+        {
+            text:"⏳ Use the stabilizer",
+
+            effect(){
+                stability+=25;
+                paradox-=10;
+
+                return "The stabilizer protects the timeline.";
+            }
+        },
+
+        {
+            text:"🏃 Escape",
+
+            effect(){
+                stability-=20;
+                paradox+=15;
+
+                return "You escape but leave the timeline unstable.";
+            }
+        },
+
+        {
+            text:"🧠 Study the storm",
+
+            effect(){
+                wisdom+=30;
+                clues++;
+
+                return "You discover the storm is being generated by a machine.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Machine Beneath the Castle",
+
+    description:
+    "You return to your original era and discover a machine hidden beneath the castle.",
+
+    choices:[
+
+        {
+            text:"🔎 Examine the machine",
+
+            effect(){
+                clues++;
+                wisdom+=25;
+
+                return "The machine was built by someone who knew about your journey.";
+            }
+        },
+
+        {
+            text:"💥 Destroy it",
+
+            effect(){
+                paradox-=10;
+                stability+=10;
+
+                return "The machine is destroyed and the timeline stabilizes.";
+            }
+        },
+
+        {
+            text:"⏳ Activate it",
+
+            effect(){
+                paradox+=20;
+                stability-=15;
+
+                return "The machine opens hundreds of possible timelines.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Final Warning",
+
+    description:
+    "Your future self appears one last time and says: 'The person you trust most will betray you.'",
+
+    choices:[
+
+        {
+            text:"🕵️ Trust nobody",
+
+            effect(){
+                wisdom+=15;
+
+                return "You become extremely cautious.";
+            }
+        },
+
+        {
+            text:"👑 Trust your closest ally",
+
+            effect(){
+                paradox+=8;
+
+                return "You place your trust in someone important.";
+            }
+        },
+
+        {
+            text:"🧠 Investigate everyone",
+
+            effect(){
+                clues++;
+                wisdom+=25;
+
+                return "You discover evidence of a hidden traitor.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Last Timeline",
+
+    description:
+    "Only one timeline can survive. You must choose which reality becomes permanent.",
+
+    choices:[
+
+        {
+            text:"🏰 Preserve your kingdom",
+
+            effect(){
+                stability+=10;
+                wisdom+=10;
+
+                return "Your kingdom becomes the foundation of the new timeline.";
+            }
+        },
+
+        {
+            text:"🌌 Preserve the future",
+
+            effect(){
+                stability+=25;
+
+                return "The future becomes stable again.";
+            }
+        },
+
+        {
+            text:"🌀 Create a new timeline",
+
+            effect(){
+                paradox+=25;
+                wisdom+=20;
+
+                return "You create a completely new reality.";
+            }
+        }
+
+    ]
+},
+
+{
+    title:"The Final Decision",
+
+    description:
+    "You stand before the time machine. One final decision remains. What will you do?",
+
+    choices:[
+
+        {
+            text:"⏳ Return to your own time",
+
+            effect(){
+                stability+=15;
+                wisdom+=20;
+
+                return "You return to your original time with the knowledge of the future.";
+            }
+        },
+
+        {
+            text:"🌌 Stay in the future",
+
+            effect(){
+                stability+=20;
+                wisdom+=25;
+
+                return "You remain in the future and become its protector.";
+            }
+        },
+
+        {
+            text:"🌀 Destroy time itself",
+
+            effect(){
+                paradox+=30;
+                stability-=30;
+
+                return "You destroy the machine and end humanity's ability to manipulate time.";
+            }
+        }
+
+    ]
+}
+
+];
+
+
+/* =====================================================
+   LOAD EVENT
+===================================================== */
+
+function loadEvent(){
+
+    if(decision >= events.length){
+
+        finishGame();
+
+        return;
+    }
+
+    const event = events[decision];
+
+    document.getElementById("scenarioNumber").textContent =
+        "EVENT " + (decision + 1) + " OF 20";
+
+    document.getElementById("question").textContent =
+        event.title;
+
+    document.getElementById("description").textContent =
+        event.description;
+
+    const choices =
+        document.getElementById("choices");
+
+    choices.innerHTML = "";
+
+    event.choices.forEach((choice)=>{
+
+        const button =
+            document.createElement("button");
+
+        button.className = "choice";
+
+        button.textContent =
+            choice.text;
+
+        button.onclick =
+            ()=>makeChoice(choice);
+
+        choices.appendChild(button);
+
+    });
+
+    document.getElementById("progress").style.width =
+        ((decision / events.length) * 100) + "%";
+
+    updateTimeline();
+}
+
+
+/* =====================================================
+   MAKE CHOICE
+===================================================== */
+
+function makeChoice(choice){
+
+    if(finished || processingChoice)
+        return;
+
+    processingChoice = true;
+
+    const buttons =
+        document.querySelectorAll(".choice");
+
+    buttons.forEach(button=>{
+        button.disabled = true;
+    });
+
+    let result = "";
+
+    try{
+
+        result = choice.effect();
+
+    }
+    catch(error){
+
+        console.error("Choice error:",error);
+
+        result =
+            "The timeline experienced an unexpected disturbance.";
+
+    }
+
+    decision++;
+
+    time--;
+
+    stability =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                stability
+            )
+        );
+
+    paradox =
+        Math.max(
+            0,
+            paradox
+        );
+
+    log(
+        "⏳ Event " +
+        decision +
+        ": " +
+        result
+    );
+
+    updateUI();
+
+    showResult(result);
+}
+
+
+/* =====================================================
+   RESULT MODAL
+===================================================== */
+
+function showResult(text){
+
+    document.getElementById("modalResult").textContent =
+        text;
+
+    if(paradox >= 30){
+
+        document.getElementById("modalIcon").textContent =
+            "🌀";
+
+        document.getElementById("modalTitle").textContent =
+            "PARADOX DETECTED";
+
+    }
+    else{
+
+        document.getElementById("modalIcon").textContent =
+            "⏳";
+
+        document.getElementById("modalTitle").textContent =
+            "Timeline Updated";
+
+    }
+
+    document.getElementById("modalText").textContent =
+        "Your decision has changed the timeline.";
+
+    document.getElementById("modal").classList.add("show");
+
+    setTimeout(()=>{
+
+        document.getElementById("modal").classList.remove("show");
+
+        processingChoice = false;
+
+        if(
+            decision >= events.length ||
+            stability <= 0
+        ){
+
+            finishGame();
+
+        }
+        else{
+
+            loadEvent();
+
+        }
+
+    },1800);
+}
+
+
+/* =====================================================
+   UPDATE UI
+===================================================== */
+
+function updateUI(){
+
+    stability =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                stability
+            )
+        );
+
+    paradox =
+        Math.max(
+            0,
+            paradox
+        );
+
+    time =
+        Math.max(
+            0,
+            time
+        );
+
+    document.getElementById("paradox").textContent =
+        paradox;
+
+    document.getElementById("stability").textContent =
+        stability;
+
+    document.getElementById("clues").textContent =
+        clues;
+
+    document.getElementById("time").textContent =
+        time;
+
+    document.getElementById("wisdom").textContent =
+        wisdom;
+
+    updateClues();
+}
+
+
+/* =====================================================
+   CLUES
+===================================================== */
+
+function updateClues(){
+
+    const box =
+        document.getElementById("clueBox");
+
+    if(clues === 0){
+
+        box.innerHTML =
+            '<div class="clue">None yet</div>';
+
+        return;
+    }
+
+    const clueNames = [
+
+        "Future Castle",
+        "Broken Statue",
+        "2026 Newspaper",
+        "Missing King",
+        "Future Soldier",
+        "Frozen Clock",
+        "Future Self",
+        "Hidden Crown",
+        "First Paradox",
+        "Future Library",
+        "Time Traveler",
+        "Machine Beneath Castle",
+        "Hidden Traitor"
+
+    ];
+
+    box.innerHTML = "";
+
+    for(
+        let i = 0;
+        i < Math.min(clues,clueNames.length);
+        i++
+    ){
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "clue";
+
+        div.textContent =
+            "🔎 " +
+            clueNames[i];
+
+        box.appendChild(div);
+    }
+}
+
+
+/* =====================================================
+   TIMELINE
+===================================================== */
+
+function updateTimeline(){
+
+    const points =
+        document.querySelectorAll(".timepoint");
+
+    points.forEach(
+        (point,index)=>{
+
+            point.classList.remove("active");
+
+            const timelineStage =
+                Math.min(
+                    4,
+                    Math.floor(decision / 4)
+                );
+
+            if(timelineStage === index){
+
+                point.classList.add("active");
+
+            }
+
+        }
+    );
+}
+
+
+/* =====================================================
+   LOG
+===================================================== */
+
+function log(text){
+
+    const box =
+        document.getElementById("log");
+
+    const entry =
+        document.createElement("div");
+
+    entry.className =
+        "log-entry";
+
+    entry.textContent =
+        text;
+
+    box.prepend(entry);
+}
+
+
+/* =====================================================
+   FINAL RESULT
+===================================================== */
+
+function finishGame(){
+
+    if(finished)
+        return;
+
+    finished = true;
+
+    document.getElementById("modal").classList.remove("show");
+
+    const finalScore =
+        score +
+        wisdom +
+        clues * 10 +
+        stability -
+        paradox;
+
+    let title = "";
+    let icon = "";
+    let text = "";
+
+    /* ENDING 1 */
+
+    if(
+        stability <= 0 ||
+        paradox >= 50
+    ){
+
+        icon = "💥";
+
+        title = "The Timeline Collapsed";
+
+        text =
+        "Your actions created too many paradoxes. The timeline could no longer sustain itself and collapsed into an unknown reality.";
+    }
+
+    /* ENDING 2 */
+
+    else if(
+        stability >= 90 &&
+        wisdom >= 150 &&
+        clues >= 8
+    ){
+
+        icon = "👑";
+
+        title = "Master of Time";
+
+        text =
+        "You solved the paradox without destroying your kingdom or the future. You become the first human capable of safely navigating time.";
+    }
+
+    /* ENDING 3 */
+
+    else if(
+        stability >= 75 &&
+        clues >= 6
+    ){
+
+        icon = "🌌";
+
+        title = "Guardian of the Future";
+
+        text =
+        "You stabilize the future and prevent the timeline from collapsing. Generations remember you as the Guardian of Time.";
+    }
+
+    /* ENDING 4 */
+
+    else if(
+        stability >= 50
+    ){
+
+        icon = "🏰";
+
+        title = "The Kingdom Survives";
+
+        text =
+        "You return to your kingdom with knowledge of the future. History changes, but your kingdom survives.";
+    }
+
+    /* ENDING 5 */
+
+    else{
+
+        icon = "🌀";
+
+        title = "The Unknown Timeline";
+
+        text =
+        "You created a reality that never existed before. Nobody knows what this new world will become.";
+    }
+
+    document.getElementById("finalIcon").textContent =
+        icon;
+
+    document.getElementById("finalTitle").textContent =
+        title;
+
+    document.getElementById("finalScore").textContent =
+        finalScore +
+        " POINTS";
+
+    document.getElementById("finalText").textContent =
+        text +
+        " You discovered " +
+        clues +
+        " clues and finished with " +
+        stability +
+        "% timeline stability and " +
+        paradox +
+        " paradox points.";
+
+    document.getElementById("final").classList.add("show");
+}
+
+
+/* =====================================================
+   LEVEL 18
+===================================================== */
+
+function nextLevel(){
+
+    window.location.href =
+        "level18.html";
+}
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+updateUI();
+
+loadEvent();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Level 16 — Kingdom Under Siege | PJLand</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    color:#eee7d3;
+
+    background:
+        radial-gradient(circle at top,#402c24,#17100d 45%,#070605);
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+    height:70px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 28px;
+
+    background:#090807;
+
+    border-bottom:1px solid #513b2d;
+}
+
+.logo{
+    font-family:Georgia,serif;
+    font-size:22px;
+    color:#d9b96a;
+    font-weight:bold;
+}
+
+.logo span{
+    color:white;
+}
+
+.level{
+    font-size:10px;
+    letter-spacing:3px;
+    color:#8c8176;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+
+.container{
+    width:min(1100px,calc(100% - 24px));
+    margin:auto;
+    padding:25px 0 50px;
+}
+
+/* =========================
+   TITLE
+========================= */
+
+.title{
+    text-align:center;
+    margin-bottom:18px;
+}
+
+.title small{
+    color:#d3ae5c;
+    letter-spacing:3px;
+    font-size:10px;
+}
+
+.title h1{
+    font-family:Georgia,serif;
+    font-size:clamp(30px,5vw,46px);
+    margin:7px 0;
+}
+
+.title p{
+    color:#91877e;
+    font-size:13px;
+}
+
+/* =========================
+   RESOURCES
+========================= */
+
+.resources{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:7px;
+    margin-bottom:12px;
+}
+
+.resource{
+    padding:9px;
+    text-align:center;
+
+    background:#100d0b;
+
+    border:1px solid #44342b;
+    border-radius:9px;
+}
+
+.resource .icon{
+    font-size:18px;
+}
+
+.resource span{
+    display:block;
+    font-size:8px;
+    color:#80766e;
+    margin-top:3px;
+}
+
+.resource strong{
+    display:block;
+
+    color:#d7b865;
+
+    font-family:Georgia,serif;
+
+    font-size:16px;
+
+    margin-top:2px;
+}
+
+/* =========================
+   MAIN GAME
+========================= */
+
+.game{
+    display:grid;
+    grid-template-columns:1fr 350px;
+    gap:12px;
+}
+
+/* =========================
+   BATTLEFIELD
+========================= */
+
+.battlefield{
+    position:relative;
+
+    min-height:620px;
+
+    overflow:hidden;
+
+    border:1px solid #60493a;
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #202326 0%,
+            #30322f 45%,
+            #201710 46%,
+            #120c09 100%
+        );
+}
+
+/* =========================
+   MOON
+========================= */
+
+.moon{
+    position:absolute;
+
+    top:35px;
+    right:55px;
+
+    font-size:60px;
+
+    opacity:.75;
+}
+
+/* =========================
+   FIRE
+========================= */
+
+.fire{
+    position:absolute;
+
+    font-size:34px;
+
+    animation:flicker .8s infinite alternate;
+}
+
+.fire.one{
+    left:8%;
+    bottom:20%;
+}
+
+.fire.two{
+    right:8%;
+    bottom:17%;
+}
+
+@keyframes flicker{
+
+    from{
+        transform:scale(1);
+    }
+
+    to{
+        transform:scale(1.12);
+    }
+
+}
+
+/* =========================
+   CASTLE
+========================= */
+
+.castle{
+    position:absolute;
+
+    left:50%;
+    top:46%;
+
+    transform:translate(-50%,-50%);
+
+    width:320px;
+    height:270px;
+}
+
+.tower{
+    position:absolute;
+
+    bottom:0;
+
+    width:75px;
+    height:220px;
+
+    background:#665a4f;
+
+    border:4px solid #3b342f;
+}
+
+.tower.left{
+    left:0;
+}
+
+.tower.right{
+    right:0;
+}
+
+.tower.middle{
+    left:122px;
+    height:185px;
+}
+
+.roof{
+    position:absolute;
+
+    top:-43px;
+    left:-8px;
+
+    width:84px;
+    height:50px;
+
+    background:#35251e;
+
+    clip-path:polygon(
+        50% 0,
+        100% 100%,
+        0 100%
+    );
+}
+
+.wall{
+    position:absolute;
+
+    bottom:0;
+    left:55px;
+
+    width:210px;
+    height:135px;
+
+    background:#5b5047;
+
+    border:4px solid #3b342f;
+}
+
+.gate{
+    position:absolute;
+
+    bottom:0;
+    left:122px;
+
+    width:62px;
+    height:92px;
+
+    background:#241914;
+
+    border:4px solid #2d231e;
+
+    border-radius:40px 40px 0 0;
+}
+
+/* =========================
+   ENEMY
+========================= */
+
+.enemy{
+    position:absolute;
+
+    bottom:105px;
+    left:6%;
+
+    font-size:48px;
+
+    transition:opacity .5s;
+}
+
+.enemy.two{
+    left:auto;
+    right:6%;
+}
+
+/* =========================
+   BATTLE STATUS
+========================= */
+
+.battle-status{
+    position:absolute;
+
+    top:15px;
+    left:15px;
+    right:15px;
+
+    display:flex;
+    justify-content:space-between;
+
+    padding:10px 13px;
+
+    background:rgba(5,5,5,.75);
+
+    border:1px solid #493b32;
+    border-radius:9px;
+
+    font-size:10px;
+}
+
+.battle-status strong{
+    color:#d8b967;
+}
+
+/* =========================
+   SIDE PANEL
+========================= */
+
+.panel{
+    background:#0d0b09;
+
+    border:1px solid #46362d;
+
+    border-radius:14px;
+
+    padding:15px;
+}
+
+.panel h2{
+    font-family:Georgia,serif;
+
+    color:#d8b967;
+
+    font-size:20px;
+
+    margin-bottom:12px;
+}
+
+/* =========================
+   PROGRESS
+========================= */
+
+.progress{
+    height:7px;
+
+    background:#29231f;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+    margin-bottom:15px;
+}
+
+.progress-bar{
+    height:100%;
+
+    width:0%;
+
+    background:#a78445;
+
+    transition:.4s;
+}
+
+/* =========================
+   SCENARIO
+========================= */
+
+.scenario{
+    padding:15px;
+
+    background:#14100d;
+
+    border:1px solid #3d3028;
+
+    border-radius:10px;
+}
+
+.scenario-number{
+    font-size:9px;
+
+    color:#8d8076;
+
+    letter-spacing:2px;
+}
+
+.scenario h3{
+    font-family:Georgia,serif;
+
+    color:#e0c273;
+
+    font-size:19px;
+
+    margin:8px 0;
+}
+
+.scenario p{
+    color:#a39a91;
+
+    font-size:11px;
+
+    line-height:1.7;
+}
+
+/* =========================
+   CHOICES
+========================= */
+
+.choices{
+    display:grid;
+
+    gap:8px;
+
+    margin-top:12px;
+}
+
+.choice{
+    width:100%;
+
+    padding:12px;
+
+    background:#17120f;
+
+    color:#e7dfcf;
+
+    border:1px solid #46372d;
+
+    border-radius:8px;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+    font-size:10px;
+}
+
+.choice:hover:not(:disabled){
+    border-color:#c5a452;
+
+    background:#211913;
+
+    transform:translateX(3px);
+}
+
+.choice:disabled{
+    opacity:.4;
+
+    cursor:not-allowed;
+}
+
+/* =========================
+   LOG
+========================= */
+
+.log-title{
+    color:#766d65;
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    margin-top:14px;
+
+    margin-bottom:6px;
+}
+
+.log{
+    height:145px;
+
+    overflow-y:auto;
+
+    background:#090806;
+
+    border:1px solid #2d2520;
+
+    border-radius:8px;
+
+    padding:8px;
+}
+
+.log-entry{
+    padding:7px 0;
+
+    border-bottom:1px solid #201b17;
+
+    color:#898077;
+
+    font-size:9px;
+
+    line-height:1.5;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:18px;
+
+    background:rgba(0,0,0,.92);
+
+    z-index:100;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-card{
+    width:min(570px,100%);
+
+    padding:30px;
+
+    text-align:center;
+
+    background:#110e0c;
+
+    border:1px solid #62503d;
+
+    border-radius:17px;
+}
+
+.modal-icon{
+    font-size:65px;
+}
+
+.modal-card h2{
+    font-family:Georgia,serif;
+
+    color:#dec06c;
+
+    margin:10px 0;
+}
+
+.modal-card p{
+    color:#a39a91;
+
+    font-size:11px;
+
+    line-height:1.8;
+}
+
+.modal-result{
+    margin-top:14px;
+
+    padding:12px;
+
+    border:1px solid #3d3028;
+
+    background:#17120f;
+
+    color:#c6bcae;
+
+    font-size:11px;
+
+    line-height:1.6;
+}
+
+/* =========================
+   FINAL
+========================= */
+
+.final{
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(0,0,0,.96);
+
+    z-index:200;
+}
+
+.final.show{
+    display:flex;
+}
+
+.final-card{
+    width:min(650px,100%);
+
+    padding:35px 25px;
+
+    text-align:center;
+
+    background:#110e0c;
+
+    border:1px solid #705b3f;
+
+    border-radius:18px;
+}
+
+.final-icon{
+    font-size:75px;
+}
+
+.final-card h2{
+    font-family:Georgia,serif;
+
+    color:#dfc16b;
+
+    font-size:32px;
+
+    margin:10px 0;
+}
+
+.final-card p{
+    color:#aaa096;
+
+    font-size:12px;
+
+    line-height:1.8;
+}
+
+.final-score{
+    font-family:Georgia,serif;
+
+    font-size:42px;
+
+    color:#d7b664;
+
+    margin:14px;
+}
+
+.next{
+    width:100%;
+
+    padding:13px;
+
+    margin-top:15px;
+
+    border:0;
+
+    border-radius:8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #55402b,
+            #997b3e
+        );
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+.next:hover{
+    opacity:.9;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:900px){
+
+    .game{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:700px){
+
+    .resources{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+    .battlefield{
+        min-height:500px;
+    }
+
+    .castle{
+        transform:
+            translate(-50%,-50%)
+            scale(.75);
+    }
+
+}
+
+@media(max-width:480px){
+
+    .resources{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .level{
+        display:none;
+    }
+
+    header{
+        padding:0 15px;
+    }
+
+    .battlefield{
+        min-height:430px;
+    }
+
+    .castle{
+        transform:
+            translate(-50%,-50%)
+            scale(.58);
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        PJ<span>Land</span>
+    </div>
+
+    <div class="level">
+        LEVEL 16 • KINGDOM UNDER SIEGE
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+<div class="title">
+
+    <small>LEVEL 16</small>
+
+    <h1>⚔️ Kingdom Under Siege</h1>
+
+    <p>
+        The kingdom is under attack.
+        Every decision you make will shape its fate.
+    </p>
+
+</div>
+
+
+<!-- =========================
+     RESOURCES
+========================= -->
+
+<div class="resources">
+
+    <div class="resource">
+        <div class="icon">❤️</div>
+        <span>CASTLE</span>
+        <strong id="castle">100</strong>
+    </div>
+
+    <div class="resource">
+        <div class="icon">🛡️</div>
+        <span>SOLDIERS</span>
+        <strong id="soldiers">500</strong>
+    </div>
+
+    <div class="resource">
+        <div class="icon">🏹</div>
+        <span>ARCHERS</span>
+        <strong id="archers">200</strong>
+    </div>
+
+    <div class="resource">
+        <div class="icon">🍖</div>
+        <span>FOOD</span>
+        <strong id="food">100</strong>
+    </div>
+
+    <div class="resource">
+        <div class="icon">🪙</div>
+        <span>GOLD</span>
+        <strong id="gold">500</strong>
+    </div>
+
+    <div class="resource">
+        <div class="icon">🧱</div>
+        <span>DEFENSE</span>
+        <strong id="defense">70</strong>
+    </div>
+
+    <div class="resource">
+        <div class="icon">😈</div>
+        <span>ENEMY</span>
+        <strong id="enemy">1000</strong>
+    </div>
+
+</div>
+
+
+<div class="game">
+
+
+<!-- =========================
+     BATTLEFIELD
+========================= -->
+
+<div class="battlefield">
+
+    <div class="moon">🌕</div>
+
+    <div class="fire one">🔥</div>
+
+    <div class="fire two">🔥</div>
+
+    <div class="enemy">
+        🪖🪖
+    </div>
+
+    <div class="enemy two">
+        🪖🪖
+    </div>
+
+
+    <div class="castle">
+
+        <div class="tower left">
+            <div class="roof"></div>
+        </div>
+
+        <div class="tower middle">
+            <div class="roof"></div>
+        </div>
+
+        <div class="tower right">
+            <div class="roof"></div>
+        </div>
+
+        <div class="wall"></div>
+
+        <div class="gate"></div>
+
+    </div>
+
+
+    <div class="battle-status">
+
+        <div>
+            🏰 Castle:
+            <strong id="castleMini">100</strong>
+        </div>
+
+        <div>
+            ⚔️ Enemy:
+            <strong id="enemyMini">1000</strong>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     WAR COUNCIL
+========================= -->
+
+<div class="panel">
+
+    <h2>
+        👑 War Council
+    </h2>
+
+
+    <div class="progress">
+
+        <div
+            class="progress-bar"
+            id="progress">
+        </div>
+
+    </div>
+
+
+    <div class="scenario">
+
+        <div
+            class="scenario-number"
+            id="scenarioNumber">
+
+            DECISION 1 OF 20
+
+        </div>
+
+
+        <h3 id="question">
+            The Enemy Approaches
+        </h3>
+
+
+        <p id="description">
+
+            Scouts report that a massive enemy army
+            is approaching from the north.
+            You must decide how to prepare the kingdom.
+
+        </p>
+
+    </div>
+
+
+    <div
+        class="choices"
+        id="choices">
+    </div>
+
+
+    <div class="log-title">
+        WAR COUNCIL LOG
+    </div>
+
+
+    <div
+        class="log"
+        id="log">
+
+        <div class="log-entry">
+
+            👑 You have been appointed
+            commander of the kingdom's defense.
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+</main>
+
+
+<!-- =========================
+     RESULT MODAL
+========================= -->
+
+<div
+    class="modal"
+    id="modal">
+
+    <div class="modal-card">
+
+        <div
+            class="modal-icon"
+            id="modalIcon">
+
+            ⚔️
+
+        </div>
+
+
+        <h2 id="modalTitle">
+            Decision Made
+        </h2>
+
+
+        <p id="modalText">
+        </p>
+
+
+        <div
+            class="modal-result"
+            id="modalResult">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     FINAL RESULT
+========================= -->
+
+<div
+    class="final"
+    id="final">
+
+    <div class="final-card">
+
+        <div
+            class="final-icon"
+            id="finalIcon">
+
+            👑
+
+        </div>
+
+
+        <h2 id="finalTitle">
+            The Siege Is Over
+        </h2>
+
+
+        <div
+            class="final-score"
+            id="finalScore">
+
+            0 POINTS
+
+        </div>
+
+
+        <p id="finalText">
+        </p>
+
+
+        <button
+            class="next"
+            onclick="nextLevel()">
+
+            CONTINUE TO LEVEL 17 →
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   GAME STATE
+===================================================== */
+
+let castle = 100;
+let soldiers = 500;
+let archers = 200;
+let food = 100;
+let gold = 500;
+let defense = 70;
+let enemy = 1000;
+
+let decision = 0;
+
+let score = 100;
+
+let finished = false;
+
+
+/* =====================================================
+   20 DECISIONS
+===================================================== */
+
+const decisions = [
+
+/* 1 */
+
+{
+    title:"The Enemy Approaches",
+
+    description:
+    "Scouts report 300 enemy soldiers approaching from the north. How will you respond?",
+
+    choices:[
+
+        {
+            text:"🛡️ Send 200 soldiers north",
+
+            effect(){
+
+                soldiers -= 80;
+                enemy -= 140;
+                defense -= 5;
+                score += 10;
+
+                return "Your soldiers intercept the enemy and slow their advance.";
+
+            }
+        },
+
+        {
+            text:"🏰 Keep everyone inside the castle",
+
+            effect(){
+
+                enemy -= 50;
+                defense += 8;
+
+                return "The castle defenses are strengthened, but the enemy advances.";
+
+            }
+        },
+
+        {
+            text:"🧭 Send scouts first",
+
+            effect(){
+
+                gold -= 20;
+                score += 15;
+
+                return "Your scouts discover the enemy's exact formation.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 2 */
+
+{
+    title:"The Enemy Offers a Deal",
+
+    description:
+    "The enemy commander offers peace if you surrender 300 gold.",
+
+    choices:[
+
+        {
+            text:"🪙 Pay 300 gold",
+
+            effect(){
+
+                gold -= 300;
+                score += 5;
+
+                return "The enemy accepts the gold and retreats temporarily.";
+
+            }
+        },
+
+        {
+            text:"⚔️ Reject the offer",
+
+            effect(){
+
+                enemy -= 100;
+                score += 12;
+
+                return "The enemy realizes you will not surrender.";
+
+            }
+        },
+
+        {
+            text:"🤝 Negotiate",
+
+            effect(){
+
+                gold -= 50;
+                score += 18;
+
+                return "You negotiate successfully and delay the attack.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 3 */
+
+{
+    title:"The Food Crisis",
+
+    description:
+    "Your castle has enough food for only a few days.",
+
+    choices:[
+
+        {
+            text:"🍖 Ration everyone",
+
+            effect(){
+
+                food += 15;
+                soldiers -= 20;
+                score += 12;
+
+                return "Food lasts longer, but morale suffers.";
+
+            }
+        },
+
+        {
+            text:"👑 Feed everyone normally",
+
+            effect(){
+
+                food -= 25;
+                score += 4;
+
+                return "The army remains strong but supplies disappear quickly.";
+
+            }
+        },
+
+        {
+            text:"🏹 Send hunters outside",
+
+            effect(){
+
+                food += 30;
+                soldiers -= 10;
+                score += 14;
+
+                return "Hunters return with enough food for several days.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 4 */
+
+{
+    title:"Secret Tunnel",
+
+    description:
+    "A soldier discovers an underground tunnel leading behind enemy lines.",
+
+    choices:[
+
+        {
+            text:"🕵️ Send scouts through it",
+
+            effect(){
+
+                gold -= 30;
+                score += 18;
+
+                return "The scouts discover the enemy's supply camp.";
+
+            }
+        },
+
+        {
+            text:"⚔️ Send 100 soldiers",
+
+            effect(){
+
+                soldiers -= 30;
+                enemy -= 180;
+                score += 20;
+
+                return "Your soldiers destroy an enemy supply camp.";
+
+            }
+        },
+
+        {
+            text:"🧱 Collapse the tunnel",
+
+            effect(){
+
+                defense += 15;
+                score += 7;
+
+                return "You eliminate the risk of an enemy attack through the tunnel.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 5 */
+
+{
+    title:"Enemy Siege Towers",
+
+    description:
+    "Large siege towers are approaching the eastern wall.",
+
+    choices:[
+
+        {
+            text:"🏹 Concentrate archers",
+
+            effect(){
+
+                archers -= 30;
+                enemy -= 180;
+                score += 18;
+
+                return "Your archers destroy several siege towers.";
+
+            }
+        },
+
+        {
+            text:"🔥 Use burning oil",
+
+            effect(){
+
+                gold -= 30;
+                enemy -= 220;
+                score += 20;
+
+                return "The siege towers are engulfed in flames.";
+
+            }
+        },
+
+        {
+            text:"🛡️ Reinforce the wall",
+
+            effect(){
+
+                defense += 20;
+                castle += 5;
+                score += 12;
+
+                return "The wall becomes much harder to breach.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 6 */
+
+{
+    title:"A Spy Is Found",
+
+    description:
+    "Your guards discover someone inside the castle sending signals to the enemy.",
+
+    choices:[
+
+        {
+            text:"⚖️ Question the spy",
+
+            effect(){
+
+                gold -= 20;
+                score += 12;
+
+                return "The spy reveals the enemy's next target.";
+
+            }
+        },
+
+        {
+            text:"⛓️ Imprison the spy",
+
+            effect(){
+
+                defense += 5;
+                score += 7;
+
+                return "The spy is safely imprisoned.";
+
+            }
+        },
+
+        {
+            text:"🚨 Publicly accuse the spy",
+
+            effect(){
+
+                soldiers -= 15;
+                score -= 3;
+
+                return "The accusation creates tension among the soldiers.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 7 */
+
+{
+    title:"The Northern Wall Falls",
+
+    description:
+    "Part of the northern wall has collapsed.",
+
+    choices:[
+
+        {
+            text:"🧱 Repair immediately",
+
+            effect(){
+
+                gold -= 80;
+                defense += 25;
+                castle += 5;
+                score += 18;
+
+                return "Workers repair the wall before the next attack.";
+
+            }
+        },
+
+        {
+            text:"⚔️ Defend the opening",
+
+            effect(){
+
+                soldiers -= 60;
+                enemy -= 120;
+                score += 10;
+
+                return "Soldiers hold the opening.";
+
+            }
+        },
+
+        {
+            text:"🏰 Abandon the northern section",
+
+            effect(){
+
+                defense -= 15;
+                castle -= 8;
+                score += 3;
+
+                return "You retreat behind the inner wall.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 8 */
+
+{
+    title:"The Night Attack",
+
+    description:
+    "The enemy is preparing a surprise attack under cover of darkness.",
+
+    choices:[
+
+        {
+            text:"🔥 Light the walls",
+
+            effect(){
+
+                gold -= 20;
+                enemy -= 100;
+                score += 15;
+
+                return "The illuminated walls reveal enemy movements.";
+
+            }
+        },
+
+        {
+            text:"🌑 Keep everything dark",
+
+            effect(){
+
+                soldiers -= 50;
+                enemy -= 80;
+                score += 10;
+
+                return "Your soldiers ambush the attackers.";
+
+            }
+        },
+
+        {
+            text:"🏹 Prepare archers",
+
+            effect(){
+
+                archers -= 25;
+                enemy -= 160;
+                score += 18;
+
+                return "The archers stop the night assault.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 9 */
+
+{
+    title:"The Desertion",
+
+    description:
+    "Some soldiers want to leave the castle because they believe the battle is hopeless.",
+
+    choices:[
+
+        {
+            text:"👑 Give them a speech",
+
+            effect(){
+
+                score += 18;
+                soldiers += 20;
+
+                return "Your speech restores their confidence.";
+
+            }
+        },
+
+        {
+            text:"🪙 Pay them",
+
+            effect(){
+
+                gold -= 100;
+                soldiers += 15;
+                score += 10;
+
+                return "The soldiers agree to remain.";
+
+            }
+        },
+
+        {
+            text:"🚪 Let them leave",
+
+            effect(){
+
+                soldiers -= 50;
+                score -= 5;
+
+                return "The soldiers leave the castle.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 10 */
+
+{
+    title:"Enemy Catapults",
+
+    description:
+    "Enemy catapults begin firing at the castle.",
+
+    choices:[
+
+        {
+            text:"🏹 Attack the catapults",
+
+            effect(){
+
+                archers -= 40;
+                enemy -= 170;
+                score += 18;
+
+                return "Your archers destroy several catapults.";
+
+            }
+        },
+
+        {
+            text:"🛡️ Strengthen the walls",
+
+            effect(){
+
+                defense += 18;
+                castle -= 5;
+                score += 10;
+
+                return "The walls absorb most of the damage.";
+
+            }
+        },
+
+        {
+            text:"⚔️ Charge the enemy",
+
+            effect(){
+
+                soldiers -= 100;
+                enemy -= 220;
+                score += 14;
+
+                return "The charge destroys some of the siege weapons.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 11 */
+
+{
+    title:"The Poisoned Well",
+
+    description:
+    "Someone has poisoned one of the castle's wells.",
+
+    choices:[
+
+        {
+            text:"🧪 Search for the poison",
+
+            effect(){
+
+                gold -= 30;
+                food -= 10;
+                score += 15;
+
+                return "The poison source is discovered and removed.";
+
+            }
+        },
+
+        {
+            text:"🚫 Close the well",
+
+            effect(){
+
+                food -= 15;
+                waterLoss();
+                score += 8;
+
+                return "The well is closed and the castle uses its reserves.";
+
+            }
+        },
+
+        {
+            text:"💧 Continue using it",
+
+            effect(){
+
+                castle -= 15;
+                soldiers -= 30;
+                score -= 15;
+
+                return "The poisoned water causes illness.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 12 */
+
+{
+    title:"Enemy Reinforcements",
+
+    description:
+    "Another enemy army is approaching from the east.",
+
+    choices:[
+
+        {
+            text:"🏹 Ambush them",
+
+            effect(){
+
+                enemy -= 220;
+                archers -= 25;
+                score += 20;
+
+                return "Your archers launch a devastating ambush.";
+
+            }
+        },
+
+        {
+            text:"🛡️ Defend the eastern gate",
+
+            effect(){
+
+                defense += 15;
+                soldiers -= 20;
+                score += 12;
+
+                return "The eastern gate becomes heavily defended.";
+
+            }
+        },
+
+        {
+            text:"⚔️ Attack before they arrive",
+
+            effect(){
+
+                soldiers -= 90;
+                enemy -= 260;
+                score += 18;
+
+                return "You catch the reinforcements before they join the siege.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 13 */
+
+{
+    title:"The Prisoners",
+
+    description:
+    "Your soldiers captured enemy officers. They may know the enemy's plans.",
+
+    choices:[
+
+        {
+            text:"🕵️ Question them",
+
+            effect(){
+
+                score += 20;
+                enemy -= 100;
+
+                return "The officers reveal the location of the enemy commander.";
+
+            }
+        },
+
+        {
+            text:"🤝 Offer them freedom",
+
+            effect(){
+
+                gold -= 40;
+                score += 16;
+
+                return "One officer gives you valuable information.";
+
+            }
+        },
+
+        {
+            text:"⛓️ Keep them imprisoned",
+
+            effect(){
+
+                defense += 5;
+                score += 5;
+
+                return "The prisoners remain secure.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 14 */
+
+{
+    title:"The Enemy Commander",
+
+    description:
+    "You discover where the enemy commander is staying.",
+
+    choices:[
+
+        {
+            text:"🗡️ Send a small strike team",
+
+            effect(){
+
+                soldiers -= 30;
+                enemy -= 250;
+                score += 25;
+
+                return "The strike team attacks the enemy command center.";
+
+            }
+        },
+
+        {
+            text:"🏹 Ignore the commander",
+
+            effect(){
+
+                enemy -= 30;
+                score += 3;
+
+                return "You choose to focus on defending the castle.";
+
+            }
+        },
+
+        {
+            text:"🧭 Send spies",
+
+            effect(){
+
+                gold -= 60;
+                score += 18;
+
+                return "Your spies discover the enemy's final plan.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 15 */
+
+{
+    title:"The Great Assault",
+
+    description:
+    "The enemy launches its largest attack yet.",
+
+    choices:[
+
+        {
+            text:"🏹 Fire everything",
+
+            effect(){
+
+                archers -= 60;
+                enemy -= 300;
+                castle -= 5;
+                score += 22;
+
+                return "Your archers devastate the attacking army.";
+
+            }
+        },
+
+        {
+            text:"⚔️ Open the gates",
+
+            effect(){
+
+                soldiers -= 140;
+                enemy -= 400;
+                castle -= 12;
+                score += 20;
+
+                return "Your soldiers launch a massive counterattack.";
+
+            }
+        },
+
+        {
+            text:"🛡️ Hold the walls",
+
+            effect(){
+
+                castle -= 15;
+                enemy -= 200;
+                defense -= 5;
+                score += 15;
+
+                return "The castle survives the assault.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 16 */
+
+{
+    title:"The Enemy Retreats",
+
+    description:
+    "The enemy army is exhausted. This may be your chance to end the siege.",
+
+    choices:[
+
+        {
+            text:"⚔️ Pursue them",
+
+            effect(){
+
+                soldiers -= 70;
+                enemy -= 250;
+                score += 20;
+
+                return "Your army destroys the retreating forces.";
+
+            }
+        },
+
+        {
+            text:"🏰 Protect the castle",
+
+            effect(){
+
+                defense += 15;
+                score += 12;
+
+                return "You refuse to risk the castle.";
+
+            }
+        },
+
+        {
+            text:"🤝 Offer peace",
+
+            effect(){
+
+                gold -= 50;
+                enemy -= 150;
+                score += 22;
+
+                return "The enemy agrees to negotiate.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 17 */
+
+{
+    title:"The Final Attack",
+
+    description:
+    "The enemy commander refuses to surrender and launches one final assault.",
+
+    choices:[
+
+        {
+            text:"👑 Lead from the front",
+
+            effect(){
+
+                soldiers -= 80;
+                enemy -= 350;
+                score += 25;
+
+                return "Your leadership inspires the entire army.";
+
+            }
+        },
+
+        {
+            text:"🏹 Trust your archers",
+
+            effect(){
+
+                archers -= 60;
+                enemy -= 300;
+                score += 22;
+
+                return "Your archers hold the walls.";
+
+            }
+        },
+
+        {
+            text:"🧠 Use the secret tunnel",
+
+            effect(){
+
+                soldiers -= 30;
+                enemy -= 400;
+                score += 30;
+
+                return "Your strategy catches the enemy completely by surprise.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 18 */
+
+{
+    title:"The Enemy Commander Captured",
+
+    description:
+    "The enemy commander has been captured. You must decide his fate.",
+
+    choices:[
+
+        {
+            text:"⚖️ Release him",
+
+            effect(){
+
+                score += 20;
+
+                return "The commander promises the war will end.";
+
+            }
+        },
+
+        {
+            text:"⛓️ Imprison him",
+
+            effect(){
+
+                defense += 10;
+                score += 15;
+
+                return "The commander is safely imprisoned.";
+
+            }
+        },
+
+        {
+            text:"🤝 Negotiate with him",
+
+            effect(){
+
+                gold += 150;
+                enemy -= 100;
+                score += 25;
+
+                return "The commander agrees to a peace treaty.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 19 */
+
+{
+    title:"The Last Decision",
+
+    description:
+    "The battlefield is silent. The kingdom has survived, but the enemy may return. What will you do?",
+
+    choices:[
+
+        {
+            text:"🏰 Strengthen the kingdom",
+
+            effect(){
+
+                gold -= 100;
+                defense += 30;
+                score += 20;
+
+                return "You use the victory to build stronger defenses.";
+
+            }
+        },
+
+        {
+            text:"🤝 Build peace",
+
+            effect(){
+
+                gold -= 50;
+                enemy = 0;
+                score += 30;
+
+                return "You begin building a lasting peace.";
+
+            }
+        },
+
+        {
+            text:"⚔️ Destroy the enemy",
+
+            effect(){
+
+                soldiers -= 80;
+                enemy = 0;
+                score += 25;
+
+                return "The enemy army is completely defeated.";
+
+            }
+        }
+
+    ]
+},
+
+
+/* 20 */
+
+{
+    title:"The Final Council",
+
+    description:
+    "The kingdom has survived the siege, but its future depends on the final decision you make as commander.",
+
+    choices:[
+
+        {
+            text:"👑 Unite the kingdom",
+
+            effect(){
+
+                defense += 20;
+                soldiers += 40;
+                score += 30;
+
+                return "The people unite behind you and the kingdom begins rebuilding.";
+
+            }
+        },
+
+        {
+            text:"🤝 Establish permanent peace",
+
+            effect(){
+
+                gold -= 80;
+                enemy = 0;
+                score += 35;
+
+                return "You establish a lasting peace and prevent another war.";
+
+            }
+        },
+
+        {
+            text:"⚔️ Prepare for another war",
+
+            effect(){
+
+                soldiers += 60;
+                defense += 25;
+                gold -= 100;
+                score += 20;
+
+                return "The kingdom prepares for any future threat.";
+
+            }
+        }
+
+    ]
+}
+
+];
+
+
+/* =====================================================
+   LOAD DECISION
+===================================================== */
+
+function loadDecision(){
+
+    if(decision >= decisions.length){
+
+        finishGame();
+
+        return;
+    }
+
+
+    const d = decisions[decision];
+
+
+    document.getElementById(
+        "scenarioNumber"
+    ).textContent =
+        "DECISION " +
+        (decision + 1) +
+        " OF " +
+        decisions.length;
+
+
+    document.getElementById(
+        "question"
+    ).textContent =
+        d.title;
+
+
+    document.getElementById(
+        "description"
+    ).textContent =
+        d.description;
+
+
+    const choices =
+        document.getElementById("choices");
+
+
+    choices.innerHTML = "";
+
+
+    d.choices.forEach(
+        (choice,index) => {
+
+            const button =
+                document.createElement("button");
+
+
+            button.className = "choice";
+
+
+            button.type = "button";
+
+
+            button.textContent =
+                choice.text;
+
+
+            button.onclick =
+                () => makeDecision(choice);
+
+
+            choices.appendChild(button);
+
+        }
+    );
+
+
+    const progress =
+        (decision / decisions.length) * 100;
+
+
+    document.getElementById(
+        "progress"
+    ).style.width =
+        progress + "%";
+
+}
+
+
+/* =====================================================
+   MAKE DECISION
+===================================================== */
+
+function makeDecision(choice){
+
+    if(finished){
+        return;
+    }
+
+
+    const buttons =
+        document.querySelectorAll(".choice");
+
+
+    buttons.forEach(
+        button => {
+            button.disabled = true;
+        }
+    );
+
+
+    const result =
+        choice.effect();
+
+
+    decision++;
+
+
+    normalizeResources();
+
+
+    log(
+        "⚔️ Decision " +
+        decision +
+        ": " +
+        result
+    );
+
+
+    updateUI();
+
+
+    showResult(result);
+
+}
+
+
+/* =====================================================
+   RESULT MODAL
+===================================================== */
+
+function showResult(text){
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Decision " +
+        decision +
+        " Complete";
+
+
+    document.getElementById(
+        "modalText"
+    ).textContent =
+        "Your decision has changed the battlefield.";
+
+
+    document.getElementById(
+        "modalResult"
+    ).textContent =
+        text;
+
+
+    document.getElementById(
+        "modal"
+    ).classList.add("show");
+
+
+    setTimeout(
+        () => {
+
+            document.getElementById(
+                "modal"
+            ).classList.remove("show");
+
+
+            if(decision >= decisions.length){
+
+                finishGame();
+
+            }
+            else{
+
+                loadDecision();
+
+            }
+
+        },
+        1800
+    );
+
+}
+
+
+/* =====================================================
+   WATER LOSS
+===================================================== */
+
+function waterLoss(){
+
+    food -= 10;
+
+}
+
+
+/* =====================================================
+   LOG
+===================================================== */
+
+function log(text){
+
+    const box =
+        document.getElementById("log");
+
+
+    const entry =
+        document.createElement("div");
+
+
+    entry.className =
+        "log-entry";
+
+
+    entry.textContent =
+        text;
+
+
+    box.prepend(entry);
+
+}
+
+
+/* =====================================================
+   NORMALIZE RESOURCES
+===================================================== */
+
+function normalizeResources(){
+
+    castle =
+        Math.max(0,castle);
+
+    soldiers =
+        Math.max(0,soldiers);
+
+    archers =
+        Math.max(0,archers);
+
+    food =
+        Math.max(0,food);
+
+    gold =
+        Math.max(0,gold);
+
+    defense =
+        Math.max(0,defense);
+
+    enemy =
+        Math.max(0,enemy);
+
+}
+
+
+/* =====================================================
+   UPDATE UI
+===================================================== */
+
+function updateUI(){
+
+    normalizeResources();
+
+
+    document.getElementById(
+        "castle"
+    ).textContent =
+        castle;
+
+
+    document.getElementById(
+        "soldiers"
+    ).textContent =
+        soldiers;
+
+
+    document.getElementById(
+        "archers"
+    ).textContent =
+        archers;
+
+
+    document.getElementById(
+        "food"
+    ).textContent =
+        food;
+
+
+    document.getElementById(
+        "gold"
+    ).textContent =
+        gold;
+
+
+    document.getElementById(
+        "defense"
+    ).textContent =
+        defense;
+
+
+    document.getElementById(
+        "enemy"
+    ).textContent =
+        enemy;
+
+
+    document.getElementById(
+        "castleMini"
+    ).textContent =
+        castle;
+
+
+    document.getElementById(
+        "enemyMini"
+    ).textContent =
+        enemy;
+
+
+    /* =========================
+       ENEMY VISUAL
+    ========================= */
+
+    const enemies =
+        document.querySelectorAll(".enemy");
+
+
+    let opacity = 1;
+
+
+    if(enemy < 700){
+        opacity = .7;
+    }
+
+    if(enemy < 400){
+        opacity = .4;
+    }
+
+    if(enemy < 150){
+        opacity = .15;
+    }
+
+    if(enemy <= 0){
+        opacity = 0;
+    }
+
+
+    enemies.forEach(
+        element => {
+
+            element.style.opacity =
+                opacity;
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   FINAL RESULT
+===================================================== */
+
+function finishGame(){
+
+    if(finished){
+        return;
+    }
+
+
+    finished = true;
+
+
+    normalizeResources();
+
+
+    const finalScore =
+        Math.max(
+            0,
+            score +
+            defense +
+            Math.floor(castle / 2)
+        );
+
+
+    let title = "";
+    let icon = "";
+    let text = "";
+
+
+    /* =========================
+       ENDINGS
+    ========================= */
+
+    if(castle <= 0){
+
+        icon = "🔥";
+
+        title =
+            "The Castle Has Fallen";
+
+        text =
+            "The kingdom could not survive the siege. Your decisions will become a lesson for future generations.";
+
+    }
+
+    else if(
+        enemy <= 0 &&
+        castle >= 80 &&
+        score >= 250
+    ){
+
+        icon = "👑";
+
+        title =
+            "The Legendary Strategist";
+
+        text =
+            "You defended the kingdom with extraordinary intelligence. The people now call you the greatest strategist in the kingdom.";
+
+    }
+
+    else if(
+        enemy <= 0 &&
+        castle >= 50
+    ){
+
+        icon = "⚔️";
+
+        title =
+            "Victory at the Castle";
+
+        text =
+            "The enemy has been defeated. The kingdom survives because of your leadership.";
+
+    }
+
+    else if(enemy <= 0){
+
+        icon = "🏰";
+
+        title =
+            "The Kingdom Survives";
+
+        text =
+            "The siege is over, although the kingdom has suffered heavy losses.";
+
+    }
+
+    else{
+
+        icon = "🕊️";
+
+        title =
+            "A Fragile Peace";
+
+        text =
+            "The battle ends without complete victory, but your decisions prevent the kingdom from falling.";
+
+    }
+
+
+    document.getElementById(
+        "finalIcon"
+    ).textContent =
+        icon;
+
+
+    document.getElementById(
+        "finalTitle"
+    ).textContent =
+        title;
+
+
+    document.getElementById(
+        "finalScore"
+    ).textContent =
+        finalScore +
+        " POINTS";
+
+
+    document.getElementById(
+        "finalText"
+    ).textContent =
+        text +
+        " You finished the siege with " +
+        soldiers +
+        " soldiers, " +
+        castle +
+        "% castle health and " +
+        enemy +
+        " enemy strength remaining.";
+
+
+    document.getElementById(
+        "final"
+    ).classList.add("show");
+
+}
+
+
+/* =====================================================
+   NEXT LEVEL
+===================================================== */
+
+function nextLevel(){
+
+    window.location.href =
+        "level17.html";
+
+}
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+updateUI();
+
+loadDecision();
+
+</script>
+
+</body>
+</html>

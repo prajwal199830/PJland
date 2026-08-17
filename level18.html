@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Level 18 — The King's Final Test</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    color:#eee;
+
+    background:
+        radial-gradient(circle at 50% 0%,#302313,#120e09 45%,#050505);
+}
+
+/* HEADER */
+
+header{
+    height:70px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 28px;
+
+    background:#090806;
+
+    border-bottom:1px solid #4b3920;
+}
+
+.logo{
+    font-family:Georgia,serif;
+
+    font-size:21px;
+    font-weight:bold;
+
+    color:#d7b45c;
+}
+
+.logo span{
+    color:#fff;
+}
+
+.level{
+    font-size:10px;
+
+    letter-spacing:3px;
+
+    color:#87765a;
+}
+
+
+/* MAIN */
+
+.container{
+    width:min(1100px,calc(100% - 24px));
+
+    margin:auto;
+
+    padding:25px 0 50px;
+}
+
+
+/* TITLE */
+
+.title{
+    text-align:center;
+
+    margin-bottom:20px;
+}
+
+.title small{
+    color:#c59e4c;
+
+    letter-spacing:3px;
+
+    font-size:10px;
+}
+
+.title h1{
+    font-family:Georgia,serif;
+
+    font-size:clamp(30px,5vw,46px);
+
+    color:#e6d3a1;
+
+    margin:7px 0;
+}
+
+.title p{
+    color:#8e826e;
+
+    font-size:13px;
+}
+
+
+/* ROYAL STATUS */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(5,1fr);
+
+    gap:7px;
+
+    margin-bottom:14px;
+}
+
+.stat{
+
+    padding:10px;
+
+    text-align:center;
+
+    background:#100d09;
+
+    border:1px solid #493820;
+
+    border-radius:9px;
+}
+
+.stat .icon{
+    font-size:18px;
+}
+
+.stat span{
+    display:block;
+
+    margin-top:3px;
+
+    color:#786b57;
+
+    font-size:8px;
+}
+
+.stat strong{
+    display:block;
+
+    margin-top:3px;
+
+    font-family:Georgia,serif;
+
+    color:#d4b260;
+
+    font-size:16px;
+}
+
+
+/* GAME */
+
+.game{
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 370px;
+
+    gap:12px;
+}
+
+
+/* CASTLE */
+
+.castle{
+
+    position:relative;
+
+    min-height:620px;
+
+    overflow:hidden;
+
+    border-radius:17px;
+
+    border:1px solid #5b4627;
+
+    background:
+
+        linear-gradient(
+            to bottom,
+            #17120b,
+            #090806
+        );
+}
+
+
+/* CASTLE */
+
+.castle-bg{
+
+    position:absolute;
+
+    inset:0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+}
+
+.castle-building{
+
+    position:relative;
+
+    width:300px;
+
+    height:270px;
+
+    background:#282016;
+
+    border:3px solid #554326;
+
+    border-bottom:0;
+
+    box-shadow:
+        0 0 40px rgba(210,160,60,.08);
+}
+
+.tower{
+
+    position:absolute;
+
+    bottom:0;
+
+    width:75px;
+
+    height:330px;
+
+    background:#211a11;
+
+    border:3px solid #4e3c24;
+}
+
+.tower.left{
+    left:-70px;
+}
+
+.tower.right{
+    right:-70px;
+}
+
+.roof{
+
+    position:absolute;
+
+    top:-48px;
+
+    left:-10px;
+
+    width:89px;
+
+    height:50px;
+
+    background:#15110c;
+
+    border-left:44px solid transparent;
+
+    border-right:44px solid transparent;
+
+    border-bottom:50px solid #352817;
+}
+
+.main-roof{
+
+    position:absolute;
+
+    top:-75px;
+
+    left:20px;
+
+    width:260px;
+
+    height:80px;
+
+    border-left:130px solid transparent;
+
+    border-right:130px solid transparent;
+
+    border-bottom:75px solid #342716;
+}
+
+.window{
+
+    position:absolute;
+
+    width:28px;
+
+    height:45px;
+
+    background:#b88b36;
+
+    border:4px solid #15100a;
+
+    border-radius:50% 50% 0 0;
+
+}
+
+.w1{
+    left:65px;
+    top:75px;
+}
+
+.w2{
+    right:65px;
+    top:75px;
+}
+
+.door{
+
+    position:absolute;
+
+    bottom:0;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:65px;
+
+    height:105px;
+
+    background:#0c0906;
+
+    border:3px solid #634b28;
+
+    border-radius:40px 40px 0 0;
+}
+
+
+/* KING */
+
+.king{
+
+    position:absolute;
+
+    top:55px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    font-size:90px;
+
+    filter:
+        drop-shadow(
+            0 0 15px
+            rgba(230,190,80,.25)
+        );
+
+    animation:
+
+        breathe
+        3s
+        infinite
+        alternate;
+}
+
+@keyframes breathe{
+
+    from{
+        transform:
+            translateX(-50%)
+            scale(.97);
+    }
+
+    to{
+        transform:
+            translateX(-50%)
+            scale(1.03);
+    }
+
+}
+
+
+/* THRONE */
+
+.throne{
+
+    position:absolute;
+
+    bottom:25px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    font-size:75px;
+
+    opacity:.35;
+}
+
+
+/* PANEL */
+
+.panel{
+
+    background:#0d0b08;
+
+    border:1px solid #463720;
+
+    border-radius:14px;
+
+    padding:15px;
+}
+
+.panel h2{
+
+    font-family:Georgia,serif;
+
+    color:#d2b15f;
+
+    font-size:20px;
+
+    margin-bottom:10px;
+}
+
+
+/* PROGRESS */
+
+.progress{
+
+    height:7px;
+
+    background:#241c11;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+    margin-bottom:15px;
+}
+
+.progress-bar{
+
+    height:100%;
+
+    width:0%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #80602b,
+            #d3ad52
+        );
+
+    transition:.4s;
+}
+
+
+/* ROYAL LETTER */
+
+.letter{
+
+    padding:15px;
+
+    background:#141008;
+
+    border:1px solid #44351f;
+
+    border-radius:10px;
+}
+
+.event{
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    color:#74664f;
+}
+
+.letter h3{
+
+    font-family:Georgia,serif;
+
+    font-size:19px;
+
+    color:#dfcb9b;
+
+    margin:8px 0;
+}
+
+.letter p{
+
+    font-size:11px;
+
+    color:#a19888;
+
+    line-height:1.7;
+}
+
+
+/* ANSWERS */
+
+.choices{
+
+    display:grid;
+
+    gap:8px;
+
+    margin-top:12px;
+}
+
+.choice{
+
+    width:100%;
+
+    padding:12px;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    color:#ded7ca;
+
+    background:#15110c;
+
+    border:1px solid #3c301e;
+
+    border-radius:8px;
+
+    font-size:10px;
+
+    transition:.2s;
+}
+
+.choice:hover{
+
+    border-color:#c29e51;
+
+    background:#1c160d;
+
+    transform:translateX(3px);
+}
+
+
+/* ROYAL LOG */
+
+.log-title{
+
+    margin-top:13px;
+
+    margin-bottom:6px;
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    color:#6f634f;
+}
+
+.log{
+
+    height:110px;
+
+    overflow-y:auto;
+
+    padding:8px;
+
+    background:#080705;
+
+    border:1px solid #282016;
+
+    border-radius:8px;
+}
+
+.log-entry{
+
+    padding:6px 0;
+
+    border-bottom:1px solid #1b150d;
+
+    color:#847b6d;
+
+    font-size:9px;
+
+    line-height:1.5;
+}
+
+
+/* MODAL */
+
+.modal{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(0,0,0,.9);
+
+    z-index:100;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-card{
+
+    width:min(560px,100%);
+
+    padding:30px;
+
+    text-align:center;
+
+    background:#110e09;
+
+    border:1px solid #68522c;
+
+    border-radius:17px;
+}
+
+.modal-icon{
+    font-size:60px;
+}
+
+.modal-card h2{
+
+    font-family:Georgia,serif;
+
+    color:#ddc487;
+
+    margin:10px 0;
+}
+
+.modal-card p{
+
+    color:#a39a8a;
+
+    font-size:11px;
+
+    line-height:1.8;
+}
+
+.modal-result{
+
+    margin-top:13px;
+
+    padding:12px;
+
+    background:#19140d;
+
+    border:1px solid #3c301e;
+
+    color:#c2b7a5;
+
+    font-size:11px;
+
+    line-height:1.7;
+}
+
+
+/* FINAL */
+
+.final{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(0,0,0,.96);
+
+    z-index:200;
+}
+
+.final.show{
+    display:flex;
+}
+
+.final-card{
+
+    width:min(650px,100%);
+
+    padding:35px 25px;
+
+    text-align:center;
+
+    background:#110e09;
+
+    border:1px solid #786039;
+
+    border-radius:18px;
+}
+
+.final-icon{
+    font-size:80px;
+}
+
+.final-card h2{
+
+    font-family:Georgia,serif;
+
+    color:#e2ca87;
+
+    font-size:32px;
+
+    margin:10px 0;
+}
+
+.final-card p{
+
+    color:#aaa193;
+
+    font-size:12px;
+
+    line-height:1.8;
+}
+
+.final-score{
+
+    font-family:Georgia,serif;
+
+    color:#d3ad58;
+
+    font-size:42px;
+
+    margin:14px;
+}
+
+.next{
+
+    width:100%;
+
+    padding:13px;
+
+    margin-top:15px;
+
+    border:0;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-weight:bold;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6b4e20,
+            #b2873c
+        );
+}
+
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+    .game{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:650px){
+
+    .stats{
+        grid-template-columns:
+            repeat(3,1fr);
+    }
+
+    .castle{
+        min-height:450px;
+    }
+
+    .castle-building{
+        transform:scale(.75);
+    }
+
+}
+
+@media(max-width:450px){
+
+    .stats{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .level{
+        display:none;
+    }
+
+    header{
+        padding:0 15px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        PJ<span>Land</span>
+    </div>
+
+    <div class="level">
+        LEVEL 18 • THE KING'S FINAL TEST
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+<div class="title">
+
+    <small>LEVEL 18</small>
+
+    <h1>👑 The King's Final Test</h1>
+
+    <p>
+        Twenty candidates. One crown. One future Queen.
+    </p>
+
+</div>
+
+
+<!-- STATS -->
+
+<div class="stats">
+
+    <div class="stat">
+
+        <div class="icon">👑</div>
+
+        <span>ROYAL SCORE</span>
+
+        <strong id="score">0</strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="icon">🧠</div>
+
+        <span>WISDOM</span>
+
+        <strong id="wisdom">0</strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="icon">⚖️</div>
+
+        <span>JUDGMENT</span>
+
+        <strong id="judgment">0</strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="icon">❤️</div>
+
+        <span>ROYAL FAVOR</span>
+
+        <strong id="favor">0</strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="icon">🏆</div>
+
+        <span>TRIAL</span>
+
+        <strong id="trial">1/20</strong>
+
+    </div>
+
+</div>
+
+
+<div class="game">
+
+
+<!-- CASTLE -->
+
+<div class="castle">
+
+
+    <div class="castle-bg">
+
+        <div class="castle-building">
+
+            <div class="main-roof"></div>
+
+            <div class="tower left">
+
+                <div class="roof"></div>
+
+            </div>
+
+            <div class="tower right">
+
+                <div class="roof"></div>
+
+            </div>
+
+            <div class="window w1"></div>
+
+            <div class="window w2"></div>
+
+            <div class="door"></div>
+
+        </div>
+
+    </div>
+
+
+    <div class="king">
+
+        👑
+
+    </div>
+
+
+    <div class="throne">
+
+        🪑
+
+    </div>
+
+</div>
+
+
+<!-- PANEL -->
+
+<div class="panel">
+
+    <h2>
+        ⚔️ Royal Trial
+    </h2>
+
+
+    <div class="progress">
+
+        <div
+            class="progress-bar"
+            id="progress">
+        </div>
+
+    </div>
+
+
+    <div class="letter">
+
+        <div
+            class="event"
+            id="event">
+
+            TRIAL 1 OF 20
+
+        </div>
+
+
+        <h3
+            id="question">
+
+            The King's First Question
+
+        </h3>
+
+
+        <p
+            id="description">
+
+            The dying King looks at you from his throne.
+
+        </p>
+
+    </div>
+
+
+    <div
+        class="choices"
+        id="choices">
+    </div>
+
+
+    <div class="log-title">
+        ROYAL RECORD
+    </div>
+
+
+    <div
+        class="log"
+        id="log">
+
+        <div class="log-entry">
+
+            👑 You have entered the King's
+            final succession trial.
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+</main>
+
+
+<!-- RESULT -->
+
+<div
+    class="modal"
+    id="modal">
+
+    <div class="modal-card">
+
+        <div
+            class="modal-icon"
+            id="modalIcon">
+
+            👑
+
+        </div>
+
+
+        <h2
+            id="modalTitle">
+
+            The King Has Judged You
+
+        </h2>
+
+
+        <p>
+            Your decision has been recorded
+            in the royal succession book.
+        </p>
+
+
+        <div
+            class="modal-result"
+            id="modalResult">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- FINAL -->
+
+<div
+    class="final"
+    id="final">
+
+    <div class="final-card">
+
+        <div
+            class="final-icon"
+            id="finalIcon">
+
+            👑
+
+        </div>
+
+
+        <h2
+            id="finalTitle">
+
+            The Crown Awaits
+
+        </h2>
+
+
+        <div
+            class="final-score"
+            id="finalScore">
+
+            0
+
+        </div>
+
+
+        <p
+            id="finalText">
+        </p>
+
+
+        <button
+            class="next"
+            onclick="nextLevel()">
+
+            CONTINUE TO LEVEL 19 →
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let score = 0;
+
+let wisdom = 0;
+
+let judgment = 0;
+
+let favor = 0;
+
+let trial = 0;
+
+let finished = false;
+
+
+/* =====================================================
+   20 ROYAL TRIALS
+===================================================== */
+
+const trials = [
+
+/* 1 */
+
+{
+title:"The King's First Question",
+
+description:
+"The King asks: A kingdom has 100 soldiers. Half leave for war. How many remain?",
+
+answers:[
+["25 soldiers",false],
+["50 soldiers",true],
+["75 soldiers",false]
+],
+
+success:
+"The King nods. You understand simple decisions.",
+
+fail:
+"The King expected a simple answer."
+},
+
+
+/* 2 */
+
+{
+title:"The Three Boxes",
+
+description:
+"Three boxes are labeled GOLD, SILVER and MIXED. Every label is wrong. You may take one item from one box. Which box should you choose first?",
+
+answers:[
+["The GOLD box",false],
+["The SILVER box",false],
+["The MIXED box",true]
+],
+
+success:
+"You use logic instead of guessing.",
+
+fail:
+"You choose without identifying the logical shortcut."
+},
+
+
+/* 3 */
+
+{
+title:"The Hungry Village",
+
+description:
+"A famine strikes. You have food for only one village. One village has 100 people and another has 300. What should a wise ruler do?",
+
+answers:[
+["Give everything to the larger village",false],
+["Give everything to the smaller village",false],
+["Study the situation and distribute fairly",true]
+],
+
+success:
+"The King smiles. Leadership requires judgment, not just arithmetic.",
+
+fail:
+"The King expected you to consider the entire kingdom."
+},
+
+
+/* 4 */
+
+{
+title:"The Assassin",
+
+description:
+"A guard tells you an assassin is hiding among five people. Nobody knows who it is. What should you do?",
+
+answers:[
+["Execute everyone",false],
+["Investigate before accusing anyone",true],
+["Ignore the warning",false]
+],
+
+success:
+"You avoid punishing innocent people.",
+
+fail:
+"The King does not reward reckless rulers."
+},
+
+
+/* 5 */
+
+{
+title:"The Royal Memory",
+
+description:
+"The King says: remember these numbers — 8, 3, 9, 1. Which sequence is correct?",
+
+answers:[
+["8 - 3 - 9 - 1",true],
+["8 - 9 - 3 - 1",false],
+["3 - 8 - 1 - 9",false]
+],
+
+success:
+"Your memory impresses the royal court.",
+
+fail:
+"You lose a point for poor attention."
+},
+
+
+/* 6 */
+
+{
+title:"The Bridge",
+
+description:
+"Four people must cross a bridge at night. They have one torch. Only two can cross at once. What should the ruler prioritize?",
+
+answers:[
+["Speed without a plan",false],
+["A strategy that minimizes total time",true],
+["Send everyone separately",false]
+],
+
+success:
+"Strategic thinking is the foundation of a kingdom.",
+
+fail:
+"The court expected strategic planning."
+},
+
+
+/* 7 */
+
+{
+title:"The Honest Farmer",
+
+description:
+"A farmer claims a royal tax collector stole his money. The collector denies it. What should you do?",
+
+answers:[
+["Believe the farmer",false],
+["Believe the collector",false],
+["Hear evidence from both sides",true]
+],
+
+success:
+"Justice requires hearing both sides.",
+
+fail:
+"A king cannot rule by favoritism."
+},
+
+
+/* 8 */
+
+{
+title:"The Secret Message",
+
+description:
+"The royal spy sends: BLUE — 2, RED — 4, GREEN — 5. Which word has the highest number?",
+
+answers:[
+["BLUE",false],
+["RED",false],
+["GREEN",true]
+],
+
+success:
+"You notice the information hidden in plain sight.",
+
+fail:
+"You overlooked the simplest clue."
+},
+
+
+/* 9 */
+
+{
+title:"The Royal Treasury",
+
+description:
+"The treasury has 1,000 gold coins. You spend 25% on the army. How many remain?",
+
+answers:[
+["750",true],
+["800",false],
+["500",false]
+],
+
+success:
+"Your mathematics are strong enough for royal finances.",
+
+fail:
+"The treasury cannot afford mathematical mistakes."
+},
+
+
+/* 10 */
+
+{
+title:"The Rival Candidate",
+
+description:
+"Another candidate insults you publicly to make you angry. What do you do?",
+
+answers:[
+["Insult him back",false],
+["Challenge him to a fight",false],
+["Remain calm and continue the trial",true]
+],
+
+success:
+"The King values emotional control.",
+
+fail:
+"A ruler who cannot control anger can destroy a kingdom."
+},
+
+
+/* 11 */
+
+{
+title:"The Two Roads",
+
+description:
+"One road leads safely to the capital. The other is shorter but dangerous. You have limited information. What should you do?",
+
+answers:[
+["Always choose the shortest",false],
+["Always choose the safest",false],
+["Evaluate risk versus reward",true]
+],
+
+success:
+"Leadership requires balancing risk.",
+
+fail:
+"A king must understand consequences."
+},
+
+
+/* 12 */
+
+{
+title:"The Missing Prince",
+
+description:
+"The prince disappears before a battle. The army wants to search for him. The enemy is approaching. What should you do?",
+
+answers:[
+["Abandon the kingdom",false],
+["Protect the kingdom while sending a search party",true],
+["Ignore the prince",false]
+],
+
+success:
+"You protect both immediate and long-term interests.",
+
+fail:
+"You focused too heavily on only one problem."
+},
+
+
+/* 13 */
+
+{
+title:"The Royal Pattern",
+
+description:
+"What number comes next? 2, 4, 8, 16, ?", 
+
+answers:[
+["20",false],
+["24",false],
+["32",true]
+],
+
+success:
+"You recognize the doubling pattern.",
+
+fail:
+"The pattern was simple."
+},
+
+
+/* 14 */
+
+{
+title:"The Broken Treaty",
+
+description:
+"A neighboring king breaks a treaty. Your generals demand war. What should you do first?",
+
+answers:[
+["Immediately attack",false],
+["Investigate why the treaty was broken",true],
+["Surrender",false]
+],
+
+success:
+"Understanding the cause can prevent unnecessary war.",
+
+fail:
+"The King wants diplomacy before destruction."
+},
+
+
+/* 15 */
+
+{
+title:"The Poisoned Cup",
+
+description:
+"Two cups are on the table. One contains poison. You do not know which. What is the safest decision?",
+
+answers:[
+["Drink the first cup",false],
+["Drink the second cup",false],
+["Refuse both until the poison is identified",true]
+],
+
+success:
+"You refuse to gamble with your life.",
+
+fail:
+"The court considers your decision reckless."
+},
+
+
+/* 16 */
+
+{
+title:"The People's Choice",
+
+description:
+"The people want lower taxes. The army needs more money. What should a wise king do?",
+
+answers:[
+["Ignore the people",false],
+["Ignore the army",false],
+["Find a sustainable compromise",true]
+],
+
+success:
+"You understand that kingdoms require balance.",
+
+fail:
+"A kingdom cannot survive if one side is ignored."
+},
+
+
+/* 17 */
+
+{
+title:"The False Prophet",
+
+description:
+"A mysterious prophet claims he knows the future and demands royal power. What do you do?",
+
+answers:[
+["Give him the crown",false],
+["Execute him immediately",false],
+["Investigate his claims",true]
+],
+
+success:
+"You neither blindly trust nor recklessly punish.",
+
+fail:
+"The King expects evidence."
+},
+
+
+/* 18 */
+
+{
+title:"The Final War",
+
+description:
+"Your kingdom can win a war but will lose thousands of soldiers. Peace is possible but requires giving up some territory. What should you consider?",
+
+answers:[
+["Only victory",false],
+["Only territory",false],
+["The lives of citizens and long-term stability",true]
+],
+
+success:
+"The court recognizes mature leadership.",
+
+fail:
+"A king must consider more than winning."
+},
+
+
+/* 19 */
+
+{
+title:"The Princess's Question",
+
+description:
+"The Princess asks: 'Would you rather be feared by your people or respected by them?'",
+
+answers:[
+["Feared",false],
+["Respected",true],
+["Neither matters",false]
+],
+
+success:
+"The Princess smiles. She has been testing your character.",
+
+fail:
+"Your answer concerns the royal family."
+},
+
+
+/* 20 */
+
+{
+title:"The Final Crown",
+
+description:
+"The dying King removes his crown. Twenty candidates remain, but only one can become King. He asks: 'What makes a great King?'",
+
+answers:[
+["Power",false],
+["Wealth",false],
+["Wisdom, justice and responsibility",true]
+],
+
+success:
+"The entire court becomes silent. The King finally smiles.",
+
+fail:
+"The King expected something deeper."
+}
+
+];
+
+
+/* =====================================================
+   LOAD TRIAL
+===================================================== */
+
+function loadTrial(){
+
+    if(trial>=trials.length){
+
+        finish();
+
+        return;
+    }
+
+
+    const t=trials[trial];
+
+
+    document.getElementById(
+        "event"
+    ).textContent=
+        "TRIAL "+
+        (trial+1)+
+        " OF 20";
+
+
+    document.getElementById(
+        "question"
+    ).textContent=
+        t.title;
+
+
+    document.getElementById(
+        "description"
+    ).textContent=
+        t.description;
+
+
+    const choices=
+        document.getElementById(
+            "choices"
+        );
+
+
+    choices.innerHTML="";
+
+
+    t.answers.forEach(
+        answer=>{
+
+            const button=
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className=
+                "choice";
+
+
+            button.textContent=
+                answer[0];
+
+
+            button.onclick=
+                ()=>answerQuestion(
+                    answer[1],
+                    t
+                );
+
+
+            choices.appendChild(
+                button
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        "progress"
+    ).style.width=
+        (trial/20*100)+"%";
+
+
+    document.getElementById(
+        "trial"
+    ).textContent=
+        (trial+1)+"/20";
+
+}
+
+
+/* =====================================================
+   ANSWER
+===================================================== */
+
+function answerQuestion(
+    correct,
+    trialData
+){
+
+    if(finished)
+        return;
+
+
+    if(correct){
+
+        score+=10;
+
+        wisdom+=5;
+
+        judgment+=5;
+
+        favor+=5;
+
+    }
+
+    else{
+
+        score-=5;
+
+        judgment-=2;
+
+    }
+
+
+    trial++;
+
+
+    updateUI();
+
+
+    log(
+        correct
+        ? "👑 Correct decision: "+
+          trialData.success
+        : "⚠️ Wrong decision: "+
+          trialData.fail
+    );
+
+
+    document.getElementById(
+        "modalIcon"
+    ).textContent=
+        correct
+        ? "👑"
+        : "⚠️";
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent=
+        correct
+        ? "The King Approves"
+        : "The King Is Disappointed";
+
+
+    document.getElementById(
+        "modalResult"
+    ).textContent=
+        correct
+        ? trialData.success
+        : trialData.fail;
+
+
+    document.getElementById(
+        "modal"
+    ).classList.add("show");
+
+
+    setTimeout(()=>{
+
+        document.getElementById(
+            "modal"
+        ).classList.remove("show");
+
+
+        if(trial>=20){
+
+            finish();
+
+        }
+        else{
+
+            loadTrial();
+
+        }
+
+    },1600);
+
+}
+
+
+/* =====================================================
+   UPDATE
+===================================================== */
+
+function updateUI(){
+
+    document.getElementById(
+        "score"
+    ).textContent=
+        Math.max(0,score);
+
+
+    document.getElementById(
+        "wisdom"
+    ).textContent=
+        Math.max(0,wisdom);
+
+
+    document.getElementById(
+        "judgment"
+    ).textContent=
+        Math.max(0,judgment);
+
+
+    document.getElementById(
+        "favor"
+    ).textContent=
+        Math.max(0,favor);
+
+}
+
+
+/* =====================================================
+   LOG
+===================================================== */
+
+function log(text){
+
+    const box=
+        document.getElementById(
+            "log"
+        );
+
+
+    const entry=
+        document.createElement(
+            "div"
+        );
+
+
+    entry.className=
+        "log-entry";
+
+
+    entry.textContent=
+        text;
+
+
+    box.prepend(entry);
+
+}
+
+
+/* =====================================================
+   FINAL
+===================================================== */
+
+function finish(){
+
+    if(finished)
+        return;
+
+
+    finished=true;
+
+
+    let title;
+
+    let icon;
+
+    let message;
+
+
+    if(
+        score>=180 &&
+        wisdom>=80 &&
+        judgment>=80
+    ){
+
+        icon="👑";
+
+        title=
+            "THE KING HAS CHOSEN YOU";
+
+        message=
+            "You have passed the King's Final Test. The dying King rises from his throne and places the crown in your hands. The Princess accepts you as her future husband. The kingdom now recognizes you as its next King.";
+
+    }
+
+    else if(score>=140){
+
+        icon="🏰";
+
+        title=
+            "YOU HAVE EARNED THE CROWN";
+
+        message=
+            "You passed enough of the King's trials to prove that you are worthy of the throne. The royal council accepts you as the next King.";
+
+    }
+
+    else if(score>=100){
+
+        icon="⚔️";
+
+        title=
+            "THE COUNCIL IS DIVIDED";
+
+        message=
+            "You survived the King's trials, but several nobles question whether you are ready to rule. The final decision will be made by the royal council.";
+
+    }
+
+    else{
+
+        icon="🚪";
+
+        title=
+            "THE CROWN ESCAPES YOU";
+
+        message=
+            "You failed too many of the King's trials. Another candidate will inherit the throne. Your journey toward becoming King is not over, but the kingdom will remember this day.";
+
+    }
+
+
+    document.getElementById(
+        "finalIcon"
+    ).textContent=
+        icon;
+
+
+    document.getElementById(
+        "finalTitle"
+    ).textContent=
+        title;
+
+
+    document.getElementById(
+        "finalScore"
+    ).textContent=
+        Math.max(0,score)+
+        " ROYAL POINTS";
+
+
+    document.getElementById(
+        "finalText"
+    ).textContent=
+        message;
+
+
+    document.getElementById(
+        "final"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   LEVEL 19
+===================================================== */
+
+function nextLevel(){
+
+    window.location.href=
+        "level19.html";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+updateUI();
+
+loadTrial();
+
+</script>
+
+</body>
+
+</html>
