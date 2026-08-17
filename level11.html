@@ -1,0 +1,2701 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Level 11 — Escape the Castle</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    min-height: 100vh;
+
+    font-family: Arial, sans-serif;
+
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #30251c,
+            #120d09 55%,
+            #050403
+        );
+
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+
+    height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 30px;
+
+    background:
+        rgba(5,4,3,.96);
+
+    border-bottom:
+        1px solid #423424;
+
+}
+
+.logo {
+
+    font-family: Georgia, serif;
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+    color: #d9b75c;
+
+}
+
+.logo span {
+
+    color: white;
+
+}
+
+.level {
+
+    color: #85786a;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.container {
+
+    width:
+        min(1100px, calc(100% - 24px));
+
+    margin: auto;
+
+    padding: 25px 0 50px;
+
+}
+
+
+/* =========================
+   TITLE
+========================= */
+
+.title {
+
+    text-align: center;
+
+    margin-bottom: 18px;
+
+}
+
+.title small {
+
+    color: #c6a555;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+}
+
+.title h1 {
+
+    font-family: Georgia, serif;
+
+    font-size:
+        clamp(28px, 5vw, 42px);
+
+    margin: 7px 0;
+
+}
+
+.title p {
+
+    color: #92877a;
+
+    font-size: 13px;
+
+}
+
+
+/* =========================
+   STATS
+========================= */
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 10px;
+
+    margin-bottom: 15px;
+
+}
+
+.stat {
+
+    background:
+        #17120e;
+
+    border:
+        1px solid #3e3021;
+
+    border-radius: 11px;
+
+    padding: 12px;
+
+    text-align: center;
+
+}
+
+.stat span {
+
+    display: block;
+
+    color: #756b60;
+
+    font-size: 9px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 5px;
+
+}
+
+.stat strong {
+
+    color: #d8b961;
+
+    font-family: Georgia, serif;
+
+    font-size: 20px;
+
+}
+
+
+/* =========================
+   GAME
+========================= */
+
+.game {
+
+    background:
+        #100c09;
+
+    border:
+        1px solid #493827;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.5);
+
+}
+
+
+/* =========================
+   CASTLE ROOM
+========================= */
+
+.room {
+
+    position: relative;
+
+    height: 600px;
+
+    overflow: hidden;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 25%,
+            rgba(255,190,75,.10),
+            transparent 28%
+        ),
+
+        linear-gradient(
+            180deg,
+            #302419 0%,
+            #1c140e 68%,
+            #0e0a07 100%
+        );
+
+}
+
+
+/* stone wall */
+
+.room::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    opacity: .22;
+
+    background-image:
+
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.04) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            rgba(255,255,255,.04) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        80px 55px;
+
+    pointer-events: none;
+
+}
+
+
+/* floor */
+
+.floor {
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 24%;
+
+    background:
+
+        repeating-linear-gradient(
+            90deg,
+            #21170e 0,
+            #21170e 75px,
+            #2b1d12 76px,
+            #2b1d12 80px
+        );
+
+    border-top:
+        4px solid #0b0806;
+
+}
+
+
+/* =========================
+   OBJECT
+========================= */
+
+.object {
+
+    position: absolute;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    transition:
+        transform .2s,
+        filter .2s;
+
+    z-index: 5;
+
+}
+
+.object:hover {
+
+    transform:
+        scale(1.07);
+
+    filter:
+        brightness(1.25);
+
+}
+
+
+/* painting */
+
+.painting {
+
+    left: 11%;
+
+    top: 15%;
+
+    width: 150px;
+
+    height: 190px;
+
+    padding: 8px;
+
+    background:
+        #65451e;
+
+    border:
+        8px solid #2b1b0e;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.5);
+
+}
+
+.painting-inner {
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #273c4a,
+            #7d6b43,
+            #1b252d
+        );
+
+    font-size: 50px;
+
+}
+
+
+/* bookshelf */
+
+.bookshelf {
+
+    right: 8%;
+
+    top: 16%;
+
+    width: 190px;
+
+    height: 250px;
+
+    background:
+        #4b2d17;
+
+    border:
+        7px solid #25160b;
+
+    box-shadow:
+        0 15px 30px rgba(0,0,0,.5);
+
+}
+
+.books {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 6px;
+
+    padding: 12px;
+
+}
+
+.book {
+
+    height: 65px;
+
+    background:
+        #673d24;
+
+    border:
+        1px solid #8a6037;
+
+}
+
+.book:nth-child(2) {
+
+    background:
+        #324d3a;
+
+}
+
+.book:nth-child(3) {
+
+    background:
+        #574c2c;
+
+}
+
+.book:nth-child(4) {
+
+    background:
+        #593239;
+
+}
+
+.book:nth-child(5) {
+
+    background:
+        #304353;
+
+}
+
+
+/* table */
+
+.table {
+
+    left: 35%;
+
+    bottom: 15%;
+
+    width: 300px;
+
+    height: 90px;
+
+    background:
+        #4c2e16;
+
+    border:
+        5px solid #2a180c;
+
+    border-radius: 8px;
+
+}
+
+.table::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 15px;
+    right: 15px;
+
+    bottom: -80px;
+
+    height: 80px;
+
+    border-left:
+        14px solid #2b190d;
+
+    border-right:
+        14px solid #2b190d;
+
+}
+
+
+/* candle */
+
+.candle {
+
+    left: 42%;
+
+    bottom: 30%;
+
+    font-size: 55px;
+
+}
+
+.candle-glow {
+
+    position: absolute;
+
+    width: 120px;
+
+    height: 120px;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,180,60,.12);
+
+    filter:
+        blur(15px);
+
+    pointer-events: none;
+
+}
+
+
+/* chest */
+
+.chest {
+
+    left: 9%;
+
+    bottom: 13%;
+
+    font-size: 75px;
+
+}
+
+
+/* door */
+
+.door {
+
+    right: 38%;
+
+    bottom: 15%;
+
+    width: 130px;
+
+    height: 250px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #2a180d,
+            #5a351a,
+            #2a180d
+        );
+
+    border:
+        8px solid #1b1008;
+
+    border-radius:
+        8px 8px 0 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 38px;
+
+}
+
+.door.locked {
+
+    box-shadow:
+        inset 0 0 30px rgba(0,0,0,.7);
+
+}
+
+
+/* key */
+
+.key {
+
+    display: none;
+
+    right: 19%;
+
+    bottom: 24%;
+
+    font-size: 50px;
+
+}
+
+.key.show {
+
+    display: block;
+
+}
+
+
+/* =========================
+   HUD
+========================= */
+
+.hud {
+
+    position: absolute;
+
+    top: 18px;
+
+    left: 18px;
+
+    right: 18px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    pointer-events: none;
+
+    z-index: 20;
+
+}
+
+.hud-box {
+
+    padding: 9px 13px;
+
+    background:
+        rgba(5,4,3,.82);
+
+    border:
+        1px solid #55422d;
+
+    border-radius: 8px;
+
+    font-size: 11px;
+
+}
+
+.hud-box b {
+
+    color: #d9b75c;
+
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+.message-box {
+
+    min-height: 70px;
+
+    padding: 15px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    color: #d6c9b6;
+
+    background:
+        #15100c;
+
+    border-top:
+        1px solid #3b2c20;
+
+    border-bottom:
+        1px solid #3b2c20;
+
+    font-family: Georgia, serif;
+
+    font-size: 15px;
+
+    line-height: 1.5;
+
+}
+
+
+/* =========================
+   INVENTORY
+========================= */
+
+.inventory {
+
+    padding: 15px 20px;
+
+    background:
+        #0e0a07;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+.inventory-label {
+
+    color: #756a5e;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    margin-right: 5px;
+
+}
+
+.inventory-item {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border:
+        1px solid #483727;
+
+    border-radius: 7px;
+
+    background:
+        #18110c;
+
+    font-size: 22px;
+
+}
+
+
+/* =========================
+   PUZZLE MODAL
+========================= */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(4,3,2,.88);
+
+}
+
+.modal.show {
+
+    display: flex;
+
+}
+
+.modal-card {
+
+    width:
+        min(500px,100%);
+
+    padding: 25px;
+
+    border-radius: 18px;
+
+    background:
+        #17110d;
+
+    border:
+        1px solid #60492e;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.7);
+
+}
+
+.modal-card h2 {
+
+    font-family: Georgia, serif;
+
+    color: #e0c36a;
+
+    margin-bottom: 10px;
+
+}
+
+.modal-card p {
+
+    color: #a49a8d;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    margin-bottom: 18px;
+
+}
+
+.modal-input {
+
+    width: 100%;
+
+    padding: 13px;
+
+    border:
+        1px solid #55412c;
+
+    border-radius: 8px;
+
+    background:
+        #0d0906;
+
+    color: white;
+
+    outline: none;
+
+    margin-bottom: 10px;
+
+}
+
+.modal-btn {
+
+    width: 100%;
+
+    padding: 13px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #96722f,
+            #dfc05f
+        );
+
+    color: #171108;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+.close-btn {
+
+    margin-top: 8px;
+
+    width: 100%;
+
+    padding: 10px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #766c60;
+
+    cursor: pointer;
+
+}
+
+
+/* =========================
+   RESULT
+========================= */
+
+.result {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 200;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(4,3,2,.96);
+
+}
+
+.result.show {
+
+    display: flex;
+
+}
+
+.result-card {
+
+    width:
+        min(620px,100%);
+
+    padding: 35px 25px;
+
+    text-align: center;
+
+    border-radius: 22px;
+
+    background:
+        #17110d;
+
+    border:
+        1px solid #624b2f;
+
+}
+
+.result-icon {
+
+    font-size: 70px;
+
+}
+
+.result-card h2 {
+
+    font-family: Georgia, serif;
+
+    font-size: 32px;
+
+    margin: 8px 0;
+
+}
+
+.final-score {
+
+    font-family: Georgia, serif;
+
+    color: #e2c45f;
+
+    font-size: 50px;
+
+    margin: 15px;
+
+}
+
+.result-card p {
+
+    color: #958a7c;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+}
+
+.result-stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 8px;
+
+    margin: 20px 0;
+
+}
+
+.result-stat {
+
+    background:
+        #0d0906;
+
+    border-radius: 8px;
+
+    padding: 12px;
+
+}
+
+.result-stat span {
+
+    display: block;
+
+    color: #70665a;
+
+    font-size: 8px;
+
+    text-transform: uppercase;
+
+}
+
+.result-stat strong {
+
+    display: block;
+
+    color: #d5b45b;
+
+    margin-top: 5px;
+
+}
+
+.continue {
+
+    width: 100%;
+
+    padding: 14px;
+
+    margin-top: 15px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #96722f,
+            #dfc05f
+        );
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px) {
+
+    header {
+
+        padding: 0 15px;
+
+    }
+
+    .level {
+
+        display: none;
+
+    }
+
+    .stats {
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+    .room {
+
+        height: 570px;
+
+    }
+
+    .painting {
+
+        left: 5%;
+
+        transform:
+            scale(.75);
+
+        transform-origin:
+            top left;
+
+    }
+
+    .bookshelf {
+
+        right: 2%;
+
+        transform:
+            scale(.72);
+
+        transform-origin:
+            top right;
+
+    }
+
+    .table {
+
+        left: 28%;
+
+        width: 220px;
+
+    }
+
+    .door {
+
+        right: 30%;
+
+        transform:
+            scale(.75);
+
+        transform-origin:
+            bottom;
+
+    }
+
+    .chest {
+
+        left: 3%;
+
+        font-size: 55px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+
+        <span>PJLand</span>
+
+    </div>
+
+    <div class="level">
+
+        LEVEL 11 • CASTLE ESCAPE
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<div class="title">
+
+    <small>LEVEL 11</small>
+
+    <h1>🏰 Escape the Castle</h1>
+
+    <p>
+        Nobody will tell you what to do. Think.
+    </p>
+
+</div>
+
+
+
+<div class="stats">
+
+
+    <div class="stat">
+
+        <span>
+            Time
+        </span>
+
+        <strong id="time">
+            10:00
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>
+            Puzzles
+        </span>
+
+        <strong id="puzzles">
+            0 / 20
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>
+            Clues
+        </span>
+
+        <strong id="clues">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>
+            Score
+        </span>
+
+        <strong id="score">
+            100
+        </strong>
+
+    </div>
+
+
+</div>
+
+
+
+<div class="game">
+
+
+<div class="room">
+
+
+    <div class="hud">
+
+        <div class="hud-box">
+
+            STATUS:
+            <b id="status">
+                TRAPPED
+
+            </b>
+
+        </div>
+
+
+        <div class="hud-box">
+
+            DOOR:
+            <b id="doorStatus">
+                LOCKED
+
+            </b>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="floor"></div>
+
+
+
+    <!-- PAINTING -->
+
+    <div
+        class="object painting"
+        onclick="inspectPainting()">
+
+        <div
+            class="painting-inner">
+
+            🏰
+
+        </div>
+
+    </div>
+
+
+
+    <!-- BOOKSHELF -->
+
+    <div
+        class="object bookshelf"
+        onclick="inspectBooks()">
+
+        <div class="books">
+
+            <div class="book"></div>
+            <div class="book"></div>
+            <div class="book"></div>
+            <div class="book"></div>
+            <div class="book"></div>
+            <div class="book"></div>
+            <div class="book"></div>
+            <div class="book"></div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- TABLE -->
+
+    <div
+        class="object table"
+        onclick="inspectTable()">
+
+    </div>
+
+
+
+    <!-- CANDLE -->
+
+    <div
+        class="object candle"
+        onclick="inspectCandle()">
+
+        <div class="candle-glow"></div>
+
+        🕯️
+
+    </div>
+
+
+
+    <!-- CHEST -->
+
+    <div
+        class="object chest"
+        onclick="inspectChest()">
+
+        🧰
+
+    </div>
+
+
+
+    <!-- DOOR -->
+
+    <div
+        class="object door locked"
+        id="door"
+        onclick="inspectDoor()">
+
+        🔒
+
+    </div>
+
+
+
+    <!-- KEY -->
+
+    <div
+        class="object key"
+        id="key"
+        onclick="takeKey()">
+
+        🗝️
+
+    </div>
+
+
+</div>
+
+
+
+<div
+    class="message-box"
+    id="message">
+
+    You wake up in a cold castle chamber.
+    The door is locked.
+    Nobody is coming to help you.
+
+</div>
+
+
+
+<div class="inventory">
+
+    <div class="inventory-label">
+
+        INVENTORY
+
+    </div>
+
+
+    <div
+        class="inventory-item"
+        id="invPaper">
+
+        —
+
+    </div>
+
+
+    <div
+        class="inventory-item"
+        id="invCode">
+
+        —
+
+    </div>
+
+
+    <div
+        class="inventory-item"
+        id="invKey">
+
+        —
+
+    </div>
+
+
+</div>
+
+
+</div>
+
+
+</main>
+
+
+
+<!-- =========================
+     PUZZLE MODAL
+========================= -->
+
+<div
+    class="modal"
+    id="modal">
+
+
+<div class="modal-card">
+
+
+    <h2 id="modalTitle">
+        Puzzle
+    </h2>
+
+
+    <p id="modalText">
+        Solve the puzzle.
+    </p>
+
+
+    <input
+        class="modal-input"
+        id="modalInput"
+        placeholder="Enter your answer..."
+        autocomplete="off">
+
+
+    <button
+        class="modal-btn"
+        onclick="submitPuzzle()">
+
+        SUBMIT ANSWER
+
+    </button>
+
+
+    <button
+        class="close-btn"
+        onclick="closeModal()">
+
+        Close
+
+    </button>
+
+
+</div>
+
+
+</div>
+
+
+
+<!-- =========================
+     RESULT
+========================= -->
+
+<div
+    class="result"
+    id="result">
+
+
+<div class="result-card">
+
+
+    <div
+        class="result-icon"
+        id="resultIcon">
+
+        👑
+
+    </div>
+
+
+    <h2
+        id="resultTitle">
+
+        Castle Escape Master
+
+    </h2>
+
+
+    <div
+        class="final-score"
+        id="finalScore">
+
+        100 / 100
+
+    </div>
+
+
+    <div class="result-stats">
+
+
+        <div class="result-stat">
+
+            <span>
+                Puzzles
+            </span>
+
+            <strong>
+                20 / 20
+            </strong>
+
+        </div>
+
+
+        <div class="result-stat">
+
+            <span>
+                Clues
+            </span>
+
+            <strong id="finalClues">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="result-stat">
+
+            <span>
+                Time
+            </span>
+
+            <strong id="finalTime">
+                —
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+    <p id="resultMessage">
+
+    </p>
+
+
+    <button
+        class="continue"
+        onclick="nextLevel()">
+
+        ENTER LEVEL 12 →
+
+    </button>
+
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+/* =========================================
+   GAME STATE
+========================================= */
+
+let timeLeft = 600;
+
+let puzzlesSolved = 0;
+
+let cluesFound = 0;
+
+let score = 100;
+
+let hasPaper = false;
+
+let hasCode = false;
+
+let hasKey = false;
+
+let paintingSolved = false;
+
+let booksSolved = false;
+
+let candleSolved = false;
+
+let tableSolved = false;
+
+let chestSolved = false;
+
+let doorSolved = false;
+
+let currentPuzzle = null;
+
+let timer;
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const message =
+    document.getElementById(
+        "message"
+    );
+
+const modal =
+    document.getElementById(
+        "modal"
+    );
+
+const modalTitle =
+    document.getElementById(
+        "modalTitle"
+    );
+
+const modalText =
+    document.getElementById(
+        "modalText"
+    );
+
+const modalInput =
+    document.getElementById(
+        "modalInput"
+    );
+
+
+/* =========================================
+   TIMER
+========================================= */
+
+timer = setInterval(
+    function() {
+
+        timeLeft--;
+
+        updateTime();
+
+
+        if (
+            timeLeft <= 0
+        ) {
+
+            clearInterval(
+                timer
+            );
+
+            gameOver();
+
+        }
+
+    },
+    1000
+);
+
+
+function updateTime() {
+
+    const minutes =
+        Math.floor(
+            timeLeft / 60
+        );
+
+
+    const seconds =
+        timeLeft % 60;
+
+
+    document
+        .getElementById(
+            "time"
+        )
+        .textContent =
+
+        String(minutes)
+            .padStart(2,"0")
+
+        + ":" +
+
+        String(seconds)
+            .padStart(2,"0");
+
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+function openPuzzle(
+    title,
+    text,
+    puzzle
+) {
+
+    currentPuzzle =
+        puzzle;
+
+
+    modalTitle.textContent =
+        title;
+
+
+    modalText.textContent =
+        text;
+
+
+    modalInput.value =
+        "";
+
+
+    modal.classList
+        .add("show");
+
+
+    setTimeout(
+        function() {
+
+            modalInput.focus();
+
+        },
+        100
+    );
+
+}
+
+
+function closeModal() {
+
+    modal.classList
+        .remove("show");
+
+    currentPuzzle =
+        null;
+
+}
+
+
+/* =========================================
+   SUBMIT
+========================================= */
+
+function submitPuzzle() {
+
+    if (
+        !currentPuzzle
+    )
+        return;
+
+
+    const answer =
+        modalInput.value
+            .trim()
+            .toLowerCase();
+
+
+    currentPuzzle(
+        answer
+    );
+
+}
+
+
+/* =========================================
+   CORRECT
+========================================= */
+
+function solved(
+    text
+) {
+
+    puzzlesSolved++;
+
+    cluesFound++;
+
+
+    document
+        .getElementById(
+            "puzzles"
+        )
+        .textContent =
+
+        puzzlesSolved +
+        " / 20";
+
+
+    document
+        .getElementById(
+            "clues"
+        )
+        .textContent =
+        cluesFound;
+
+
+    message.textContent =
+        "✓ " + text;
+
+
+    closeModal();
+
+}
+
+
+/* =========================================
+   WRONG
+========================================= */
+
+function wrong(
+    hint
+) {
+
+    score =
+        Math.max(
+            0,
+            score - 3
+        );
+
+
+    document
+        .getElementById(
+            "score"
+        )
+        .textContent =
+        score;
+
+
+    message.textContent =
+        "Think again. " +
+        hint;
+
+}
+
+
+/* =========================================
+   PAINTING
+========================================= */
+
+function inspectPainting() {
+
+    if (
+        paintingSolved
+    ) {
+
+        message.textContent =
+            "The painting has already revealed everything.";
+
+        return;
+
+    }
+
+
+    openPuzzle(
+
+        "The Strange Painting",
+
+        "You notice four symbols carved into the bottom of the frame: ★  △  ○  □. A small inscription says: 'Count the corners.' What number opens the hidden panel?",
+
+        function(answer) {
+
+            if (
+                answer === "6"
+            ) {
+
+                paintingSolved =
+                    true;
+
+
+                solved(
+                    "The painting slides aside. You discover a hidden piece of parchment."
+                );
+
+
+                hasPaper =
+                    true;
+
+
+                document
+                    .getElementById(
+                        "invPaper"
+                    )
+                    .textContent =
+                    "📜";
+
+            }
+
+            else {
+
+                wrong(
+                    "Look at the shapes and count their corners."
+                );
+
+            }
+
+        }
+
+    );
+
+}
+
+
+/* =========================================
+   BOOKS
+========================================= */
+
+function inspectBooks() {
+
+    if (
+        booksSolved
+    ) {
+
+        message.textContent =
+            "The books have already been searched.";
+
+        return;
+
+    }
+
+
+    openPuzzle(
+
+        "The Scholar's Bookshelf",
+
+        "Five books have strange numbers on their spines: 2, 4, 8, 16, ?. What number should the final book have?",
+
+        function(answer) {
+
+            if (
+                answer === "32"
+            ) {
+
+                booksSolved =
+                    true;
+
+
+                solved(
+                    "You pull the correct book. A secret compartment opens."
+                );
+
+            }
+
+            else {
+
+                wrong(
+                    "Look for the mathematical pattern."
+                );
+
+            }
+
+        }
+
+    );
+
+}
+
+
+/* =========================================
+   CANDLE
+========================================= */
+
+function inspectCandle() {
+
+    if (
+        candleSolved
+    ) {
+
+        message.textContent =
+            "The candle has already been examined.";
+
+        return;
+
+    }
+
+
+    openPuzzle(
+
+        "The Candle",
+
+        "The candle flame points toward a message on the wall: 'I have keys but no locks. I have space but no room. What am I?'",
+
+        function(answer) {
+
+            if (
+                answer.includes("keyboard")
+            ) {
+
+                candleSolved =
+                    true;
+
+
+                solved(
+                    "The answer reveals a hidden marking beneath the candle."
+                );
+
+            }
+
+            else {
+
+                wrong(
+                    "Think about something that has keys and space."
+                );
+
+            }
+
+        }
+
+    );
+
+}
+
+
+/* =========================================
+   TABLE
+========================================= */
+
+function inspectTable() {
+
+    if (
+        tableSolved
+    ) {
+
+        message.textContent =
+            "There is nothing else useful on the table.";
+
+        return;
+
+    }
+
+
+    openPuzzle(
+
+        "The King's Table",
+
+        "A note says: 'If TWO becomes 6 and THREE becomes 12, what does FOUR become?'",
+
+        function(answer) {
+
+            if (
+                answer === "20"
+            ) {
+
+                tableSolved =
+                    true;
+
+
+                solved(
+                    "A drawer opens. Inside is a metal plate engraved with: 4."
+                );
+
+            }
+
+            else {
+
+                wrong(
+                    "Think about multiplying the number by the next number."
+                );
+
+            }
+
+        }
+
+    );
+
+}
+
+
+/* =========================================
+   CHEST
+========================================= */
+
+function inspectChest() {
+
+    if (
+        chestSolved
+    ) {
+
+        message.textContent =
+            "The chest is empty.";
+
+        return;
+
+    }
+
+
+    if (
+        !hasPaper
+    ) {
+
+        message.textContent =
+            "The chest has a complicated lock. You need more clues.";
+
+        return;
+
+    }
+
+
+    openPuzzle(
+
+        "The Locked Chest",
+
+        "The parchment you found says: 'The code is the sum of the corners of the triangle, square and hexagon.' What is the code?",
+
+        function(answer) {
+
+            if (
+                answer === "14"
+            ) {
+
+                chestSolved =
+                    true;
+
+                hasCode =
+                    true;
+
+
+                document
+                    .getElementById(
+                        "invCode"
+                    )
+                    .textContent =
+                    "🔢";
+
+
+                solved(
+                    "The chest opens! Inside you find a small golden key."
+                );
+
+
+                document
+                    .getElementById(
+                        "key"
+                    )
+                    .classList
+                    .add("show");
+
+            }
+
+            else {
+
+                wrong(
+                    "Triangle = 3, square = 4, hexagon = 6."
+                );
+
+            }
+
+        }
+
+    );
+
+}
+
+
+/* =========================================
+   TAKE KEY
+========================================= */
+
+function takeKey() {
+
+    if (
+        !chestSolved
+    ) {
+
+        message.textContent =
+            "The key is inside the chest.";
+
+        return;
+
+    }
+
+
+    if (
+        hasKey
+    )
+        return;
+
+
+    hasKey =
+        true;
+
+
+    document
+        .getElementById(
+            "invKey"
+        )
+        .textContent =
+        "🗝️";
+
+
+    document
+        .getElementById(
+            "key"
+        )
+        .style.display =
+        "none";
+
+
+    solved(
+        "You picked up the golden key. The castle door may finally open."
+    );
+
+}
+
+
+/* =========================================
+   DOOR
+========================================= */
+
+function inspectDoor() {
+
+    if (
+        doorSolved
+    )
+        return;
+
+
+    if (
+        !hasKey
+    ) {
+
+        message.textContent =
+            "The door is locked. Somewhere in this room there must be a way out.";
+
+        return;
+
+    }
+
+
+    openPuzzle(
+
+        "The Final Lock",
+
+        "The key fits, but the final lock asks one question: What has to be broken before you can use it?",
+
+        function(answer) {
+
+            if (
+                answer.includes("egg")
+            ) {
+
+                doorSolved =
+                    true;
+
+
+                puzzlesSolved++;
+
+                document
+                    .getElementById(
+                        "puzzles"
+                    )
+                    .textContent =
+
+                    puzzlesSolved +
+                    " / 20";
+
+
+                document
+                    .getElementById(
+                        "door"
+                    )
+                    .innerHTML =
+                    "🚪";
+
+
+                document
+                    .getElementById(
+                        "door"
+                    )
+                    .classList
+                    .remove(
+                        "locked"
+                    );
+
+
+                document
+                    .getElementById(
+                        "doorStatus"
+                    )
+                    .textContent =
+                    "OPEN";
+
+
+                document
+                    .getElementById(
+                        "status"
+                    )
+                    .textContent =
+                    "ESCAPED";
+
+
+                message.textContent =
+                    "🚪 The great castle door opens. You escaped!";
+
+
+                closeModal();
+
+
+                setTimeout(
+                    finishGame,
+                    1200
+                );
+
+            }
+
+            else {
+
+                wrong(
+                    "It's a classic riddle."
+                );
+
+            }
+
+        }
+
+    );
+
+}
+
+
+/* =========================================
+   FINISH
+========================================= */
+
+function finishGame() {
+
+    clearInterval(
+        timer
+    );
+
+
+    const timeUsed =
+        600 - timeLeft;
+
+
+    const minutes =
+        Math.floor(
+            timeUsed / 60
+        );
+
+
+    const seconds =
+        timeUsed % 60;
+
+
+    /*
+       Time bonus
+    */
+
+    let finalScore =
+        score;
+
+
+    if (
+        timeLeft >= 420
+    ) {
+
+        finalScore += 15;
+
+    }
+
+    else if (
+        timeLeft >= 240
+    ) {
+
+        finalScore += 10;
+
+    }
+
+    else if (
+        timeLeft >= 120
+    ) {
+
+        finalScore += 5;
+
+    }
+
+
+    finalScore =
+        Math.min(
+            100,
+            finalScore
+        );
+
+
+    let icon;
+
+    let title;
+
+    let resultMessage;
+
+
+    if (
+        finalScore >= 90
+    ) {
+
+        icon =
+            "👑";
+
+        title =
+            "Castle Escape Master";
+
+        resultMessage =
+            "Exceptional reasoning. You explored the environment, connected clues and escaped with impressive efficiency.";
+
+    }
+
+    else if (
+        finalScore >= 75
+    ) {
+
+        icon =
+            "🏰";
+
+        title =
+            "Royal Escape Artist";
+
+        resultMessage =
+            "Excellent work. Your ability to connect clues is becoming a valuable royal skill.";
+
+    }
+
+    else if (
+        finalScore >= 55
+    ) {
+
+        icon =
+            "🗝️";
+
+        title =
+            "Castle Survivor";
+
+        resultMessage =
+            "You escaped, but the Royal Council believes you can solve future chambers more efficiently.";
+
+    }
+
+    else {
+
+        icon =
+            "🛡️";
+
+        title =
+            "Castle Apprentice";
+
+        resultMessage =
+            "You escaped the castle. Your next challenge will require sharper observation.";
+
+    }
+
+
+    document
+        .getElementById(
+            "resultIcon"
+        )
+        .textContent =
+        icon;
+
+
+    document
+        .getElementById(
+            "resultTitle"
+        )
+        .textContent =
+        title;
+
+
+    document
+        .getElementById(
+            "finalScore"
+        )
+        .textContent =
+        finalScore +
+        " / 100";
+
+
+    document
+        .getElementById(
+            "finalClues"
+        )
+        .textContent =
+        cluesFound;
+
+
+    document
+        .getElementById(
+            "finalTime"
+        )
+        .textContent =
+
+        minutes +
+        "m " +
+        seconds +
+        "s";
+
+
+    document
+        .getElementById(
+            "resultMessage"
+        )
+        .textContent =
+        resultMessage;
+
+
+    document
+        .getElementById(
+            "result"
+        )
+        .classList
+        .add("show");
+
+}
+
+
+/* =========================================
+   GAME OVER
+========================================= */
+
+function gameOver() {
+
+    message.textContent =
+        "⏰ Time is up. The castle remains locked.";
+
+    score =
+        Math.max(
+            0,
+            score - 20
+        );
+
+
+    setTimeout(
+        function() {
+
+            document
+                .getElementById(
+                    "resultIcon"
+                )
+                .textContent =
+                "⏰";
+
+
+            document
+                .getElementById(
+                    "resultTitle"
+                )
+                .textContent =
+                "The Castle Won";
+
+
+            document
+                .getElementById(
+                    "finalScore"
+                )
+                .textContent =
+                score +
+                " / 100";
+
+
+            document
+                .getElementById(
+                    "finalClues"
+                )
+                .textContent =
+                cluesFound;
+
+
+            document
+                .getElementById(
+                    "finalTime"
+                )
+                .textContent =
+                "10:00";
+
+
+            document
+                .getElementById(
+                    "resultMessage"
+                )
+                .textContent =
+                "You ran out of time. A true ruler must learn to think quickly as well as think correctly.";
+
+
+            document
+                .getElementById(
+                    "result"
+                )
+                .classList
+                .add("show");
+
+        },
+        1000
+    );
+
+}
+
+
+/* =========================================
+   NEXT LEVEL
+========================================= */
+
+function nextLevel() {
+
+    window.location.href =
+        "level12.html";
+
+}
+
+
+/* =========================================
+   KEYBOARD ENTER
+========================================= */
+
+modalInput.addEventListener(
+    "keydown",
+    function(e) {
+
+        if (
+            e.key === "Enter"
+        ) {
+
+            submitPuzzle();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   START
+========================================= */
+
+updateTime();
+
+</script>
+
+</body>
+
+</html>

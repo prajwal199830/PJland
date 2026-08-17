@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Level 9 — Royal Archery Trial</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #3b2b18,
+            #17110a 55%,
+            #080604
+        );
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 30px;
+
+    background: rgba(8,7,5,.96);
+
+    border-bottom: 1px solid #3c3020;
+}
+
+.logo {
+    font-family: Georgia, serif;
+    font-size: 21px;
+    font-weight: bold;
+    color: #e0bd5e;
+}
+
+.logo span {
+    color: white;
+}
+
+.level {
+    color: #847967;
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.container {
+    width: min(1000px, calc(100% - 24px));
+    margin: auto;
+    padding: 25px 0 50px;
+}
+
+
+/* =========================
+   TITLE
+========================= */
+
+.title {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.title small {
+    color: #d2aa4b;
+    font-size: 10px;
+    letter-spacing: 3px;
+}
+
+.title h1 {
+    font-family: Georgia, serif;
+    font-size: clamp(28px, 5vw, 42px);
+    margin: 7px 0;
+}
+
+.title p {
+    color: #908778;
+    font-size: 13px;
+}
+
+
+/* =========================
+   STATS
+========================= */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.stat {
+    background: #17130e;
+    border: 1px solid #3b3021;
+    border-radius: 11px;
+
+    padding: 12px;
+    text-align: center;
+}
+
+.stat span {
+    display: block;
+
+    color: #756d60;
+    font-size: 9px;
+
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    margin-bottom: 5px;
+}
+
+.stat strong {
+    color: #ddbb60;
+
+    font-family: Georgia, serif;
+    font-size: 20px;
+}
+
+
+/* =========================
+   GAME CARD
+========================= */
+
+.game-card {
+    background:
+        linear-gradient(
+            145deg,
+            #1b1710,
+            #100e0a
+        );
+
+    border: 1px solid #4b3d26;
+    border-radius: 20px;
+
+    padding: 18px;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.45);
+}
+
+
+/* =========================
+   INSTRUCTION
+========================= */
+
+.instruction {
+    text-align: center;
+
+    color: #9d9588;
+
+    font-size: 12px;
+
+    margin-bottom: 13px;
+}
+
+.instruction b {
+    color: #d5b45d;
+}
+
+
+/* =========================
+   RANGE
+========================= */
+
+.range {
+    position: relative;
+
+    width: 100%;
+
+    height: min(600px, 65vh);
+
+    min-height: 450px;
+
+    overflow: hidden;
+
+    border-radius: 15px;
+
+    cursor: crosshair;
+
+    background:
+
+        linear-gradient(
+            to bottom,
+            #667276 0%,
+            #a0a18e 53%,
+            #59633e 54%,
+            #30391e 100%
+        );
+
+    border: 2px solid #4c412c;
+}
+
+
+/* mountains */
+
+.range::before {
+    content: "";
+
+    position: absolute;
+
+    left: -10%;
+    right: -10%;
+
+    bottom: 37%;
+
+    height: 32%;
+
+    background:
+        linear-gradient(
+            135deg,
+            transparent 38%,
+            rgba(35,35,29,.35) 39%,
+            rgba(35,35,29,.35) 61%,
+            transparent 62%
+        );
+
+    opacity: .7;
+}
+
+
+/* ground */
+
+.ground {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 44%;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(25,35,15,.2) 0px,
+            rgba(25,35,15,.2) 3px,
+            transparent 3px,
+            transparent 13px
+        );
+}
+
+
+/* =========================
+   TARGET
+========================= */
+
+.target {
+    position: absolute;
+
+    width: 170px;
+    height: 170px;
+
+    transform:
+        translate(-50%,-50%);
+
+    border-radius: 50%;
+
+    transition:
+        left .45s ease,
+        top .45s ease;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.45);
+
+    z-index: 5;
+}
+
+.ring {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    border-radius: 50%;
+}
+
+.outer {
+    width: 170px;
+    height: 170px;
+
+    background: #eeeeee;
+
+    border: 4px solid #222;
+}
+
+.ring2 {
+    width: 132px;
+    height: 132px;
+
+    background: #b63a31;
+}
+
+.ring3 {
+    width: 94px;
+    height: 94px;
+
+    background: #eeeeee;
+}
+
+.ring4 {
+    width: 61px;
+    height: 61px;
+
+    background: #b63a31;
+}
+
+.bull {
+    width: 29px;
+    height: 29px;
+
+    background: #e4c65e;
+
+    border: 3px solid #59451d;
+}
+
+
+/* =========================
+   LOCKED TARGET
+========================= */
+
+.lock-label {
+    position: absolute;
+
+    top: -30px;
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    padding: 5px 9px;
+
+    border-radius: 6px;
+
+    background: #302715;
+
+    border: 1px solid #d0ae57;
+
+    color: #e1c36a;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    display: none;
+}
+
+.target.locked .lock-label {
+    display: block;
+}
+
+
+/* =========================
+   AIM
+========================= */
+
+.aim {
+    position: absolute;
+
+    width: 34px;
+    height: 34px;
+
+    transform:
+        translate(-50%,-50%);
+
+    border: 2px solid white;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    z-index: 10;
+
+    display: none;
+}
+
+.aim::before {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 7px;
+    height: 7px;
+
+    transform:
+        translate(-50%,-50%);
+
+    border-radius: 50%;
+
+    background: white;
+}
+
+.aim.locked {
+    border-color: #e4bd51;
+
+    box-shadow:
+        0 0 0 4px rgba(228,189,81,.18);
+
+    width: 42px;
+    height: 42px;
+}
+
+
+/* =========================
+   BOW
+========================= */
+
+.bow {
+    position: absolute;
+
+    left: 50%;
+    bottom: 20px;
+
+    transform:
+        translateX(-50%);
+
+    width: 100px;
+    height: 110px;
+
+    z-index: 15;
+
+    pointer-events: none;
+}
+
+.bow-arc {
+    position: absolute;
+
+    left: 20px;
+    top: 0;
+
+    width: 65px;
+    height: 105px;
+
+    border-right: 7px solid #6f461e;
+
+    border-radius: 50%;
+}
+
+.bow-string {
+    position: absolute;
+
+    left: 52px;
+    top: 3px;
+
+    width: 2px;
+    height: 100px;
+
+    background: #ddd3b9;
+
+    transform-origin: center;
+}
+
+
+/* =========================
+   FLYING ARROW
+========================= */
+
+.flying-arrow {
+    position: absolute;
+
+    width: 80px;
+    height: 4px;
+
+    background: #302519;
+
+    transform-origin: left center;
+
+    z-index: 20;
+
+    pointer-events: none;
+
+    display: none;
+
+    border-radius: 3px;
+}
+
+.flying-arrow::after {
+    content: "";
+
+    position: absolute;
+
+    right: -2px;
+    top: -5px;
+
+    border-left: 13px solid #302519;
+
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+}
+
+
+/* =========================
+   LOCK BUTTON
+========================= */
+
+.controls {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 16px;
+}
+
+.lock-btn,
+.shoot-btn {
+    padding: 14px 30px;
+
+    border-radius: 9px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    border: none;
+}
+
+.lock-btn {
+    background: #272117;
+
+    color: #d8c9a7;
+
+    border: 1px solid #625335;
+}
+
+.lock-btn:hover {
+    background: #342b1d;
+}
+
+.shoot-btn {
+    background:
+        linear-gradient(
+            135deg,
+            #96712d,
+            #dfbf60
+        );
+
+    color: #171108;
+}
+
+.shoot-btn:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+.message {
+    text-align: center;
+
+    min-height: 32px;
+
+    margin-top: 13px;
+
+    color: #d9ba63;
+
+    font-family: Georgia, serif;
+
+    font-size: 17px;
+}
+
+
+/* =========================
+   RESULT
+========================= */
+
+.result {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(5,4,2,.95);
+}
+
+.result.show {
+    display: flex;
+}
+
+.result-card {
+    width: min(600px,100%);
+
+    padding: 35px 25px;
+
+    text-align: center;
+
+    border-radius: 22px;
+
+    background: #17130d;
+
+    border: 1px solid #65522f;
+
+    box-shadow:
+        0 30px 100px rgba(0,0,0,.7);
+}
+
+.result-icon {
+    font-size: 70px;
+}
+
+.result-card h2 {
+    font-family: Georgia, serif;
+
+    font-size: 32px;
+
+    margin: 8px 0;
+}
+
+.final-score {
+    color: #e1c15e;
+
+    font-family: Georgia, serif;
+
+    font-size: 48px;
+
+    margin: 14px;
+}
+
+.result-card p {
+    color: #91897c;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+.result-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 8px;
+
+    margin: 20px 0;
+}
+
+.result-stat {
+    background: #0e0c09;
+
+    border-radius: 8px;
+
+    padding: 12px;
+}
+
+.result-stat span {
+    display: block;
+
+    color: #6d665b;
+
+    font-size: 8px;
+
+    text-transform: uppercase;
+}
+
+.result-stat strong {
+    display: block;
+
+    color: #d2b15c;
+
+    margin-top: 5px;
+}
+
+.next-btn {
+    width: 100%;
+
+    margin-top: 15px;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #99742d,
+            #dfc061
+        );
+
+    color: #171108;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:650px) {
+
+    header {
+        padding: 0 15px;
+    }
+
+    .level {
+        display: none;
+    }
+
+    .stats {
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .game-card {
+        padding: 10px;
+    }
+
+    .range {
+        min-height: 470px;
+        height: 65vh;
+    }
+
+    .target {
+        width: 140px;
+        height: 140px;
+    }
+
+    .outer {
+        width: 140px;
+        height: 140px;
+    }
+
+    .ring2 {
+        width: 108px;
+        height: 108px;
+    }
+
+    .ring3 {
+        width: 78px;
+        height: 78px;
+    }
+
+    .ring4 {
+        width: 50px;
+        height: 50px;
+    }
+
+    .bull {
+        width: 23px;
+        height: 23px;
+    }
+
+    .controls {
+        flex-direction: column;
+    }
+
+    .lock-btn,
+    .shoot-btn {
+        width: 100%;
+    }
+
+    .result-stats {
+        grid-template-columns:
+            repeat(3,1fr);
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        MIND<span>REALM</span>
+    </div>
+
+    <div class="level">
+        LEVEL 9 • ROYAL ARCHERY
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<div class="title">
+
+    <small>LEVEL 9</small>
+
+    <h1>🏹 Royal Archery Trial</h1>
+
+    <p>
+        Aim carefully. Lock your position. Fire.
+    </p>
+
+</div>
+
+
+
+<div class="stats">
+
+    <div class="stat">
+
+        <span>Arrows</span>
+
+        <strong id="arrows">
+            20
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>Score</span>
+
+        <strong id="score">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>Bullseyes</span>
+
+        <strong id="bullseyes">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>Combo</span>
+
+        <strong id="combo">
+            ×0
+        </strong>
+
+    </div>
+
+</div>
+
+
+
+<div class="game-card">
+
+
+<div class="instruction">
+
+    <b>STEP 1:</b>
+    Move your mouse/finger to aim.
+
+    <br>
+
+    <b>STEP 2:</b>
+    Click/tap the range to lock your aim.
+
+    <br>
+
+    <b>STEP 3:</b>
+    Press SHOOT.
+
+</div>
+
+
+
+<div
+    class="range"
+    id="range">
+
+
+    <div class="ground"></div>
+
+
+    <div
+        class="target"
+        id="target">
+
+
+        <div class="lock-label">
+            🔒 LOCKED
+        </div>
+
+
+        <div class="ring outer"></div>
+
+        <div class="ring ring2"></div>
+
+        <div class="ring ring3"></div>
+
+        <div class="ring ring4"></div>
+
+        <div class="ring bull"></div>
+
+
+    </div>
+
+
+    <div
+        class="aim"
+        id="aim">
+
+    </div>
+
+
+    <div
+        class="flying-arrow"
+        id="flyingArrow">
+
+    </div>
+
+
+    <div class="bow">
+
+        <div class="bow-arc"></div>
+
+        <div class="bow-string"></div>
+
+    </div>
+
+
+</div>
+
+
+
+<div
+    class="message"
+    id="message">
+
+    Aim at the target.
+
+</div>
+
+
+
+<div class="controls">
+
+    <button
+        class="lock-btn"
+        id="lockBtn">
+
+        🔒 LOCK AIM
+
+    </button>
+
+
+    <button
+        class="shoot-btn"
+        id="shootBtn"
+        disabled>
+
+        🏹 SHOOT
+
+    </button>
+
+</div>
+
+
+</div>
+
+
+</main>
+
+
+
+<!-- =========================
+     RESULT
+========================= -->
+
+<div
+    class="result"
+    id="result">
+
+
+<div class="result-card">
+
+
+    <div
+        class="result-icon"
+        id="resultIcon">
+
+        🏹
+
+    </div>
+
+
+    <h2
+        id="resultTitle">
+
+        Royal Archer
+
+    </h2>
+
+
+    <p>
+
+        The Royal Archery Council
+        has judged your 20 arrows.
+
+    </p>
+
+
+    <div
+        class="final-score"
+        id="finalScore">
+
+        0 / 100
+
+    </div>
+
+
+    <div class="result-stats">
+
+
+        <div class="result-stat">
+
+            <span>
+                Points
+            </span>
+
+            <strong id="finalPoints">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="result-stat">
+
+            <span>
+                Bullseyes
+            </span>
+
+            <strong id="finalBullseyes">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="result-stat">
+
+            <span>
+                Best Combo
+            </span>
+
+            <strong id="finalCombo">
+                ×0
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+    <p id="resultMessage"></p>
+
+
+    <button
+        class="next-btn"
+        onclick="nextLevel()">
+
+        ENTER LEVEL 10 →
+
+    </button>
+
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+/* =========================================
+   GAME VARIABLES
+========================================= */
+
+let arrowsLeft = 20;
+
+let totalScore = 0;
+
+let bullseyes = 0;
+
+let combo = 0;
+
+let bestCombo = 0;
+
+let locked = false;
+
+let aimingX = null;
+
+let aimingY = null;
+
+let targetX = 50;
+
+let targetY = 38;
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const range =
+    document.getElementById("range");
+
+const target =
+    document.getElementById("target");
+
+const aim =
+    document.getElementById("aim");
+
+const lockBtn =
+    document.getElementById("lockBtn");
+
+const shootBtn =
+    document.getElementById("shootBtn");
+
+const message =
+    document.getElementById("message");
+
+const flyingArrow =
+    document.getElementById("flyingArrow");
+
+
+/* =========================================
+   TARGET POSITION
+========================================= */
+
+function moveTarget() {
+
+    const minX = 20;
+
+    const maxX = 80;
+
+    const minY = 23;
+
+    const maxY = 63;
+
+
+    targetX =
+        minX +
+        Math.random() *
+        (maxX - minX);
+
+
+    targetY =
+        minY +
+        Math.random() *
+        (maxY - minY);
+
+
+    target.style.left =
+        targetX + "%";
+
+
+    target.style.top =
+        targetY + "%";
+
+}
+
+
+/* =========================================
+   AIM WITH MOUSE
+========================================= */
+
+range.addEventListener(
+    "mousemove",
+    function(e) {
+
+        if (locked)
+            return;
+
+        updateAim(
+            e.clientX,
+            e.clientY
+        );
+
+    }
+);
+
+
+/* =========================================
+   TOUCH
+========================================= */
+
+range.addEventListener(
+    "touchmove",
+    function(e) {
+
+        if (locked)
+            return;
+
+        const touch =
+            e.touches[0];
+
+        updateAim(
+            touch.clientX,
+            touch.clientY
+        );
+
+        e.preventDefault();
+
+    },
+    {
+        passive:false
+    }
+);
+
+
+/* =========================================
+   CLICK RANGE TO AIM
+========================================= */
+
+range.addEventListener(
+    "click",
+    function(e) {
+
+        if (locked)
+            return;
+
+        /*
+         Don't process clicks
+         on buttons or target controls.
+        */
+
+        updateAim(
+            e.clientX,
+            e.clientY
+        );
+
+    }
+);
+
+
+/* =========================================
+   UPDATE AIM
+========================================= */
+
+function updateAim(
+    clientX,
+    clientY
+) {
+
+    const rect =
+        range.getBoundingClientRect();
+
+
+    aimingX =
+        clientX -
+        rect.left;
+
+
+    aimingY =
+        clientY -
+        rect.top;
+
+
+    aim.style.left =
+        aimingX + "px";
+
+
+    aim.style.top =
+        aimingY + "px";
+
+
+    aim.style.display =
+        "block";
+
+}
+
+
+/* =========================================
+   LOCK AIM
+========================================= */
+
+lockBtn.addEventListener(
+    "click",
+    function() {
+
+        if (
+            aimingX === null
+        ) {
+
+            message.textContent =
+                "🎯 Move your aim onto the range first.";
+
+            return;
+
+        }
+
+
+        locked = true;
+
+
+        aim.classList.add(
+            "locked"
+        );
+
+
+        target.classList.add(
+            "locked"
+        );
+
+
+        lockBtn.textContent =
+            "🔓 UNLOCK AIM";
+
+
+        shootBtn.disabled =
+            false;
+
+
+        message.textContent =
+            "🔒 AIM LOCKED — FIRE WHEN READY!";
+
+    }
+);
+
+
+/* =========================================
+   UNLOCK
+========================================= */
+
+lockBtn.addEventListener(
+    "dblclick",
+    function() {
+
+        unlockAim();
+
+    }
+);
+
+
+/* =========================================
+   UNLOCK FUNCTION
+========================================= */
+
+function unlockAim() {
+
+    locked = false;
+
+    aim.classList.remove(
+        "locked"
+    );
+
+    target.classList.remove(
+        "locked"
+    );
+
+    lockBtn.textContent =
+        "🔒 LOCK AIM";
+
+    shootBtn.disabled =
+        true;
+
+    message.textContent =
+        "Aim again.";
+
+}
+
+
+/* =========================================
+   SHOOT
+========================================= */
+
+shootBtn.addEventListener(
+    "click",
+    shootArrow
+);
+
+
+function shootArrow() {
+
+    if (!locked)
+        return;
+
+
+    if (arrowsLeft <= 0)
+        return;
+
+
+    const targetRect =
+        target.getBoundingClientRect();
+
+
+    const rangeRect =
+        range.getBoundingClientRect();
+
+
+    /*
+       Target center
+    */
+
+    const centerX =
+        targetRect.left +
+        targetRect.width / 2 -
+        rangeRect.left;
+
+
+    const centerY =
+        targetRect.top +
+        targetRect.height / 2 -
+        rangeRect.top;
+
+
+    /*
+       Distance from
+       locked aim position
+       to target center.
+    */
+
+    const distance =
+        Math.sqrt(
+
+            Math.pow(
+                aimingX - centerX,
+                2
+            )
+
+            +
+
+            Math.pow(
+                aimingY - centerY,
+                2
+            )
+
+        );
+
+
+    const radius =
+        targetRect.width / 2;
+
+
+    let points = 0;
+
+    let resultText = "";
+
+
+    /*
+       Scoring
+    */
+
+    if (
+        distance <=
+        radius * .17
+    ) {
+
+        points = 10;
+
+        bullseyes++;
+
+        combo++;
+
+        resultText =
+            "🎯 BULLSEYE! +10";
+
+    }
+
+    else if (
+        distance <=
+        radius * .36
+    ) {
+
+        points = 8;
+
+        combo = 0;
+
+        resultText =
+            "🔥 Excellent shot! +8";
+
+    }
+
+    else if (
+        distance <=
+        radius * .56
+    ) {
+
+        points = 6;
+
+        combo = 0;
+
+        resultText =
+            "🏹 Great shot! +6";
+
+    }
+
+    else if (
+        distance <=
+        radius * .78
+    ) {
+
+        points = 4;
+
+        combo = 0;
+
+        resultText =
+            "👍 Good shot! +4";
+
+    }
+
+    else if (
+        distance <=
+        radius
+    ) {
+
+        points = 2;
+
+        combo = 0;
+
+        resultText =
+            "🎯 Edge hit! +2";
+
+    }
+
+    else {
+
+        points = 0;
+
+        combo = 0;
+
+        resultText =
+            "❌ MISS! +0";
+
+    }
+
+
+    /*
+       Combo bonus
+    */
+
+    if (
+        combo >= 3
+    ) {
+
+        points += 5;
+
+        resultText +=
+            " 🔥 COMBO +5!";
+
+    }
+
+
+    totalScore += points;
+
+
+    if (
+        combo > bestCombo
+    ) {
+
+        bestCombo =
+            combo;
+
+    }
+
+
+    arrowsLeft--;
+
+
+    updateStats();
+
+
+    /*
+       Animate arrow.
+    */
+
+    animateArrow(
+        centerX,
+        centerY,
+        function() {
+
+            message.textContent =
+                resultText;
+
+
+            if (
+                arrowsLeft > 0
+            ) {
+
+                setTimeout(
+                    function() {
+
+                        moveTarget();
+
+                        unlockAim();
+
+                        resetAim();
+
+                    },
+                    600
+                );
+
+            }
+
+            else {
+
+                setTimeout(
+                    showResult,
+                    700
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   ARROW ANIMATION
+========================================= */
+
+function animateArrow(
+    targetX,
+    targetY,
+    callback
+) {
+
+    const startX =
+        range.clientWidth / 2;
+
+
+    const startY =
+        range.clientHeight - 65;
+
+
+    flyingArrow.style.display =
+        "block";
+
+
+    flyingArrow.style.left =
+        startX + "px";
+
+
+    flyingArrow.style.top =
+        startY + "px";
+
+
+    /*
+       Calculate angle.
+    */
+
+    const angle =
+        Math.atan2(
+            targetY - startY,
+            targetX - startX
+        ) *
+        180 /
+        Math.PI;
+
+
+    flyingArrow.style.transform =
+        `rotate(${angle}deg)`;
+
+
+    /*
+       Force browser
+       to recognize starting position.
+    */
+
+    flyingArrow.getBoundingClientRect();
+
+
+    flyingArrow.style.transition =
+        "left .55s ease, top .55s ease";
+
+
+    flyingArrow.style.left =
+        targetX + "px";
+
+
+    flyingArrow.style.top =
+        targetY + "px";
+
+
+    setTimeout(
+        function() {
+
+            flyingArrow.style.display =
+                "none";
+
+            flyingArrow.style.transition =
+                "";
+
+            callback();
+
+        },
+        600
+    );
+
+}
+
+
+/* =========================================
+   RESET AIM
+========================================= */
+
+function resetAim() {
+
+    aimingX = null;
+
+    aimingY = null;
+
+    aim.style.display =
+        "none";
+
+}
+
+
+/* =========================================
+   UPDATE STATS
+========================================= */
+
+function updateStats() {
+
+    document
+        .getElementById("arrows")
+        .textContent =
+        arrowsLeft;
+
+
+    document
+        .getElementById("score")
+        .textContent =
+        totalScore;
+
+
+    document
+        .getElementById("bullseyes")
+        .textContent =
+        bullseyes;
+
+
+    document
+        .getElementById("combo")
+        .textContent =
+        "×" + combo;
+
+}
+
+
+/* =========================================
+   FINAL RESULT
+========================================= */
+
+function showResult() {
+
+    /*
+       Maximum possible score:
+       20 arrows × 10 = 200
+       plus combo bonuses.
+    */
+
+    const maxBase =
+        200;
+
+
+    const finalScore =
+        Math.min(
+            100,
+            Math.round(
+                (totalScore /
+                maxBase) *
+                100
+            )
+        );
+
+
+    document
+        .getElementById("finalScore")
+        .textContent =
+        finalScore +
+        " / 100";
+
+
+    document
+        .getElementById("finalPoints")
+        .textContent =
+        totalScore;
+
+
+    document
+        .getElementById("finalBullseyes")
+        .textContent =
+        bullseyes;
+
+
+    document
+        .getElementById("finalCombo")
+        .textContent =
+        "×" + bestCombo;
+
+
+    let title;
+
+    let icon;
+
+    let resultMessage;
+
+
+    if (
+        finalScore >= 90
+    ) {
+
+        icon = "👑";
+
+        title =
+            "Master Archer";
+
+        resultMessage =
+            "Incredible precision! The Royal Council considers you one of the finest archers in the kingdom.";
+
+    }
+
+    else if (
+        finalScore >= 75
+    ) {
+
+        icon = "🏹";
+
+        title =
+            "Royal Archer";
+
+        resultMessage =
+            "Excellent work. Your accuracy is worthy of the Royal Guard.";
+
+    }
+
+    else if (
+        finalScore >= 55
+    ) {
+
+        icon = "🎯";
+
+        title =
+            "Castle Archer";
+
+        resultMessage =
+            "Good performance. Your aim is improving, but greater precision is required.";
+
+    }
+
+    else {
+
+        icon = "🛡️";
+
+        title =
+            "Apprentice Archer";
+
+        resultMessage =
+            "The Royal Council sees potential, but you need more practice before advancing.";
+
+    }
+
+
+    document
+        .getElementById("resultIcon")
+        .textContent =
+        icon;
+
+
+    document
+        .getElementById("resultTitle")
+        .textContent =
+        title;
+
+
+    document
+        .getElementById("resultMessage")
+        .textContent =
+        resultMessage;
+
+
+    document
+        .getElementById("result")
+        .classList.add("show");
+
+}
+
+
+/* =========================================
+   LEVEL 10
+========================================= */
+
+function nextLevel() {
+
+    window.location.href =
+        "level10.html";
+
+}
+
+
+/* =========================================
+   START GAME
+========================================= */
+
+moveTarget();
+
+updateStats();
+
+</script>
+
+</body>
+
+</html>

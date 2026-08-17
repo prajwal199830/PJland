@@ -1,0 +1,2610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Level 12 — Murder at the Castle</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    min-height: 100vh;
+
+    font-family: Arial, sans-serif;
+
+    color: #fff;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #29181d,
+            #0d080a 60%,
+            #050304
+        );
+
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+
+    height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 30px;
+
+    background: rgba(5,3,4,.96);
+
+    border-bottom:
+        1px solid #493238;
+
+}
+
+.logo {
+
+    font-family: Georgia, serif;
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+    color: #cfae62;
+
+}
+
+.logo span {
+
+    color: white;
+
+}
+
+.level {
+
+    color: #83747a;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.container {
+
+    width:
+        min(1150px, calc(100% - 24px));
+
+    margin: auto;
+
+    padding: 25px 0 50px;
+
+}
+
+
+/* =========================
+   TITLE
+========================= */
+
+.title {
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+}
+
+.title small {
+
+    color: #cda84e;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+}
+
+.title h1 {
+
+    font-family: Georgia, serif;
+
+    font-size:
+        clamp(28px, 5vw, 44px);
+
+    margin: 7px 0;
+
+}
+
+.title p {
+
+    color: #978a8e;
+
+    font-size: 13px;
+
+}
+
+
+/* =========================
+   STATS
+========================= */
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 10px;
+
+    margin-bottom: 15px;
+
+}
+
+.stat {
+
+    background:
+        #171012;
+
+    border:
+        1px solid #443039;
+
+    border-radius: 10px;
+
+    padding: 12px;
+
+    text-align: center;
+
+}
+
+.stat span {
+
+    display: block;
+
+    color: #75696d;
+
+    font-size: 9px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 5px;
+
+}
+
+.stat strong {
+
+    color: #d6b75d;
+
+    font-family: Georgia, serif;
+
+    font-size: 19px;
+
+}
+
+
+/* =========================
+   CASE BOARD
+========================= */
+
+.board {
+
+    background:
+        #110b0e;
+
+    border:
+        1px solid #50383f;
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.5);
+
+}
+
+
+/* =========================
+   STORY
+========================= */
+
+.story {
+
+    padding: 18px;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #211318,
+            #140d10
+        );
+
+    border:
+        1px solid #4c333b;
+
+    margin-bottom: 18px;
+
+}
+
+.story h2 {
+
+    font-family: Georgia, serif;
+
+    color: #d9ba64;
+
+    margin-bottom: 8px;
+
+}
+
+.story p {
+
+    color: #a99b9e;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+}
+
+
+/* =========================
+   ROOMS
+========================= */
+
+.section-title {
+
+    font-family: Georgia, serif;
+
+    color: #d7b65b;
+
+    margin: 20px 0 12px;
+
+    font-size: 18px;
+
+}
+
+.rooms {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 10px;
+
+}
+
+.room {
+
+    padding: 16px 10px;
+
+    border:
+        1px solid #463139;
+
+    border-radius: 10px;
+
+    background:
+        #171013;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+}
+
+.room:hover {
+
+    transform:
+        translateY(-3px);
+
+    border-color:
+        #9b7443;
+
+}
+
+.room-icon {
+
+    font-size: 30px;
+
+    margin-bottom: 7px;
+
+}
+
+.room h3 {
+
+    font-size: 12px;
+
+}
+
+.room small {
+
+    color: #75696d;
+
+    font-size: 9px;
+
+}
+
+
+/* =========================
+   SUSPECTS
+========================= */
+
+.suspects {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 12px;
+
+}
+
+.suspect {
+
+    position: relative;
+
+    padding: 18px;
+
+    border:
+        1px solid #49323a;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #1b1115,
+            #100a0d
+        );
+
+    cursor: pointer;
+
+    transition: .2s;
+
+}
+
+.suspect:hover {
+
+    transform:
+        translateY(-3px);
+
+    border-color:
+        #a17c48;
+
+}
+
+.suspect-icon {
+
+    font-size: 42px;
+
+    margin-bottom: 7px;
+
+}
+
+.suspect h3 {
+
+    font-family: Georgia, serif;
+
+    color: #e0c26c;
+
+    margin-bottom: 5px;
+
+}
+
+.suspect p {
+
+    color: #807479;
+
+    font-size: 10px;
+
+}
+
+.suspect .badge {
+
+    position: absolute;
+
+    top: 10px;
+
+    right: 10px;
+
+    font-size: 9px;
+
+    padding: 4px 7px;
+
+    border-radius: 20px;
+
+    background:
+        #2b1a20;
+
+    color: #a9959a;
+
+}
+
+
+/* =========================
+   EVIDENCE
+========================= */
+
+.evidence {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 10px;
+
+}
+
+.evidence-card {
+
+    min-height: 100px;
+
+    padding: 14px;
+
+    background:
+        #171013;
+
+    border:
+        1px solid #443038;
+
+    border-radius: 10px;
+
+}
+
+.evidence-card .icon {
+
+    font-size: 25px;
+
+    margin-bottom: 7px;
+
+}
+
+.evidence-card h4 {
+
+    color: #d4b45d;
+
+    font-size: 12px;
+
+    margin-bottom: 5px;
+
+}
+
+.evidence-card p {
+
+    color: #8d8185;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+
+}
+
+
+/* =========================
+   LOG
+========================= */
+
+.log {
+
+    margin-top: 18px;
+
+    padding: 15px;
+
+    background:
+        #0c080a;
+
+    border:
+        1px solid #38272d;
+
+    border-radius: 10px;
+
+}
+
+.log-title {
+
+    color: #c8a958;
+
+    font-family: Georgia, serif;
+
+    margin-bottom: 8px;
+
+}
+
+.log-list {
+
+    min-height: 45px;
+
+    color: #817579;
+
+    font-size: 11px;
+
+    line-height: 1.7;
+
+}
+
+
+/* =========================
+   FINAL ACCUSATION
+========================= */
+
+.accuse {
+
+    margin-top: 20px;
+
+    padding: 22px;
+
+    text-align: center;
+
+    border:
+        1px solid #66424c;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #251319,
+            #120b0e
+        );
+
+}
+
+.accuse h2 {
+
+    font-family: Georgia, serif;
+
+    margin-bottom: 7px;
+
+    color: #e0c16a;
+
+}
+
+.accuse p {
+
+    color: #918387;
+
+    font-size: 12px;
+
+    margin-bottom: 15px;
+
+}
+
+.accuse-btn {
+
+    padding: 13px 25px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #875437,
+            #c99d51
+        );
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(3,2,3,.9);
+
+}
+
+.modal.show {
+
+    display: flex;
+
+}
+
+.modal-card {
+
+    width:
+        min(550px,100%);
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    padding: 25px;
+
+    border-radius: 18px;
+
+    background:
+        #171013;
+
+    border:
+        1px solid #63434d;
+
+}
+
+.modal-card h2 {
+
+    font-family: Georgia, serif;
+
+    color: #dfc16b;
+
+    margin-bottom: 12px;
+
+}
+
+.modal-card p {
+
+    color: #a89a9e;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+    margin-bottom: 15px;
+
+}
+
+.close {
+
+    width: 100%;
+
+    margin-top: 10px;
+
+    padding: 10px;
+
+    background: transparent;
+
+    border: none;
+
+    color: #756a6e;
+
+    cursor: pointer;
+
+}
+
+
+/* =========================
+   WITNESS STATEMENT
+========================= */
+
+.statement {
+
+    padding: 14px;
+
+    margin: 8px 0;
+
+    border-radius: 8px;
+
+    background:
+        #0d090b;
+
+    border:
+        1px solid #3b2930;
+
+}
+
+.statement strong {
+
+    display: block;
+
+    color: #c9a957;
+
+    margin-bottom: 5px;
+
+}
+
+.statement span {
+
+    color: #918589;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+
+}
+
+
+/* =========================
+   FINAL RESULT
+========================= */
+
+.result {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 200;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(3,2,3,.96);
+
+}
+
+.result.show {
+
+    display: flex;
+
+}
+
+.result-card {
+
+    width:
+        min(620px,100%);
+
+    text-align: center;
+
+    padding: 35px 25px;
+
+    border-radius: 22px;
+
+    background:
+        #171013;
+
+    border:
+        1px solid #684650;
+
+}
+
+.result-icon {
+
+    font-size: 70px;
+
+}
+
+.result-card h2 {
+
+    font-family: Georgia, serif;
+
+    font-size: 31px;
+
+    margin: 10px 0;
+
+}
+
+.score {
+
+    color: #dfc064;
+
+    font-family: Georgia, serif;
+
+    font-size: 50px;
+
+    margin: 15px;
+
+}
+
+.result-card p {
+
+    color: #95898d;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+}
+
+.continue {
+
+    width: 100%;
+
+    margin-top: 18px;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #875437,
+            #d0a451
+        );
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px) {
+
+    header {
+
+        padding: 0 15px;
+
+    }
+
+    .level {
+
+        display: none;
+
+    }
+
+    .stats {
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+    .rooms {
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+    .suspects {
+
+        grid-template-columns:
+            1fr 1fr;
+
+    }
+
+    .evidence {
+
+        grid-template-columns:
+            1fr 1fr;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+
+        <span>PJLand</span>
+
+    </div>
+
+    <div class="level">
+
+        LEVEL 12 • THE ROYAL MURDER
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<div class="title">
+
+    <small>LEVEL 12</small>
+
+    <h1>🕵️ Murder at the Castle</h1>
+
+    <p>
+        Someone poisoned the King. Find out who.
+    </p>
+
+</div>
+
+
+
+<div class="stats">
+
+    <div class="stat">
+
+        <span>Time</span>
+
+        <strong id="time">
+            15:00
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>Evidence</span>
+
+        <strong id="evidenceCount">
+            0 / 8
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>Interviews</span>
+
+        <strong id="interviews">
+            0 / 6
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>Investigation</span>
+
+        <strong id="score">
+            100
+        </strong>
+
+    </div>
+
+</div>
+
+
+
+<div class="board">
+
+
+<div class="story">
+
+    <h2>⚠️ The King's Last Dinner</h2>
+
+    <p>
+
+        Last night the King hosted six people for dinner.
+        At 10:15 PM he suddenly collapsed.
+
+        The royal physician confirmed that the King's wine
+        contained poison.
+
+        One of the six people in the castle is responsible.
+
+        <br><br>
+
+        <strong style="color:#d8b65d">
+            You are the Royal Investigator.
+            Find the murderer before they escape.
+        </strong>
+
+    </p>
+
+</div>
+
+
+
+<!-- =========================
+     ROOMS
+========================= -->
+
+<div class="section-title">
+
+    🔎 Investigate the Castle
+
+</div>
+
+
+<div class="rooms">
+
+
+    <div
+        class="room"
+        onclick="inspectRoom('dining')">
+
+        <div class="room-icon">
+            🍷
+        </div>
+
+        <h3>Dining Hall</h3>
+
+        <small>
+            Examine the crime scene
+        </small>
+
+    </div>
+
+
+    <div
+        class="room"
+        onclick="inspectRoom('kitchen')">
+
+        <div class="room-icon">
+            🍳
+        </div>
+
+        <h3>Kitchen</h3>
+
+        <small>
+            Search for poison
+        </small>
+
+    </div>
+
+
+    <div
+        class="room"
+        onclick="inspectRoom('office')">
+
+        <div class="room-icon">
+            📜
+        </div>
+
+        <h3>King's Office</h3>
+
+        <small>
+            Search documents
+        </small>
+
+    </div>
+
+
+    <div
+        class="room"
+        onclick="inspectRoom('garden')">
+
+        <div class="room-icon">
+            🌿
+        </div>
+
+        <h3>Garden</h3>
+
+        <small>
+            Examine footprints
+        </small>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     SUSPECTS
+========================= -->
+
+<div class="section-title">
+
+    👤 Question the Suspects
+
+</div>
+
+
+<div class="suspects">
+
+
+    <div
+        class="suspect"
+        onclick="interview('chef')">
+
+        <div class="badge">
+            SUSPECT
+        </div>
+
+        <div class="suspect-icon">
+            👨‍🍳
+        </div>
+
+        <h3>The Chef</h3>
+
+        <p>
+            Prepared the King's dinner.
+        </p>
+
+    </div>
+
+
+    <div
+        class="suspect"
+        onclick="interview('guard')">
+
+        <div class="badge">
+            SUSPECT
+        </div>
+
+        <div class="suspect-icon">
+            🛡️
+        </div>
+
+        <h3>The Guard</h3>
+
+        <p>
+            Guarded the dining hall.
+        </p>
+
+    </div>
+
+
+    <div
+        class="suspect"
+        onclick="interview('advisor')">
+
+        <div class="badge">
+            SUSPECT
+        </div>
+
+        <div class="suspect-icon">
+            🧙
+        </div>
+
+        <h3>The Advisor</h3>
+
+        <p>
+            Had a private meeting with the King.
+        </p>
+
+    </div>
+
+
+    <div
+        class="suspect"
+        onclick="interview('queen')">
+
+        <div class="badge">
+            SUSPECT
+        </div>
+
+        <div class="suspect-icon">
+            👸
+        </div>
+
+        <h3>The Queen</h3>
+
+        <p>
+            Sat beside the King.
+        </p>
+
+    </div>
+
+
+    <div
+        class="suspect"
+        onclick="interview('treasurer')">
+
+        <div class="badge">
+            SUSPECT
+        </div>
+
+        <div class="suspect-icon">
+            💰
+        </div>
+
+        <h3>The Treasurer</h3>
+
+        <p>
+            Recently argued with the King.
+        </p>
+
+    </div>
+
+
+    <div
+        class="suspect"
+        onclick="interview('servant')">
+
+        <div class="badge">
+            SUSPECT
+        </div>
+
+        <div class="suspect-icon">
+            🧑‍🌾
+        </div>
+
+        <h3>The Servant</h3>
+
+        <p>
+            Served the wine.
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     EVIDENCE
+========================= -->
+
+<div class="section-title">
+
+    🧩 Evidence Board
+
+</div>
+
+
+<div
+    class="evidence"
+    id="evidenceBoard">
+
+
+    <div class="evidence-card">
+
+        <div class="icon">
+            🔒
+        </div>
+
+        <h4>Unknown</h4>
+
+        <p>
+            Investigate the castle to discover evidence.
+        </p>
+
+    </div>
+
+
+    <div class="evidence-card">
+
+        <div class="icon">
+            🔒
+        </div>
+
+        <h4>Unknown</h4>
+
+        <p>
+            Investigate the castle to discover evidence.
+        </p>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================
+     INVESTIGATION LOG
+========================= -->
+
+<div class="log">
+
+    <div class="log-title">
+
+        📓 Investigation Notes
+
+    </div>
+
+    <div
+        class="log-list"
+        id="log">
+
+        No evidence collected yet.
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     ACCUSATION
+========================= -->
+
+<div class="accuse">
+
+    <h2>
+        ⚖️ Make Your Accusation
+    </h2>
+
+    <p>
+
+        You may accuse someone at any time.
+        But choose carefully.
+
+        A wrong accusation will cost you points.
+
+    </p>
+
+    <button
+        class="accuse-btn"
+        onclick="openAccusation()">
+
+        ACCUSE THE MURDERER
+
+    </button>
+
+</div>
+
+
+</div>
+
+</main>
+
+
+
+<!-- =========================
+     MODAL
+========================= -->
+
+<div
+    class="modal"
+    id="modal">
+
+
+<div class="modal-card">
+
+    <h2 id="modalTitle">
+        Investigation
+    </h2>
+
+    <div id="modalContent">
+    </div>
+
+    <button
+        class="close"
+        onclick="closeModal()">
+
+        CLOSE
+
+    </button>
+
+</div>
+
+
+</div>
+
+
+
+<!-- =========================
+     RESULT
+========================= -->
+
+<div
+    class="result"
+    id="result">
+
+
+<div class="result-card">
+
+    <div
+        class="result-icon"
+        id="resultIcon">
+
+        👑
+
+    </div>
+
+
+    <h2 id="resultTitle">
+
+        Case Solved
+
+    </h2>
+
+
+    <div
+        class="score"
+        id="finalScore">
+
+        100 / 100
+
+    </div>
+
+
+    <p id="resultText">
+
+    </p>
+
+
+    <button
+        class="continue"
+        onclick="nextLevel()">
+
+        ENTER LEVEL 13 →
+
+    </button>
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+/* =========================================
+   GAME STATE
+========================================= */
+
+let timeLeft = 900;
+
+let score = 100;
+
+let evidence = [];
+
+let interviewed = [];
+
+let timer;
+
+
+/* =========================================
+   EVIDENCE DATA
+========================================= */
+
+const evidenceData = {
+
+    wine: {
+
+        icon: "🍷",
+
+        title: "Poisoned Wine",
+
+        text:
+        "The poison was added directly to the King's wine glass."
+
+    },
+
+    glove: {
+
+        icon: "🧤",
+
+        title: "Black Glove",
+
+        text:
+        "A black glove was discovered beneath the dining table."
+
+    },
+
+    footprint: {
+
+        icon: "👣",
+
+        title: "Garden Footprint",
+
+        text:
+        "A muddy footprint leads from the garden toward the kitchen."
+
+    },
+
+    ledger: {
+
+        icon: "📖",
+
+        title: "Royal Ledger",
+
+        text:
+        "The Treasurer recently moved a large amount of money without permission."
+
+    },
+
+    letter: {
+
+        icon: "✉️",
+
+        title: "Threatening Letter",
+
+        text:
+        "The King received a threatening letter earlier that evening."
+
+    },
+
+    poison: {
+
+        icon: "☠️",
+
+        title: "Missing Poison",
+
+        text:
+        "A bottle of poison is missing from the kitchen cabinet."
+
+    },
+
+    clock: {
+
+        icon: "🕰️",
+
+        title: "Broken Clock",
+
+        text:
+        "The dining hall clock stopped at exactly 10:05 PM."
+
+    },
+
+    key: {
+
+        icon: "🔑",
+
+        title: "Kitchen Key",
+
+        text:
+        "The kitchen key was found in the Guard's possession."
+
+    }
+
+};
+
+
+/* =========================================
+   TIMER
+========================================= */
+
+timer = setInterval(
+    function() {
+
+        timeLeft--;
+
+        updateTime();
+
+        if (
+            timeLeft <= 0
+        ) {
+
+            clearInterval(timer);
+
+            timeUp();
+
+        }
+
+    },
+    1000
+);
+
+
+function updateTime() {
+
+    let m =
+        Math.floor(
+            timeLeft / 60
+        );
+
+    let s =
+        timeLeft % 60;
+
+    document
+        .getElementById("time")
+        .textContent =
+
+        String(m)
+            .padStart(2,"0")
+
+        + ":" +
+
+        String(s)
+            .padStart(2,"0");
+
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+function openModal(
+    title,
+    html
+) {
+
+    document
+        .getElementById(
+            "modalTitle"
+        )
+        .textContent =
+        title;
+
+
+    document
+        .getElementById(
+            "modalContent"
+        )
+        .innerHTML =
+        html;
+
+
+    document
+        .getElementById(
+            "modal"
+        )
+        .classList
+        .add("show");
+
+}
+
+
+function closeModal() {
+
+    document
+        .getElementById(
+            "modal"
+        )
+        .classList
+        .remove("show");
+
+}
+
+
+/* =========================================
+   ADD EVIDENCE
+========================================= */
+
+function addEvidence(
+    id
+) {
+
+    if (
+        evidence.includes(id)
+    )
+        return;
+
+
+    evidence.push(id);
+
+
+    updateEvidence();
+
+    addLog(
+        evidenceData[id].title +
+        ": " +
+        evidenceData[id].text
+    );
+
+}
+
+
+function updateEvidence() {
+
+    document
+        .getElementById(
+            "evidenceCount"
+        )
+        .textContent =
+
+        evidence.length +
+        " / 8";
+
+
+    const board =
+        document
+            .getElementById(
+                "evidenceBoard"
+            );
+
+
+    board.innerHTML = "";
+
+
+    evidence.forEach(
+        function(id) {
+
+            const item =
+                evidenceData[id];
+
+
+            board.innerHTML += `
+
+                <div class="evidence-card">
+
+                    <div class="icon">
+                        ${item.icon}
+                    </div>
+
+                    <h4>
+                        ${item.title}
+                    </h4>
+
+                    <p>
+                        ${item.text}
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   LOG
+========================================= */
+
+function addLog(
+    text
+) {
+
+    const log =
+        document
+            .getElementById(
+                "log"
+            );
+
+
+    if (
+        log.textContent ===
+        "No evidence collected yet."
+    ) {
+
+        log.textContent = "";
+
+    }
+
+
+    log.innerHTML +=
+        "• " +
+        text +
+        "<br>";
+
+}
+
+
+/* =========================================
+   ROOM INVESTIGATION
+========================================= */
+
+function inspectRoom(
+    room
+) {
+
+    if (
+        room === "dining"
+    ) {
+
+        addEvidence("wine");
+
+        addEvidence("glove");
+
+        addEvidence("clock");
+
+
+        openModal(
+
+            "🍷 Dining Hall",
+
+            `
+
+            <p>
+            The King's chair is still pulled back.
+            His wine glass contains traces of poison.
+            Beneath the table you discover a black glove.
+            </p>
+
+            <div class="statement">
+
+                <strong>
+                    Important Observation
+                </strong>
+
+                <span>
+                The dining hall clock stopped at 10:05 PM.
+                The King collapsed around 10:15 PM.
+                </span>
+
+            </div>
+
+            `
+
+        );
+
+    }
+
+
+    if (
+        room === "kitchen"
+    ) {
+
+        addEvidence("poison");
+
+        addEvidence("footprint");
+
+
+        openModal(
+
+            "🍳 Kitchen",
+
+            `
+
+            <p>
+            One bottle of poison is missing.
+            You also notice muddy footprints near the
+            back entrance.
+            </p>
+
+            <div class="statement">
+
+                <strong>
+                    Kitchen Observation
+                </strong>
+
+                <span>
+                The back door leads directly toward the garden.
+                </span>
+
+            </div>
+
+            `
+
+        );
+
+    }
+
+
+    if (
+        room === "office"
+    ) {
+
+        addEvidence("ledger");
+
+        addEvidence("letter");
+
+
+        openModal(
+
+            "📜 King's Office",
+
+            `
+
+            <p>
+            You search the King's desk.
+            </p>
+
+            <div class="statement">
+
+                <strong>
+                    Royal Ledger
+                </strong>
+
+                <span>
+                A large amount of money has recently
+                disappeared from the royal treasury.
+                </span>
+
+            </div>
+
+            <div class="statement">
+
+                <strong>
+                    Threatening Letter
+                </strong>
+
+                <span>
+                "You will regret taking what belongs to me."
+                </span>
+
+            </div>
+
+            `
+
+        );
+
+    }
+
+
+    if (
+        room === "garden"
+    ) {
+
+        addEvidence("footprint");
+
+
+        openModal(
+
+            "🌿 Castle Garden",
+
+            `
+
+            <p>
+            The ground is wet from rain.
+            You discover one clear footprint.
+            </p>
+
+            <div class="statement">
+
+                <strong>
+                    Footprint
+                </strong>
+
+                <span>
+                The footprint leads toward the kitchen,
+                but there are no footprints going back.
+                </span>
+
+            </div>
+
+            `
+
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   INTERVIEWS
+========================================= */
+
+function interview(
+    person
+) {
+
+    if (
+        interviewed.includes(person)
+    ) {
+
+        openModal(
+
+            "Already Interviewed",
+
+            "<p>You have already questioned this suspect.</p>"
+
+        );
+
+        return;
+
+    }
+
+
+    interviewed.push(person);
+
+
+    document
+        .getElementById(
+            "interviews"
+        )
+        .textContent =
+
+        interviewed.length +
+        " / 6";
+
+
+    let title = "";
+
+    let statements = "";
+
+
+    if (
+        person === "chef"
+    ) {
+
+        title =
+            "👨‍🍳 The Chef";
+
+        statements = `
+
+            <div class="statement">
+
+                <strong>
+                    Chef's Statement
+                </strong>
+
+                <span>
+                "I prepared the food, but I never touched
+                the King's wine. I was in the kitchen until
+                9:50 PM."
+                </span>
+
+            </div>
+
+            <div class="statement">
+
+                <strong>
+                    Observation
+                </strong>
+
+                <span>
+                The Chef has flour on both hands.
+                </span>
+
+            </div>
+
+        `;
+
+    }
+
+
+    if (
+        person === "guard"
+    ) {
+
+        title =
+            "🛡️ The Guard";
+
+        addEvidence("key");
+
+        statements = `
+
+            <div class="statement">
+
+                <strong>
+                    Guard's Statement
+                </strong>
+
+                <span>
+                "I remained near the dining hall.
+                Nobody entered through the main door."
+                </span>
+
+            </div>
+
+            <div class="statement">
+
+                <strong>
+                    Strange Detail
+                </strong>
+
+                <span>
+                The kitchen key was found in the Guard's pocket.
+                </span>
+
+            </div>
+
+        `;
+
+    }
+
+
+    if (
+        person === "advisor"
+    ) {
+
+        title =
+            "🧙 The Advisor";
+
+        statements = `
+
+            <div class="statement">
+
+                <strong>
+                    Advisor's Statement
+                </strong>
+
+                <span>
+                "I spoke with the King in his office
+                until 9:45 PM. After that I went directly
+                to my room."
+                </span>
+
+            </div>
+
+        `;
+
+    }
+
+
+    if (
+        person === "queen"
+    ) {
+
+        title =
+            "👸 The Queen";
+
+        statements = `
+
+            <div class="statement">
+
+                <strong>
+                    Queen's Statement
+                </strong>
+
+                <span>
+                "I sat beside the King throughout dinner.
+                I watched the Chef bring the food."
+                </span>
+
+            </div>
+
+        `;
+
+    }
+
+
+    if (
+        person === "treasurer"
+    ) {
+
+        title =
+            "💰 The Treasurer";
+
+        statements = `
+
+            <div class="statement">
+
+                <strong>
+                    Treasurer's Statement
+                </strong>
+
+                <span>
+                "Yes, I argued with the King.
+                But after our argument I went to my office."
+                </span>
+
+            </div>
+
+            <div class="statement">
+
+                <strong>
+                    Strange Detail
+                </strong>
+
+                <span>
+                The threatening letter may be connected
+                to the Treasurer's financial dispute.
+                </span>
+
+            </div>
+
+        `;
+
+    }
+
+
+    if (
+        person === "servant"
+    ) {
+
+        title =
+            "🧑‍🌾 The Servant";
+
+        statements = `
+
+            <div class="statement">
+
+                <strong>
+                    Servant's Statement
+                </strong>
+
+                <span>
+                "I delivered the wine at 10:00 PM.
+                Then I left through the kitchen."
+                </span>
+
+            </div>
+
+            <div class="statement">
+
+                <strong>
+                    Important Detail
+                </strong>
+
+                <span>
+                The servant claims to have left through
+                the kitchen shortly before the King collapsed.
+                </span>
+
+            </div>
+
+        `;
+
+    }
+
+
+    openModal(
+        title,
+        statements
+    );
+
+}
+
+
+/* =========================================
+   ACCUSATION
+========================================= */
+
+function openAccusation() {
+
+    openModal(
+
+        "⚖️ Final Accusation",
+
+        `
+
+        <p>
+        Study everything you have discovered.
+        Who poisoned the King?
+        </p>
+
+        <select
+            id="accused"
+            style="
+                width:100%;
+                padding:13px;
+                background:#0c080a;
+                color:white;
+                border:1px solid #4a343c;
+                border-radius:8px;
+                margin-bottom:12px;
+            ">
+
+            <option value="">
+                Select suspect
+            </option>
+
+            <option value="chef">
+                The Chef
+            </option>
+
+            <option value="guard">
+                The Guard
+            </option>
+
+            <option value="advisor">
+                The Advisor
+            </option>
+
+            <option value="queen">
+                The Queen
+            </option>
+
+            <option value="treasurer">
+                The Treasurer
+            </option>
+
+            <option value="servant">
+                The Servant
+            </option>
+
+        </select>
+
+
+        <button
+            onclick="submitAccusation()"
+            style="
+                width:100%;
+                padding:13px;
+                border:0;
+                border-radius:8px;
+                background:linear-gradient(
+                    135deg,
+                    #875437,
+                    #d0a451
+                );
+                font-weight:bold;
+                cursor:pointer;
+            ">
+
+            CONFIRM ACCUSATION
+
+        </button>
+
+        `
+
+    );
+
+}
+
+
+/* =========================================
+   FINAL ANSWER
+========================================= */
+
+function submitAccusation() {
+
+    const accused =
+        document
+            .getElementById(
+                "accused"
+            )
+            .value;
+
+
+    if (
+        !accused
+    )
+        return;
+
+
+    /*
+       Correct murderer:
+       THE SERVANT
+
+       The servant had access to the wine,
+       entered through the kitchen,
+       and his timeline conflicts with
+       the dining hall evidence.
+    */
+
+    if (
+        accused === "servant"
+    ) {
+
+        score += 20;
+
+        score =
+            Math.min(
+                100,
+                score
+            );
+
+
+        closeModal();
+
+        finishGame(true);
+
+    }
+
+    else {
+
+        score -= 20;
+
+        score =
+            Math.max(
+                0,
+                score
+            );
+
+
+        document
+            .getElementById(
+                "score"
+            )
+            .textContent =
+            score;
+
+
+        closeModal();
+
+
+        setTimeout(
+            function() {
+
+                openModal(
+
+                    "❌ Wrong Accusation",
+
+                    `
+
+                    <p>
+                    The person you accused is not the murderer.
+                    </p>
+
+                    <p>
+                    The Royal Council allows you to continue
+                    investigating, but your investigation score
+                    has been reduced.
+                    </p>
+
+                    `
+
+                );
+
+            },
+            300
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   FINISH
+========================================= */
+
+function finishGame(
+    correct
+) {
+
+    clearInterval(
+        timer
+    );
+
+
+    let icon =
+        correct
+            ? "🕵️"
+            : "💀";
+
+
+    let title =
+        correct
+            ? "Murder Solved"
+            : "The Murderer Escaped";
+
+
+    let text;
+
+
+    if (
+        correct
+    ) {
+
+        text =
+
+        "Excellent investigation. You connected the evidence, challenged the suspects and identified the murderer. The King would trust you with the next royal trial.";
+
+    }
+
+    else {
+
+        text =
+
+        "The castle mystery remains unsolved.";
+
+    }
+
+
+    document
+        .getElementById(
+            "resultIcon"
+        )
+        .textContent =
+        icon;
+
+
+    document
+        .getElementById(
+            "resultTitle"
+        )
+        .textContent =
+        title;
+
+
+    document
+        .getElementById(
+            "finalScore"
+        )
+        .textContent =
+
+        score +
+        " / 100";
+
+
+    document
+        .getElementById(
+            "resultText"
+        )
+        .textContent =
+        text;
+
+
+    document
+        .getElementById(
+            "result"
+        )
+        .classList
+        .add("show");
+
+}
+
+
+/* =========================================
+   TIME UP
+========================================= */
+
+function timeUp() {
+
+    score =
+        Math.max(
+            0,
+            score - 30
+        );
+
+
+    document
+        .getElementById(
+            "resultIcon"
+        )
+        .textContent =
+        "⏰";
+
+
+    document
+        .getElementById(
+            "resultTitle"
+        )
+        .textContent =
+        "The Case Went Cold";
+
+
+    document
+        .getElementById(
+            "finalScore"
+        )
+        .textContent =
+
+        score +
+        " / 100";
+
+
+    document
+        .getElementById(
+            "resultText"
+        )
+        .textContent =
+
+        "You ran out of time before identifying the murderer. The Royal Council will expect a faster investigation next time.";
+
+
+    document
+        .getElementById(
+            "result"
+        )
+        .classList
+        .add("show");
+
+}
+
+
+/* =========================================
+   NEXT LEVEL
+========================================= */
+
+function nextLevel() {
+
+    window.location.href =
+        "level13.html";
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+updateTime();
+
+</script>
+
+</body>
+
+</html>

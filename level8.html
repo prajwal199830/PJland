@@ -1,0 +1,2247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Level 8 — Castle Strategy Trial</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    min-height: 100vh;
+
+    font-family: Arial, sans-serif;
+
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #3b2c18,
+            #17130d 50%,
+            #080706
+        );
+}
+
+
+/* =================================
+   HEADER
+================================= */
+
+.header {
+
+    height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 30px;
+
+    background:
+        rgba(10,8,5,.96);
+
+    border-bottom:
+        1px solid #3b3223;
+
+}
+
+.logo {
+
+    font-family: Georgia, serif;
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+    color: #e4c267;
+
+}
+
+.logo span {
+
+    color: white;
+
+}
+
+.level {
+
+    color: #958a76;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+}
+
+
+/* =================================
+   MAIN
+================================= */
+
+.container {
+
+    width:
+        min(900px, calc(100% - 25px));
+
+    margin: auto;
+
+    padding: 28px 0 60px;
+
+}
+
+
+/* =================================
+   TITLE
+================================= */
+
+.title {
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+}
+
+.title small {
+
+    color: #d3ad52;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+}
+
+.title h1 {
+
+    font-family: Georgia, serif;
+
+    font-size:
+        clamp(28px, 5vw, 42px);
+
+    margin: 8px 0;
+
+}
+
+.title p {
+
+    color: #938c7d;
+
+    font-size: 13px;
+
+}
+
+
+/* =================================
+   STATS
+================================= */
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 10px;
+
+    margin-bottom: 14px;
+
+}
+
+.stat {
+
+    padding: 13px;
+
+    text-align: center;
+
+    border-radius: 11px;
+
+    background:
+        #17140f;
+
+    border:
+        1px solid #3a3224;
+
+}
+
+.stat span {
+
+    display: block;
+
+    color: #817a6d;
+
+    font-size: 9px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 5px;
+
+}
+
+.stat strong {
+
+    color: #e0bf64;
+
+    font-family: Georgia, serif;
+
+    font-size: 20px;
+
+}
+
+
+/* =================================
+   PROGRESS
+================================= */
+
+.progress-container {
+
+    margin-bottom: 15px;
+
+}
+
+.progress-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    color: #817b70;
+
+    font-size: 10px;
+
+    margin-bottom: 6px;
+
+}
+
+.progress {
+
+    height: 7px;
+
+    background:
+        #272218;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+}
+
+.progress-bar {
+
+    width: 5%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #95702c,
+            #e0c264
+        );
+
+    transition: .3s;
+
+}
+
+
+/* =================================
+   SCENARIO CARD
+================================= */
+
+.card {
+
+    background:
+        linear-gradient(
+            145deg,
+            #1b1710,
+            #12100c
+        );
+
+    border:
+        1px solid #4a3d29;
+
+    border-radius: 20px;
+
+    padding: 30px;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.4);
+
+}
+
+
+/* =================================
+   SCENARIO HEADER
+================================= */
+
+.scenario-number {
+
+    color: #c49a43;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 12px;
+
+}
+
+.scenario-title {
+
+    font-family: Georgia, serif;
+
+    font-size: 27px;
+
+    line-height: 1.3;
+
+    margin-bottom: 15px;
+
+}
+
+.scenario {
+
+    color: #b2ab9d;
+
+    font-size: 14px;
+
+    line-height: 1.8;
+
+    padding: 18px;
+
+    background:
+        #0e0d0a;
+
+    border:
+        1px solid #30291d;
+
+    border-radius: 12px;
+
+    margin-bottom: 22px;
+
+}
+
+
+/* =================================
+   CHOICES
+================================= */
+
+.choice-title {
+
+    color: #777064;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 10px;
+
+}
+
+.choices {
+
+    display: grid;
+
+    gap: 10px;
+
+}
+
+.choice {
+
+    width: 100%;
+
+    padding: 16px;
+
+    text-align: left;
+
+    border-radius: 10px;
+
+    border:
+        1px solid #3a3328;
+
+    background:
+        #211d16;
+
+    color: #dcd6ca;
+
+    cursor: pointer;
+
+    transition: .18s;
+
+    font-size: 13px;
+
+}
+
+.choice:hover {
+
+    background:
+        #2c261c;
+
+    border-color:
+        #8f733b;
+
+    transform:
+        translateX(3px);
+
+}
+
+.choice.correct {
+
+    background:
+        #263b29;
+
+    border-color:
+        #71936b;
+
+}
+
+.choice.good {
+
+    background:
+        #303521;
+
+    border-color:
+        #a69b5a;
+
+}
+
+.choice.bad {
+
+    background:
+        #412a23;
+
+    border-color:
+        #a65d4f;
+
+}
+
+.choice:disabled {
+
+    cursor: default;
+
+}
+
+
+/* =================================
+   OUTCOME
+================================= */
+
+.outcome {
+
+    display: none;
+
+    margin-top: 18px;
+
+    padding: 18px;
+
+    border-radius: 12px;
+
+    background:
+        #11100c;
+
+    border:
+        1px solid #3c3427;
+
+}
+
+.outcome.show {
+
+    display: block;
+
+}
+
+.outcome-label {
+
+    color: #d2ad57;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 8px;
+
+}
+
+.outcome-text {
+
+    color: #aaa396;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+}
+
+.next-btn {
+
+    width: 100%;
+
+    margin-top: 18px;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #98732e,
+            #dfc064
+        );
+
+    color: #171209;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+/* =================================
+   FINAL RESULT
+================================= */
+
+.result {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(5,4,2,.92);
+
+    z-index: 100;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+}
+
+.result.show {
+
+    display: flex;
+
+}
+
+.result-card {
+
+    width:
+        min(600px,100%);
+
+    padding: 40px 30px;
+
+    text-align: center;
+
+    border-radius: 22px;
+
+    background:
+        #17140e;
+
+    border:
+        1px solid #655331;
+
+    box-shadow:
+        0 30px 100px rgba(0,0,0,.7);
+
+}
+
+.result-icon {
+
+    font-size: 70px;
+
+    margin-bottom: 10px;
+
+}
+
+.result-card h2 {
+
+    font-family: Georgia, serif;
+
+    font-size: 32px;
+
+    margin-bottom: 10px;
+
+}
+
+.result-card p {
+
+    color: #958f82;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+}
+
+.final-score {
+
+    font-family: Georgia, serif;
+
+    color: #e2c265;
+
+    font-size: 45px;
+
+    margin: 15px 0;
+
+}
+
+
+/* =================================
+   RESULT STATS
+================================= */
+
+.result-stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 8px;
+
+    margin: 20px 0;
+
+}
+
+.result-stat {
+
+    padding: 12px 5px;
+
+    background:
+        #0e0d09;
+
+    border-radius: 8px;
+
+}
+
+.result-stat span {
+
+    display: block;
+
+    color: #6e685d;
+
+    font-size: 8px;
+
+    text-transform: uppercase;
+
+}
+
+.result-stat strong {
+
+    display: block;
+
+    color: #c8a84f;
+
+    margin-top: 5px;
+
+}
+
+
+/* =================================
+   MOBILE
+================================= */
+
+@media(max-width:650px) {
+
+    .header {
+
+        padding: 0 15px;
+
+    }
+
+    .level {
+
+        display: none;
+
+    }
+
+    .stats {
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+    .card {
+
+        padding: 20px;
+
+    }
+
+    .scenario-title {
+
+        font-size: 23px;
+
+    }
+
+    .result-stats {
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="logo">
+
+        MIND<span>PJLand</span>
+
+    </div>
+
+    <div class="level">
+
+        LEVEL 8 • ROYAL STRATEGIST
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<div class="title">
+
+    <small>
+        LEVEL 8
+    </small>
+
+    <h1>
+        👑 Castle Strategy Trial
+    </h1>
+
+    <p>
+        Intelligence is knowing what to do when there is no perfect answer.
+    </p>
+
+</div>
+
+
+
+<div class="stats">
+
+    <div class="stat">
+
+        <span>
+            Scenario
+        </span>
+
+        <strong id="scenarioCount">
+            1 / 20
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>
+            Strategy Score
+        </span>
+
+        <strong id="score">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>
+            Best Decisions
+        </span>
+
+        <strong id="best">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>
+            Rank
+        </span>
+
+        <strong id="rank">
+            Advisor
+        </strong>
+
+    </div>
+
+</div>
+
+
+
+<div class="progress-container">
+
+    <div class="progress-top">
+
+        <span>
+            Royal Trial Progress
+        </span>
+
+        <span id="progressText">
+            5%
+        </span>
+
+    </div>
+
+    <div class="progress">
+
+        <div
+            class="progress-bar"
+            id="progressBar">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="card">
+
+
+<div
+    class="scenario-number"
+    id="scenarioNumber">
+
+    Scenario 01
+
+</div>
+
+
+<h2
+    class="scenario-title"
+    id="scenarioTitle">
+
+    The Northern Gate
+
+</h2>
+
+
+<div
+    class="scenario"
+    id="scenarioText">
+
+</div>
+
+
+<div class="choice-title">
+
+    What will you do?
+
+</div>
+
+
+<div
+    class="choices"
+    id="choices">
+
+</div>
+
+
+<div
+    class="outcome"
+    id="outcome">
+
+    <div class="outcome-label">
+
+        Strategic Result
+
+    </div>
+
+    <div
+        class="outcome-text"
+        id="outcomeText">
+
+    </div>
+
+    <button
+        class="next-btn"
+        id="nextBtn"
+        onclick="nextScenario()">
+
+        NEXT SCENARIO →
+
+    </button>
+
+</div>
+
+
+</div>
+
+
+</main>
+
+
+
+<!-- RESULT -->
+
+<div
+    class="result"
+    id="result">
+
+    <div class="result-card">
+
+        <div
+            class="result-icon"
+            id="resultIcon">
+
+            👑
+
+        </div>
+
+
+        <h2
+            id="resultTitle">
+
+            Royal Strategist
+
+        </h2>
+
+
+        <p>
+
+            Your 20 decisions have been
+            analyzed by the Royal Council.
+
+        </p>
+
+
+        <div
+            class="final-score"
+            id="finalScore">
+
+            0 / 100
+
+        </div>
+
+
+        <div
+            class="result-stats">
+
+            <div class="result-stat">
+
+                <span>
+                    Decision
+                </span>
+
+                <strong
+                    id="decisionScore">
+
+                    0
+
+                </strong>
+
+            </div>
+
+
+            <div class="result-stat">
+
+                <span>
+                    Risk
+                </span>
+
+                <strong
+                    id="riskScore">
+
+                    0
+
+                </strong>
+
+            </div>
+
+
+            <div class="result-stat">
+
+                <span>
+                    Resources
+                </span>
+
+                <strong
+                    id="resourceScore">
+
+                    0
+
+                </strong>
+
+            </div>
+
+
+            <div class="result-stat">
+
+                <span>
+                    Logic
+                </span>
+
+                <strong
+                    id="logicScore">
+
+                    0
+
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <p id="resultMessage">
+
+        </p>
+
+
+        <button
+            class="next-btn"
+            onclick="goNextLevel()">
+
+            ENTER LEVEL 9 →
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+/* =========================================
+   SCENARIOS
+========================================= */
+
+const scenarios = [
+
+{
+    title:
+        "The Northern Gate",
+
+    text:
+        "Your castle has three gates. Scouts report that an enemy army is approaching, but they cannot determine whether the attack will come from the North Gate or East Gate. You have enough soldiers to strongly defend only one gate.",
+
+    choices: [
+
+        "Put all soldiers at the North Gate.",
+
+        "Put all soldiers at the East Gate.",
+
+        "Split the army evenly between both gates.",
+
+        "Keep most soldiers inside the castle and observe the enemy longer."
+
+    ],
+
+    best: 3,
+
+    score: 85,
+
+    category: "decision",
+
+    outcome:
+        "Excellent strategic thinking. Keeping a reserve allows you to react after learning where the real attack is coming from. You avoided committing your entire force based on uncertain information."
+
+},
+
+{
+    title:
+        "The Food Crisis",
+
+    text:
+        "Winter has arrived early. Your castle has enough food for 30 days, but your population normally consumes the supply in 20 days. The next shipment may arrive in 25 days.",
+
+    choices: [
+
+        "Do nothing and hope the shipment arrives early.",
+
+        "Immediately reduce food consumption and ration supplies.",
+
+        "Send soldiers to take food from a nearby village.",
+
+        "Throw a large feast before the food runs out."
+
+    ],
+
+    best: 1,
+
+    score: 95,
+
+    category: "resource",
+
+    outcome:
+        "A strong resource-management decision. Controlled rationing gives the castle enough supplies to survive until the shipment arrives."
+
+},
+
+{
+    title:
+        "The Broken Bridge",
+
+    text:
+        "The main bridge leading to your castle is damaged. Repairing it will take 3 days. Scouts say the enemy could arrive tomorrow.",
+
+    choices: [
+
+        "Send everyone to repair the bridge.",
+
+        "Ignore the bridge completely.",
+
+        "Build temporary defenses while a smaller team repairs the bridge.",
+
+        "Destroy the bridge yourself."
+
+    ],
+
+    best: 2,
+
+    score: 90,
+
+    category: "logic",
+
+    outcome:
+        "You balanced immediate defense with long-term infrastructure. Dividing the workforce reduces the danger without abandoning the repair."
+
+},
+
+{
+    title:
+        "The Unknown Messenger",
+
+    text:
+        "A stranger arrives claiming to have information about an enemy attack. He asks to enter the castle immediately and speak directly to you.",
+
+    choices: [
+
+        "Let him enter immediately.",
+
+        "Arrest him immediately.",
+
+        "Ignore him.",
+
+        "Question him outside the castle and verify his story."
+
+    ],
+
+    best: 3,
+
+    score: 95,
+
+    category: "risk",
+
+    outcome:
+        "Excellent risk management. Valuable information should be investigated, but an unknown person should not be given unrestricted access to the castle."
+
+},
+
+{
+    title:
+        "The Empty Treasury",
+
+    text:
+        "Your treasury is almost empty. You can afford only one major project this month.",
+
+    choices: [
+
+        "Build a decorative royal hall.",
+
+        "Repair the castle defenses.",
+
+        "Hold a large celebration.",
+
+        "Buy expensive royal clothing."
+
+    ],
+
+    best: 1,
+
+    score: 100,
+
+    category: "resource",
+
+    outcome:
+        "You prioritized the castle's core security over luxury. A strategist protects the kingdom before improving its appearance."
+
+},
+
+{
+    title:
+        "The Two Roads",
+
+    text:
+        "Your army must reach a neighboring town. The mountain road is shorter but dangerous. The valley road is longer but well protected.",
+
+    choices: [
+
+        "Always choose the shortest road.",
+
+        "Always choose the safest road.",
+
+        "Consider enemy position, supplies and urgency before choosing.",
+
+        "Flip a coin."
+
+    ],
+
+    best: 2,
+
+    score: 95,
+
+    category: "decision",
+
+    outcome:
+        "Excellent. Strategy depends on circumstances. The shortest or safest route isn't always the best route."
+
+},
+
+{
+    title:
+        "The Village Fire",
+
+    text:
+        "A village near your castle catches fire. At the same time, scouts report a possible enemy movement nearby.",
+
+    choices: [
+
+        "Send every soldier to the village.",
+
+        "Ignore the village.",
+
+        "Send a limited rescue team while keeping the main defense force ready.",
+
+        "Abandon the castle."
+
+    ],
+
+    best: 2,
+
+    score: 95,
+
+    category: "risk",
+
+    outcome:
+        "You protected civilians without leaving the castle defenseless. Strong leaders balance multiple threats."
+
+},
+
+{
+    title:
+        "The Spy",
+
+    text:
+        "You discover that someone inside the castle may be giving information to the enemy. You do not know who it is.",
+
+    choices: [
+
+        "Accuse the first suspicious person.",
+
+        "Arrest everyone.",
+
+        "Quietly investigate information leaks.",
+
+        "Tell everyone about the suspected spy."
+
+    ],
+
+    best: 2,
+
+    score: 100,
+
+    category: "logic",
+
+    outcome:
+        "Excellent. Acting without evidence could damage your own kingdom. A quiet investigation gives you more information before taking action."
+
+},
+
+{
+    title:
+        "The Limited Soldiers",
+
+    text:
+        "You have 100 soldiers but four locations require protection. The castle is the most important location.",
+
+    choices: [
+
+        "Give every location exactly 25 soldiers.",
+
+        "Protect the castle strongly and assign smaller defensive teams elsewhere.",
+
+        "Send everyone to the smallest village.",
+
+        "Split the soldiers randomly."
+
+    ],
+
+    best: 1,
+
+    score: 95,
+
+    category: "resource",
+
+    outcome:
+        "You recognized that resources should be allocated according to importance rather than divided equally."
+
+},
+
+{
+    title:
+        "The Difficult Alliance",
+
+    text:
+        "A neighboring kingdom offers military assistance, but asks for a large amount of gold in return.",
+
+    choices: [
+
+        "Accept immediately.",
+
+        "Reject immediately.",
+
+        "Compare the cost with the actual threat before deciding.",
+
+        "Give them all your gold."
+
+    ],
+
+    best: 2,
+
+    score: 95,
+
+    category: "decision",
+
+    outcome:
+        "Good strategy requires comparing costs and benefits. You avoided making an emotional decision."
+
+},
+
+{
+    title:
+        "The Storm",
+
+    text:
+        "A major storm is expected tomorrow. Your army is scheduled to travel through a narrow mountain pass.",
+
+    choices: [
+
+        "Continue exactly as planned.",
+
+        "Cancel every military operation permanently.",
+
+        "Delay the movement and reassess after the storm.",
+
+        "Send the army faster."
+
+    ],
+
+    best: 2,
+
+    score: 90,
+
+    category: "risk",
+
+    outcome:
+        "You recognized that conditions can change the value of a plan. Good strategists adapt instead of blindly following the original plan."
+
+},
+
+{
+    title:
+        "The Worker Shortage",
+
+    text:
+        "You have 100 workers but three important projects: repairing the walls, farming food and building roads.",
+
+    choices: [
+
+        "Give every project the same number of workers.",
+
+        "Put everyone on the roads.",
+
+        "Prioritize the project that solves the kingdom's most urgent problem.",
+
+        "Choose the most attractive project."
+
+    ],
+
+    best: 2,
+
+    score: 100,
+
+    category: "resource",
+
+    outcome:
+        "Excellent prioritization. Resources should follow urgency and importance."
+
+},
+
+{
+    title:
+        "The Enemy Retreat",
+
+    text:
+        "The enemy army suddenly retreats after a brief battle. Your generals want to chase them immediately.",
+
+    choices: [
+
+        "Chase them without thinking.",
+
+        "Celebrate and ignore them.",
+
+        "Investigate why they retreated before pursuing.",
+
+        "Send the entire population after them."
+
+    ],
+
+    best: 2,
+
+    score: 100,
+
+    category: "logic",
+
+    outcome:
+        "Excellent caution. A retreat could be genuine or a trap. Understanding the reason is more valuable than rushing forward."
+
+},
+
+{
+    title:
+        "The Empty Warehouse",
+
+    text:
+        "Your warehouse contains enough wood for only one project. You must choose between repairing a watchtower or building new market stalls.",
+
+    choices: [
+
+        "Build market stalls.",
+
+        "Repair the watchtower.",
+
+        "Use half the wood for each even if neither is completed.",
+
+        "Throw the wood away."
+
+    ],
+
+    best: 1,
+
+    score: 90,
+
+    category: "decision",
+
+    outcome:
+        "You prioritized security when resources were limited. Economic improvements matter, but a kingdom needs protection first."
+
+},
+
+{
+    title:
+        "The Unknown Map",
+
+    text:
+        "A merchant offers you a map showing a shortcut through enemy territory. He cannot guarantee that the map is accurate.",
+
+    choices: [
+
+        "Use the shortcut immediately.",
+
+        "Burn the map.",
+
+        "Verify the map using scouts before relying on it.",
+
+        "Send the entire army to test it."
+
+    ],
+
+    best: 2,
+
+    score: 100,
+
+    category: "risk",
+
+    outcome:
+        "Excellent information management. Verify important information before committing valuable resources."
+
+},
+
+{
+    title:
+        "The Rebel Town",
+
+    text:
+        "A town in your kingdom refuses to pay taxes. The town is struggling economically and claims it cannot afford them.",
+
+    choices: [
+
+        "Send soldiers immediately.",
+
+        "Ignore the town forever.",
+
+        "Investigate the economic situation and negotiate.",
+
+        "Increase the taxes."
+
+    ],
+
+    best: 2,
+
+    score: 95,
+
+    category: "decision",
+
+    outcome:
+        "Strong leadership. Understanding the cause of a problem can be more effective than immediately punishing the people involved."
+
+},
+
+{
+    title:
+        "The Final Defense",
+
+    text:
+        "An enemy army is approaching with greater numbers than yours. Your castle walls are strong, but your food supply is limited.",
+
+    choices: [
+
+        "Fight outside the castle immediately.",
+
+        "Use the castle defenses and conserve supplies.",
+
+        "Abandon the kingdom.",
+
+        "Send every soldier into a direct attack."
+
+    ],
+
+    best: 1,
+
+    score: 100,
+
+    category: "logic",
+
+    outcome:
+        "Excellent defensive strategy. Strong walls reduce the enemy's numerical advantage while conserving your limited resources."
+
+},
+
+{
+    title:
+        "The Royal Decision",
+
+    text:
+        "You receive three reports: one is definitely true, one is probably true and one may be false. You must make an important decision.",
+
+    choices: [
+
+        "Treat all reports as equally reliable.",
+
+        "Ignore all reports.",
+
+        "Identify which information needs verification before acting.",
+
+        "Choose the report you personally like."
+
+    ],
+
+    best: 2,
+
+    score: 100,
+
+    category: "logic",
+
+    outcome:
+        "Excellent reasoning. A strong strategist understands uncertainty and verifies critical information."
+
+},
+
+{
+    title:
+        "The Kingdom's Future",
+
+    text:
+        "Your kingdom is finally safe. You have enough resources for one major investment: education, military expansion, luxury construction or entertainment.",
+
+    choices: [
+
+        "Expand the military forever.",
+
+        "Build luxury palaces.",
+
+        "Invest in education and knowledge.",
+
+        "Spend everything on entertainment."
+
+    ],
+
+    best: 2,
+
+    score: 100,
+
+    category: "decision",
+
+    outcome:
+        "A wise final decision. Education strengthens the kingdom's long-term ability to solve problems and develop future leaders."
+
+}
+
+];
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let current = 0;
+
+let totalScore = 0;
+
+let bestDecisions = 0;
+
+let decisionScore = 0;
+
+let riskScore = 0;
+
+let resourceScore = 0;
+
+let logicScore = 0;
+
+
+/* =========================================
+   LOAD SCENARIO
+========================================= */
+
+function loadScenario() {
+
+    const s =
+        scenarios[current];
+
+
+    document
+        .getElementById(
+            "scenarioNumber"
+        )
+        .textContent =
+        `Scenario ${String(current + 1).padStart(2,"0")}`;
+
+
+    document
+        .getElementById(
+            "scenarioCount"
+        )
+        .textContent =
+        `${current + 1} / ${scenarios.length}`;
+
+
+    document
+        .getElementById(
+            "scenarioTitle"
+        )
+        .textContent =
+        s.title;
+
+
+    document
+        .getElementById(
+            "scenarioText"
+        )
+        .textContent =
+        s.text;
+
+
+    const choices =
+        document.getElementById(
+            "choices"
+        );
+
+
+    choices.innerHTML = "";
+
+
+    s.choices.forEach(
+        (choice,index) => {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className =
+                "choice";
+
+
+            button.textContent =
+                `${String.fromCharCode(65 + index)}. ${choice}`;
+
+
+            button.onclick =
+                () =>
+                    chooseAnswer(
+                        index
+                    );
+
+
+            choices.appendChild(
+                button
+            );
+
+        }
+    );
+
+
+    document
+        .getElementById(
+            "outcome"
+        )
+        .classList.remove(
+            "show"
+        );
+
+
+    updateProgress();
+
+}
+
+
+/* =========================================
+   CHOOSE ANSWER
+========================================= */
+
+function chooseAnswer(
+    selected
+) {
+
+    const s =
+        scenarios[current];
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".choice"
+        );
+
+
+    buttons.forEach(
+        button =>
+            button.disabled =
+                true
+    );
+
+
+    const selectedButton =
+        buttons[selected];
+
+
+    if (
+        selected === s.best
+    ) {
+
+        selectedButton
+            .classList.add(
+                "correct"
+            );
+
+        bestDecisions++;
+
+    }
+
+    else {
+
+        selectedButton
+            .classList.add(
+                "bad"
+            );
+
+        buttons[s.best]
+            .classList.add(
+                "correct"
+            );
+
+    }
+
+
+    /*
+       Score based on
+       quality of decision.
+    */
+
+    let earned = 0;
+
+
+    if (
+        selected === s.best
+    ) {
+
+        earned =
+            s.score;
+
+    }
+
+    else if (
+        Math.abs(
+            selected - s.best
+        ) === 1
+    ) {
+
+        earned =
+            Math.floor(
+                s.score * .55
+            );
+
+    }
+
+    else {
+
+        earned =
+            Math.floor(
+                s.score * .25
+            );
+
+    }
+
+
+    totalScore += earned;
+
+
+    /*
+       Category scores
+    */
+
+    if (
+        s.category ===
+        "decision"
+    )
+        decisionScore += earned;
+
+
+    if (
+        s.category ===
+        "risk"
+    )
+        riskScore += earned;
+
+
+    if (
+        s.category ===
+        "resource"
+    )
+        resourceScore += earned;
+
+
+    if (
+        s.category ===
+        "logic"
+    )
+        logicScore += earned;
+
+
+    document
+        .getElementById(
+            "score"
+        )
+        .textContent =
+        totalScore;
+
+
+    document
+        .getElementById(
+            "best"
+        )
+        .textContent =
+        bestDecisions;
+
+
+    /*
+       Show outcome
+    */
+
+    document
+        .getElementById(
+            "outcomeText"
+        )
+        .textContent =
+        s.outcome;
+
+
+    document
+        .getElementById(
+            "outcome"
+        )
+        .classList.add(
+            "show"
+        );
+
+
+    if (
+        current ===
+        scenarios.length - 1
+    ) {
+
+        document
+            .getElementById(
+                "nextBtn"
+            )
+            .textContent =
+            "VIEW ROYAL RESULT →";
+
+    }
+
+}
+
+
+/* =========================================
+   NEXT
+========================================= */
+
+function nextScenario() {
+
+    if (
+        current >=
+        scenarios.length - 1
+    ) {
+
+        showResult();
+
+        return;
+
+    }
+
+
+    current++;
+
+    loadScenario();
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+/* =========================================
+   PROGRESS
+========================================= */
+
+function updateProgress() {
+
+    const percent =
+        ((current + 1) /
+        scenarios.length) *
+        100;
+
+
+    document
+        .getElementById(
+            "progressBar"
+        )
+        .style.width =
+        `${percent}%`;
+
+
+    document
+        .getElementById(
+            "progressText"
+        )
+        .textContent =
+        `${Math.round(percent)}%`;
+
+}
+
+
+/* =========================================
+   FINAL RESULT
+========================================= */
+
+function showResult() {
+
+    /*
+       Convert total score
+       to 100.
+    */
+
+    const maxScore =
+        scenarios.reduce(
+            (
+                total,
+                scenario
+            ) =>
+                total +
+                scenario.score,
+            0
+        );
+
+
+    const final =
+        Math.round(
+            (totalScore /
+            maxScore) *
+            100
+        );
+
+
+    const decision =
+        Math.round(
+            decisionScore /
+            getCategoryCount(
+                "decision"
+            )
+        );
+
+
+    const risk =
+        Math.round(
+            riskScore /
+            getCategoryCount(
+                "risk"
+            )
+        );
+
+
+    const resource =
+        Math.round(
+            resourceScore /
+            getCategoryCount(
+                "resource"
+            )
+        );
+
+
+    const logic =
+        Math.round(
+            logicScore /
+            getCategoryCount(
+                "logic"
+            )
+        );
+
+
+    document
+        .getElementById(
+            "finalScore"
+        )
+        .textContent =
+        `${final} / 100`;
+
+
+    document
+        .getElementById(
+            "decisionScore"
+        )
+        .textContent =
+        decision;
+
+
+    document
+        .getElementById(
+            "riskScore"
+        )
+        .textContent =
+        risk;
+
+
+    document
+        .getElementById(
+            "resourceScore"
+        )
+        .textContent =
+        resource;
+
+
+    document
+        .getElementById(
+            "logicScore"
+        )
+        .textContent =
+        logic;
+
+
+    let title;
+
+    let icon;
+
+    let message;
+
+
+    if (
+        final >= 85
+    ) {
+
+        title =
+            "👑 Royal Strategist";
+
+        icon =
+            "👑";
+
+        message =
+            "Outstanding. The Royal Council believes you have the intelligence and judgment required to advise the kingdom.";
+
+    }
+
+    else if (
+        final >= 70
+    ) {
+
+        title =
+            "🏰 Castle Commander";
+
+        icon =
+            "🏰";
+
+        message =
+            "Strong performance. You understand strategy and can make good decisions under pressure.";
+
+    }
+
+    else if (
+        final >= 55
+    ) {
+
+        title =
+            "🛡️ Castle Officer";
+
+        icon =
+            "🛡️";
+
+        message =
+            "You have potential, but the kingdom needs you to improve your strategic thinking.";
+
+    }
+
+    else {
+
+        title =
+            "⚔️ Junior Guard";
+
+        icon =
+            "⚔️";
+
+        message =
+            "The Royal Council has decided that more training is required before you can become a strategist.";
+
+    }
+
+
+    document
+        .getElementById(
+            "resultIcon"
+        )
+        .textContent =
+        icon;
+
+
+    document
+        .getElementById(
+            "resultTitle"
+        )
+        .textContent =
+        title;
+
+
+    document
+        .getElementById(
+            "resultMessage"
+        )
+        .textContent =
+        message;
+
+
+    document
+        .getElementById(
+            "result"
+        )
+        .classList.add(
+            "show"
+        );
+
+}
+
+
+/* =========================================
+   CATEGORY COUNT
+========================================= */
+
+function getCategoryCount(
+    category
+) {
+
+    return scenarios.filter(
+        s =>
+            s.category ===
+            category
+    ).length || 1;
+
+}
+
+
+/* =========================================
+   LEVEL 9
+========================================= */
+
+function goNextLevel() {
+
+    window.location.href =
+        "level9.html";
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+loadScenario();
+
+</script>
+
+
+</body>
+
+</html>

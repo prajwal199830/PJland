@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Level 6 — Conquer PJland</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    min-height: 100vh;
+
+    font-family: Arial, sans-serif;
+
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #263b32,
+            #101814 55%,
+            #080c0a
+        );
+}
+
+
+/* ================================
+   HEADER
+================================ */
+
+.header {
+
+    height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 30px;
+
+    background: #0a0f0c;
+
+    border-bottom:
+        1px solid #34453a;
+}
+
+.logo {
+
+    font-family: Georgia, serif;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    color: #e6c86e;
+}
+
+.logo span {
+
+    color: white;
+
+}
+
+.level {
+
+    color: #89968d;
+
+    font-size: 12px;
+
+    letter-spacing: 2px;
+}
+
+
+/* ================================
+   MAIN
+================================ */
+
+.container {
+
+    width:
+        min(1100px, calc(100% - 25px));
+
+    margin: auto;
+
+    padding: 30px 0 60px;
+
+}
+
+
+/* ================================
+   TITLE
+================================ */
+
+.title-section {
+
+    text-align: center;
+
+    margin-bottom: 25px;
+}
+
+.title-section .small {
+
+    color: #c7a85c;
+
+    font-size: 11px;
+
+    letter-spacing: 3px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 8px;
+}
+
+.title-section h1 {
+
+    font-family: Georgia, serif;
+
+    font-size: 38px;
+
+    margin-bottom: 8px;
+}
+
+.title-section p {
+
+    color: #929e96;
+
+    font-size: 14px;
+}
+
+
+/* ================================
+   STATS
+================================ */
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+.stat {
+
+    background: #151d18;
+
+    border:
+        1px solid #2d3c32;
+
+    padding: 15px;
+
+    text-align: center;
+
+    border-radius: 12px;
+}
+
+.stat span {
+
+    display: block;
+
+    color: #7f8b83;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 5px;
+}
+
+.stat strong {
+
+    color: #e1c367;
+
+    font-size: 21px;
+
+}
+
+
+/* ================================
+   MAP
+================================ */
+
+.map-card {
+
+    position: relative;
+
+    width: 100%;
+
+    min-height: 620px;
+
+    overflow: hidden;
+
+    border-radius: 22px;
+
+    border:
+        2px solid #4b563e;
+
+    background:
+        linear-gradient(
+            135deg,
+            #253a27,
+            #334a2d,
+            #203424
+        );
+
+    box-shadow:
+        inset 0 0 80px rgba(0,0,0,.4),
+        0 25px 70px rgba(0,0,0,.4);
+}
+
+
+/* decorative terrain */
+
+.map-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+
+    height: 500px;
+
+    border-radius: 50%;
+
+    border:
+        2px dashed rgba(255,255,255,.05);
+
+    top: 50px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+}
+
+.map-card::after {
+
+    content: "PJLAND";
+
+    position: absolute;
+
+    top: 50%;
+
+    left: 50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    font-family: Georgia, serif;
+
+    font-size: 70px;
+
+    color:
+        rgba(255,255,255,.035);
+
+    pointer-events: none;
+}
+
+
+/* ================================
+   STATES
+================================ */
+
+.state {
+
+    position: absolute;
+
+    width: 135px;
+
+    min-height: 65px;
+
+    padding: 10px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    background:
+        #465b3c;
+
+    border:
+        2px solid #778a61;
+
+    color: #f0f3df;
+
+    clip-path:
+        polygon(
+            10% 20%,
+            40% 5%,
+            85% 15%,
+            95% 55%,
+            75% 90%,
+            30% 95%,
+            5% 65%
+        );
+
+    transition: .2s;
+
+    z-index: 2;
+}
+
+.state:hover {
+
+    transform:
+        scale(1.08);
+
+    background:
+        #61784e;
+
+    z-index: 10;
+}
+
+.state-name {
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+}
+
+.state-status {
+
+    font-size: 9px;
+
+    margin-top: 4px;
+
+    color: #b8c5ae;
+}
+
+
+/* conquered */
+
+.state.conquered {
+
+    background:
+        linear-gradient(
+            135deg,
+            #806323,
+            #c19a3d
+        );
+
+    border-color:
+        #f1d274;
+
+    color: white;
+
+}
+
+.state.conquered .state-status {
+
+    color: #fff0a8;
+
+}
+
+
+/* locked */
+
+.state.locked {
+
+    opacity: .35;
+
+    cursor: not-allowed;
+
+    filter: grayscale(1);
+
+}
+
+
+/* ================================
+   STATE POSITIONS
+================================ */
+
+.s1  { top: 8%;  left: 7%; }
+.s2  { top: 5%;  left: 29%; }
+.s3  { top: 8%;  right: 8%; }
+
+.s4  { top: 22%; left: 17%; }
+.s5  { top: 22%; left: 40%; }
+.s6  { top: 21%; right: 12%; }
+
+.s7  { top: 37%; left: 5%; }
+.s8  { top: 37%; left: 28%; }
+.s9  { top: 37%; right: 29%; }
+.s10 { top: 37%; right: 5%; }
+
+.s11 { top: 53%; left: 14%; }
+.s12 { top: 53%; left: 38%; }
+.s13 { top: 53%; right: 12%; }
+
+.s14 { top: 68%; left: 5%; }
+.s15 { top: 68%; left: 28%; }
+.s16 { top: 68%; right: 29%; }
+.s17 { top: 68%; right: 5%; }
+
+.s18 { bottom: 5%; left: 17%; }
+.s19 { bottom: 5%; left: 40%; }
+.s20 { bottom: 5%; right: 12%; }
+
+
+/* ================================
+   QUESTION MODAL
+================================ */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(0,0,0,.75);
+
+    z-index: 100;
+}
+
+.modal.show {
+
+    display: flex;
+
+}
+
+.question-box {
+
+    width:
+        min(600px,100%);
+
+    background:
+        #151b17;
+
+    border:
+        1px solid #5c684a;
+
+    border-radius: 20px;
+
+    padding: 30px;
+
+    box-shadow:
+        0 30px 100px rgba(0,0,0,.7);
+
+    text-align: center;
+}
+
+.question-icon {
+
+    font-size: 55px;
+
+    margin-bottom: 10px;
+}
+
+.question-box .state-title {
+
+    color: #dfc369;
+
+    font-size: 13px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 15px;
+}
+
+.question-box h2 {
+
+    font-family: Georgia, serif;
+
+    font-size: 27px;
+
+    line-height: 1.4;
+
+    margin-bottom: 25px;
+}
+
+
+/* ================================
+   ANSWERS
+================================ */
+
+.answers {
+
+    display: grid;
+
+    gap: 10px;
+}
+
+.answer {
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    background:
+        #202a23;
+
+    border:
+        1px solid #36453a;
+
+    color: #dce4dc;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    transition: .2s;
+}
+
+.answer:hover {
+
+    background:
+        #2d3c31;
+
+    border-color:
+        #9c8139;
+
+}
+
+.answer.correct {
+
+    background:
+        #274d31;
+
+    border-color:
+        #70b77c;
+
+}
+
+.answer.wrong {
+
+    background:
+        #512b27;
+
+    border-color:
+        #b05b50;
+
+}
+
+
+/* ================================
+   RESULT
+================================ */
+
+.result {
+
+    display: none;
+
+    text-align: center;
+
+    padding: 40px 10px;
+}
+
+.result.show {
+
+    display: block;
+
+}
+
+.result h2 {
+
+    font-family: Georgia, serif;
+
+    font-size: 34px;
+
+    margin-bottom: 15px;
+}
+
+.result p {
+
+    color: #9ba69e;
+
+    line-height: 1.7;
+
+}
+
+.result button {
+
+    margin-top: 25px;
+
+    padding: 14px 25px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #c29d43;
+
+    color: #17130a;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media(max-width:700px) {
+
+    .map-card {
+
+        min-height: 750px;
+
+    }
+
+    .state {
+
+        width: 105px;
+
+        min-height: 55px;
+
+    }
+
+    .s1  { top: 5%; left: 2%; }
+    .s2  { top: 5%; left: 37%; }
+    .s3  { top: 5%; right: 2%; }
+
+    .s4  { top: 18%; left: 15%; }
+    .s5  { top: 18%; right: 15%; }
+
+    .s6  { top: 30%; left: 2%; }
+    .s7  { top: 30%; left: 37%; }
+    .s8  { top: 30%; right: 2%; }
+
+    .s9  { top: 42%; left: 15%; }
+    .s10 { top: 42%; right: 15%; }
+
+    .s11 { top: 54%; left: 2%; }
+    .s12 { top: 54%; left: 37%; }
+    .s13 { top: 54%; right: 2%; }
+
+    .s14 { top: 66%; left: 15%; }
+    .s15 { top: 66%; right: 15%; }
+
+    .s16 { bottom: 5%; left: 2%; }
+    .s17 { bottom: 5%; left: 37%; }
+    .s18 { bottom: 5%; right: 2%; }
+
+    .s19,
+    .s20 {
+
+        display: none;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="logo">
+        PJ<span>LAND</span>
+    </div>
+
+    <div class="level">
+        LEVEL 6 • THE CONQUEST
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+<div class="title-section">
+
+    <div class="small">
+        Level 6
+    </div>
+
+    <h1>
+        Conquer PJland
+    </h1>
+
+    <p>
+        Answer the question. Conquer the state.
+    </p>
+
+</div>
+
+
+<div class="stats">
+
+    <div class="stat">
+
+        <span>
+            States Conquered
+        </span>
+
+        <strong id="conquered">
+            0 / 20
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>
+            Intelligence Points
+        </span>
+
+        <strong id="score">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>
+            Kingdom
+        </span>
+
+        <strong>
+            PJland
+        </strong>
+
+    </div>
+
+</div>
+
+
+
+<div class="map-card" id="map">
+
+
+<!-- STATES -->
+
+<div class="state s1"
+     onclick="openState(0)">
+    <span class="state-name">Arvonia</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s2"
+     onclick="openState(1)">
+    <span class="state-name">Belvar</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s3"
+     onclick="openState(2)">
+    <span class="state-name">Crynora</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s4"
+     onclick="openState(3)">
+    <span class="state-name">Dalmere</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s5"
+     onclick="openState(4)">
+    <span class="state-name">Elaris</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s6"
+     onclick="openState(5)">
+    <span class="state-name">Fenwick</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s7"
+     onclick="openState(6)">
+    <span class="state-name">Galvora</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s8"
+     onclick="openState(7)">
+    <span class="state-name">Haverin</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s9"
+     onclick="openState(8)">
+    <span class="state-name">Iskora</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s10"
+     onclick="openState(9)">
+    <span class="state-name">Jorvale</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s11"
+     onclick="openState(10)">
+    <span class="state-name">Kelvoria</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s12"
+     onclick="openState(11)">
+    <span class="state-name">Lunaris</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s13"
+     onclick="openState(12)">
+    <span class="state-name">Morvane</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s14"
+     onclick="openState(13)">
+    <span class="state-name">Norvella</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s15"
+     onclick="openState(14)">
+    <span class="state-name">Orlith</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s16"
+     onclick="openState(15)">
+    <span class="state-name">Pervana</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s17"
+     onclick="openState(16)">
+    <span class="state-name">Quenora</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s18"
+     onclick="openState(17)">
+    <span class="state-name">Ravelle</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s19"
+     onclick="openState(18)">
+    <span class="state-name">Sylvara</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+<div class="state s20"
+     onclick="openState(19)">
+    <span class="state-name">Tavrion</span>
+    <span class="state-status">⚔️ Challenge</span>
+</div>
+
+
+</div>
+
+
+<div
+    id="result"
+    class="result">
+
+    <h2>
+        👑 PJland Has Been Conquered!
+    </h2>
+
+    <p>
+        You have successfully conquered
+        all 20 states through intelligence.
+        The next level awaits.
+    </p>
+
+    <button onclick="nextLevel()">
+        ENTER LEVEL 7 →
+    </button>
+
+</div>
+
+
+</main>
+
+
+
+<!-- QUESTION MODAL -->
+
+<div
+    id="modal"
+    class="modal">
+
+    <div class="question-box">
+
+        <div class="question-icon">
+            ⚔️
+        </div>
+
+        <div
+            id="stateTitle"
+            class="state-title">
+
+            STATE
+        </div>
+
+        <h2
+            id="question">
+
+        </h2>
+
+        <div
+            id="answers"
+            class="answers">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+/* =================================
+   STATE DATA
+================================= */
+
+const states = [
+
+{
+    name:"Arvonia",
+    question:"How many meters are approximately equal to 1 kilometer?",
+    options:["10 meters","100 meters","1,000 meters","10,000 meters"],
+    answer:2
+},
+
+{
+    name:"Belvar",
+    question:"What is 25 × 4?",
+    options:["50","75","100","125"],
+    answer:2
+},
+
+{
+    name:"Crynora",
+    question:"If a square has a side of 8 meters, what is its area?",
+    options:["16 m²","32 m²","64 m²","128 m²"],
+    answer:2
+},
+
+{
+    name:"Dalmere",
+    question:"What is 15% of 200?",
+    options:["15","20","30","40"],
+    answer:2
+},
+
+{
+    name:"Elaris",
+    question:"How many centimeters are in 2 meters?",
+    options:["20","100","200","2,000"],
+    answer:2
+},
+
+{
+    name:"Fenwick",
+    question:"What is 144 ÷ 12?",
+    options:["10","11","12","14"],
+    answer:2
+},
+
+{
+    name:"Galvora",
+    question:"A train travels 60 km in 1 hour. How far will it travel in 3 hours?",
+    options:["120 km","150 km","180 km","240 km"],
+    answer:2
+},
+
+{
+    name:"Haverin",
+    question:"What is 3/4 of 100?",
+    options:["25","50","75","80"],
+    answer:2
+},
+
+{
+    name:"Iskora",
+    question:"If something costs ₹500 and has a ₹100 discount, what is the final price?",
+    options:["₹300","₹350","₹400","₹450"],
+    answer:2
+},
+
+{
+    name:"Jorvale",
+    question:"What is 17 + 28?",
+    options:["35","40","45","55"],
+    answer:2
+},
+
+{
+    name:"Kelvoria",
+    question:"A rectangle is 10 meters long and 5 meters wide. What is its area?",
+    options:["15 m²","30 m²","50 m²","100 m²"],
+    answer:2
+},
+
+{
+    name:"Lunaris",
+    question:"What is 2.5 × 4?",
+    options:["5","8","10","12"],
+    answer:2
+},
+
+{
+    name:"Morvane",
+    question:"If 5 workers complete a task in 10 days, which statement is true assuming equal productivity?",
+    options:[
+        "More workers can potentially reduce the time.",
+        "More workers always increase the time.",
+        "Workers have no effect.",
+        "The task becomes impossible."
+    ],
+    answer:0
+},
+
+{
+    name:"Norvella",
+    question:"What is 500 ÷ 25?",
+    options:["10","15","20","25"],
+    answer:2
+},
+
+{
+    name:"Orlith",
+    question:"A farmer has 3 acres of land and divides it equally into 6 sections. How many acres are in each section?",
+    options:["0.25","0.5","1","2"],
+    answer:1
+},
+
+{
+    name:"Pervana",
+    question:"What is 30% of 90?",
+    options:["18","27","30","36"],
+    answer:1
+},
+
+{
+    name:"Quenora",
+    question:"If a clock shows 3:00, what is the angle between the hour and minute hands?",
+    options:["45°","60°","90°","180°"],
+    answer:2
+},
+
+{
+    name:"Ravelle",
+    question:"A box contains 48 apples. If 12 are removed, what percentage remain?",
+    options:["25%","50%","75%","80%"],
+    answer:2
+},
+
+{
+    name:"Sylvara",
+    question:"What is the next number: 2, 4, 8, 16, ?",
+    options:["20","24","30","32"],
+    answer:3
+},
+
+{
+    name:"Tavrion",
+    question:"If 1 hour contains 60 minutes, how many minutes are in 2.5 hours?",
+    options:["100","120","150","180"],
+    answer:2
+}
+
+];
+
+
+/* =================================
+   VARIABLES
+================================= */
+
+let conquered = 0;
+
+let score = 0;
+
+let currentState = null;
+
+
+/* =================================
+   OPEN STATE
+================================= */
+
+function openState(index) {
+
+    const state =
+        states[index];
+
+    currentState = index;
+
+    document
+        .getElementById("stateTitle")
+        .textContent =
+        state.name;
+
+
+    document
+        .getElementById("question")
+        .textContent =
+        state.question;
+
+
+    const answers =
+        document.getElementById(
+            "answers"
+        );
+
+    answers.innerHTML = "";
+
+
+    state.options.forEach(
+        (option,i) => {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.className =
+                "answer";
+
+            button.textContent =
+                `${String.fromCharCode(65+i)}. ${option}`;
+
+
+            button.onclick =
+                () => answerState(
+                    i,
+                    button
+                );
+
+
+            answers.appendChild(
+                button
+            );
+
+        }
+    );
+
+
+    document
+        .getElementById("modal")
+        .classList.add("show");
+
+}
+
+
+/* =================================
+   ANSWER
+================================= */
+
+function answerState(
+    selected,
+    button
+) {
+
+    const state =
+        states[currentState];
+
+    const buttons =
+        document.querySelectorAll(
+            ".answer"
+        );
+
+
+    buttons.forEach(
+        b => b.disabled = true
+    );
+
+
+    if (
+        selected === state.answer
+    ) {
+
+        button.classList.add(
+            "correct"
+        );
+
+
+        score += 100;
+
+        conquered++;
+
+
+        const mapStates =
+            document.querySelectorAll(
+                ".state"
+            );
+
+
+        mapStates[
+            currentState
+        ].classList.add(
+            "conquered"
+        );
+
+
+        mapStates[
+            currentState
+        ].querySelector(
+            ".state-status"
+        ).textContent =
+            "👑 Conquered";
+
+
+        document
+            .getElementById("score")
+            .textContent =
+            score;
+
+
+        document
+            .getElementById("conquered")
+            .textContent =
+            `${conquered} / 20`;
+
+
+        setTimeout(
+            closeModal,
+            700
+        );
+
+
+        if (
+            conquered === 20
+        ) {
+
+            setTimeout(
+                showResult,
+                900
+            );
+
+        }
+
+    }
+
+    else {
+
+        button.classList.add(
+            "wrong"
+        );
+
+
+        buttons[
+            state.answer
+        ].classList.add(
+            "correct"
+        );
+
+
+        setTimeout(
+            closeModal,
+            1200
+        );
+
+    }
+
+}
+
+
+/* =================================
+   CLOSE MODAL
+================================= */
+
+function closeModal() {
+
+    document
+        .getElementById("modal")
+        .classList.remove(
+            "show"
+        );
+
+}
+
+
+/* =================================
+   RESULT
+================================= */
+
+function showResult() {
+
+    document
+        .getElementById("result")
+        .classList.add(
+            "show"
+        );
+
+    window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth"
+    });
+
+}
+
+
+/* =================================
+   NEXT LEVEL
+================================= */
+
+function nextLevel() {
+
+    window.location.href =
+        "level7.html";
+
+}
+
+</script>
+
+</body>
+
+</html>

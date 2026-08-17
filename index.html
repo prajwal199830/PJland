@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Rise 2 King | Conquer PJland</title>
+
+<meta name="description"
+      content="Rise from a commoner to the King of PJland. Test your intelligence, master challenges, conquer kingdoms and claim the crown.">
+
+<style>
+
+/* =========================================
+   RESET
+========================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+    width:100%;
+    min-height:100%;
+}
+
+body{
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:#030303;
+
+    color:#fff;
+
+    overflow:hidden;
+}
+
+
+/* =========================================
+   GAME SCREEN
+========================================= */
+
+.game{
+
+    position:relative;
+
+    width:100vw;
+
+    height:100vh;
+
+    overflow:hidden;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 25%,
+            #332517 0%,
+            #120d08 38%,
+            #030303 80%
+        );
+
+}
+
+
+/* =========================================
+   SKY
+========================================= */
+
+.sky{
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+
+        linear-gradient(
+            to bottom,
+            #050505 0%,
+            #0d0a07 48%,
+            #1c1209 100%
+        );
+
+    transition:
+        opacity 2s ease;
+
+}
+
+
+/* =========================================
+   STARS
+========================================= */
+
+.stars{
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+}
+
+.star{
+
+    position:absolute;
+
+    width:3px;
+
+    height:3px;
+
+    border-radius:50%;
+
+    background:#e9d59c;
+
+    opacity:.6;
+
+    animation:
+        twinkle 2s infinite alternate;
+
+}
+
+@keyframes twinkle{
+
+    from{
+        opacity:.15;
+    }
+
+    to{
+        opacity:.9;
+    }
+
+}
+
+
+/* =========================================
+   MOON
+========================================= */
+
+.moon{
+
+    position:absolute;
+
+    top:8%;
+
+    right:12%;
+
+    width:75px;
+
+    height:75px;
+
+    border-radius:50%;
+
+    background:#e4d5a7;
+
+    box-shadow:
+        0 0 35px
+        rgba(228,213,167,.25);
+
+    transition:
+        all 2s ease;
+
+}
+
+
+/* =========================================
+   LANDSCAPE
+========================================= */
+
+.mountains{
+
+    position:absolute;
+
+    bottom:180px;
+
+    left:0;
+
+    width:100%;
+
+    height:220px;
+
+}
+
+.mountain{
+
+    position:absolute;
+
+    bottom:0;
+
+    width:0;
+
+    height:0;
+
+    border-left:
+        180px solid transparent;
+
+    border-right:
+        180px solid transparent;
+
+    border-bottom:
+        210px solid #100c08;
+
+}
+
+.mountain.one{
+    left:-80px;
+}
+
+.mountain.two{
+
+    left:25%;
+
+    border-bottom-color:#15100b;
+}
+
+.mountain.three{
+
+    right:15%;
+
+    border-bottom-color:#110d09;
+}
+
+.mountain.four{
+
+    right:-100px;
+
+    border-bottom-color:#0d0a07;
+}
+
+
+/* =========================================
+   GROUND
+========================================= */
+
+.ground{
+
+    position:absolute;
+
+    bottom:0;
+
+    left:0;
+
+    width:100%;
+
+    height:230px;
+
+    background:
+
+        linear-gradient(
+            to bottom,
+            #171008,
+            #070504
+        );
+
+}
+
+
+/* =========================================
+   VILLAGE
+========================================= */
+
+.village{
+
+    position:absolute;
+
+    bottom:110px;
+
+    left:50%;
+
+    transform:
+        translateX(-50%);
+
+    width:520px;
+
+    height:190px;
+
+    transition:
+        transform 2s ease,
+        opacity 2s ease;
+
+}
+
+
+/* HOUSE */
+
+.house{
+
+    position:absolute;
+
+    bottom:0;
+
+    width:120px;
+
+    height:90px;
+
+    background:#2a1c11;
+
+    border:
+        2px solid #49321c;
+
+}
+
+.house:before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-55px;
+
+    left:-15px;
+
+    width:0;
+
+    height:0;
+
+    border-left:
+        75px solid transparent;
+
+    border-right:
+        75px solid transparent;
+
+    border-bottom:
+        60px solid #21150c;
+
+}
+
+.house.one{
+    left:20px;
+}
+
+.house.two{
+
+    left:195px;
+
+    transform:
+        scale(.8);
+}
+
+.house.three{
+
+    right:20px;
+
+    transform:
+        scale(.9);
+}
+
+
+/* WINDOWS */
+
+.window{
+
+    position:absolute;
+
+    width:20px;
+
+    height:25px;
+
+    background:#c08a36;
+
+    border:
+        2px solid #49331c;
+
+    bottom:32px;
+
+}
+
+.house .window{
+    left:48px;
+}
+
+
+/* =========================================
+   CHARACTER
+========================================= */
+
+.character{
+
+    position:absolute;
+
+    bottom:108px;
+
+    left:50%;
+
+    transform:
+        translateX(-50%);
+
+    text-align:center;
+
+    z-index:10;
+
+    transition:
+        all 1.5s ease;
+
+}
+
+.character-body{
+
+    font-size:80px;
+
+    filter:
+        drop-shadow(
+            0 8px 15px
+            rgba(0,0,0,.6)
+        );
+
+    animation:
+        breathing 3s ease-in-out infinite;
+
+}
+
+@keyframes breathing{
+
+    0%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-4px);
+    }
+
+    100%{
+        transform:translateY(0);
+    }
+
+}
+
+.character-name{
+
+    margin-top:5px;
+
+    font-family:Georgia,serif;
+
+    color:#caa45b;
+
+    font-size:13px;
+
+    letter-spacing:2px;
+
+}
+
+
+/* =========================================
+   STORY OVERLAY
+========================================= */
+
+.story{
+
+    position:absolute;
+
+    z-index:30;
+
+    inset:0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    text-align:center;
+
+    background:
+
+        radial-gradient(
+            circle,
+            rgba(0,0,0,.2),
+            rgba(0,0,0,.8)
+        );
+
+    transition:
+        opacity 1s ease;
+
+}
+
+.story-box{
+
+    width:min(
+        700px,
+        100%
+    );
+
+}
+
+
+/* =========================================
+   STORY TEXT
+========================================= */
+
+.story-small{
+
+    font-size:11px;
+
+    letter-spacing:5px;
+
+    color:#9c7b45;
+
+    margin-bottom:15px;
+
+    text-transform:uppercase;
+
+}
+
+.story-title{
+
+    font-family:Georgia,serif;
+
+    font-size:
+        clamp(
+            34px,
+            7vw,
+            70px
+        );
+
+    color:#e3c982;
+
+    text-shadow:
+        0 5px 25px
+        rgba(0,0,0,.8);
+
+    margin-bottom:20px;
+
+}
+
+.story-text{
+
+    max-width:600px;
+
+    margin:auto;
+
+    font-family:Georgia,serif;
+
+    font-size:
+        clamp(
+            15px,
+            2vw,
+            19px
+        );
+
+    line-height:1.9;
+
+    color:#d1c5af;
+
+}
+
+
+/* =========================================
+   CONTINUE BUTTON
+========================================= */
+
+.continue-btn{
+
+    margin-top:30px;
+
+    padding:14px 30px;
+
+    border:
+        1px solid #8e6c36;
+
+    border-radius:7px;
+
+    background:
+        rgba(34,24,12,.9);
+
+    color:#e2c47d;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+    letter-spacing:2px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.continue-btn:hover{
+
+    background:#493418;
+
+    border-color:#d0a95d;
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+/* =========================================
+   LOGO
+========================================= */
+
+.logo-screen{
+
+    position:absolute;
+
+    z-index:40;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+
+    background:
+
+        radial-gradient(
+            circle at center,
+            #251b0e,
+            #050403 70%
+        );
+
+}
+
+.logo-box{
+
+    animation:
+        logoAppear 2s ease;
+
+}
+
+@keyframes logoAppear{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            scale(.8)
+            translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            scale(1)
+            translateY(0);
+
+    }
+
+}
+
+.crown-logo{
+
+    font-size:65px;
+
+    filter:
+        drop-shadow(
+            0 0 20px
+            rgba(216,172,82,.4)
+        );
+
+}
+
+.logo-main{
+
+    font-family:Georgia,serif;
+
+    font-size:
+        clamp(
+            42px,
+            9vw,
+            85px
+        );
+
+    font-weight:bold;
+
+    letter-spacing:3px;
+
+    color:#e4c67d;
+
+}
+
+.logo-main span{
+
+    color:#fff;
+
+}
+
+.logo-tagline{
+
+    margin-top:10px;
+
+    font-size:12px;
+
+    letter-spacing:6px;
+
+    color:#9b8155;
+
+}
+
+
+/* =========================================
+   NAME SCREEN
+========================================= */
+
+.name-screen{
+
+    position:absolute;
+
+    z-index:50;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+
+    padding:20px;
+
+    background:
+
+        radial-gradient(
+            circle at center,
+            #21180d,
+            #050403 70%
+        );
+
+}
+
+.name-box{
+
+    width:min(
+        500px,
+        100%
+    );
+
+}
+
+.name-icon{
+
+    font-size:65px;
+
+    margin-bottom:15px;
+
+}
+
+.name-title{
+
+    font-family:Georgia,serif;
+
+    font-size:35px;
+
+    color:#e0c37a;
+
+    margin-bottom:10px;
+
+}
+
+.name-description{
+
+    color:#978a77;
+
+    font-size:12px;
+
+    line-height:1.7;
+
+    margin-bottom:20px;
+
+}
+
+.name-input{
+
+    width:100%;
+
+    padding:15px;
+
+    text-align:center;
+
+    color:#fff;
+
+    background:#0d0a07;
+
+    border:
+        1px solid #554022;
+
+    border-radius:7px;
+
+    outline:none;
+
+    font-size:15px;
+
+}
+
+.name-input:focus{
+
+    border-color:#c09a53;
+
+}
+
+.start-btn{
+
+    width:100%;
+
+    margin-top:12px;
+
+    padding:15px;
+
+    border:0;
+
+    border-radius:7px;
+
+    background:#9b702e;
+
+    color:#fff;
+
+    font-weight:bold;
+
+    letter-spacing:2px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.start-btn:hover{
+
+    background:#c09243;
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+/* =========================================
+   FINAL INTRO
+========================================= */
+
+.final-intro{
+
+    position:absolute;
+
+    z-index:60;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+
+    padding:20px;
+
+    background:
+
+        linear-gradient(
+            rgba(0,0,0,.75),
+            rgba(0,0,0,.9)
+        );
+
+}
+
+.final-box{
+
+    width:min(
+        650px,
+        100%
+    );
+
+}
+
+.final-box h2{
+
+    font-family:Georgia,serif;
+
+    font-size:
+        clamp(
+            30px,
+            6vw,
+            55px
+        );
+
+    color:#e2c37a;
+
+    margin-bottom:18px;
+
+}
+
+.final-box p{
+
+    font-family:Georgia,serif;
+
+    color:#c3b6a1;
+
+    font-size:15px;
+
+    line-height:2;
+
+}
+
+
+/* =========================================
+   PLAYER NAME
+========================================= */
+
+.player-name{
+
+    color:#e2c37a;
+
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:600px){
+
+    .village{
+
+        transform:
+            translateX(-50%)
+            scale(.7);
+
+    }
+
+    .character{
+
+        bottom:105px;
+
+    }
+
+    .character-body{
+
+        font-size:65px;
+
+    }
+
+    .moon{
+
+        right:8%;
+
+        width:55px;
+
+        height:55px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="game" id="game">
+
+
+<!-- =====================================
+     SKY
+===================================== -->
+
+<div class="sky"></div>
+
+<div class="stars" id="stars"></div>
+
+<div class="moon"></div>
+
+
+<!-- =====================================
+     LANDSCAPE
+===================================== -->
+
+<div class="mountains">
+
+    <div class="mountain one"></div>
+
+    <div class="mountain two"></div>
+
+    <div class="mountain three"></div>
+
+    <div class="mountain four"></div>
+
+</div>
+
+
+<div class="ground"></div>
+
+
+<!-- =====================================
+     VILLAGE
+===================================== -->
+
+<div class="village" id="village">
+
+    <div class="house one">
+
+        <div class="window"></div>
+
+    </div>
+
+    <div class="house two">
+
+        <div class="window"></div>
+
+    </div>
+
+    <div class="house three">
+
+        <div class="window"></div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================
+     CHARACTER
+===================================== -->
+
+<div class="character" id="character">
+
+    <div class="character-body">
+        👨‍🌾
+    </div>
+
+    <div class="character-name">
+        THE COMMONER
+    </div>
+
+</div>
+
+
+<!-- =====================================
+     STORY
+===================================== -->
+
+<section
+    class="story"
+    id="story">
+
+    <div class="story-box">
+
+        <div class="story-small">
+            PJLAND
+        </div>
+
+        <h1 class="story-title">
+            Before You Were King
+        </h1>
+
+        <p class="story-text">
+
+            Far from the royal castle,
+            beyond the great mountains,
+            there was a small village.
+
+            <br><br>
+
+            And in that village,
+            someone lived an ordinary life.
+
+        </p>
+
+        <button
+            class="continue-btn"
+            onclick="nextStory()">
+
+            CONTINUE
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================
+     LOGO SCREEN
+===================================== -->
+
+<section
+    class="logo-screen"
+    id="logoScreen">
+
+    <div class="logo-box">
+
+        <div class="crown-logo">
+            👑
+        </div>
+
+        <div class="logo-main">
+
+            RISE <span>2</span> KING
+
+        </div>
+
+        <div class="logo-tagline">
+
+            CONQUER PJLAND
+
+        </div>
+
+        <button
+            class="continue-btn"
+            onclick="showNameScreen()">
+
+            ENTER PJLAND
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================
+     NAME SCREEN
+===================================== -->
+
+<section
+    class="name-screen"
+    id="nameScreen">
+
+    <div class="name-box">
+
+        <div class="name-icon">
+            👨‍🌾
+        </div>
+
+        <h2 class="name-title">
+
+            What is your name?
+
+        </h2>
+
+        <p class="name-description">
+
+            Every great King had to start somewhere.
+
+            <br>
+
+            Enter your name, Commoner.
+
+        </p>
+
+        <input
+            type="text"
+            id="playerName"
+            class="name-input"
+            maxlength="20"
+            placeholder="Enter your name">
+
+        <button
+            class="start-btn"
+            onclick="startJourney()">
+
+            BEGIN MY STORY
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================
+     FINAL INTRO
+===================================== -->
+
+<section
+    class="final-intro"
+    id="finalIntro">
+
+    <div class="final-box">
+
+        <div class="story-small">
+            YOUR JOURNEY BEGINS
+        </div>
+
+        <h2>
+
+            Welcome,
+            <span
+                class="player-name"
+                id="playerNameDisplay">
+            </span>
+
+        </h2>
+
+        <p>
+
+            You have no title.
+
+            <br>
+
+            You have no army.
+
+            <br>
+
+            You have no wealth.
+
+            <br><br>
+
+            But you have something
+            that nobody can take from you.
+
+            <br><br>
+
+            <strong>
+                Your mind.
+            </strong>
+
+            <br><br>
+
+            The King is searching for a new
+            Castle Protector.
+
+            <br>
+
+            Hundreds will attempt the test.
+
+            <br>
+
+            Only the worthy will rise.
+
+        </p>
+
+        <button
+            class="continue-btn"
+            onclick="goToLevel1()">
+
+            ⚔️ LET'S CONQUER PJLAND
+
+        </button>
+
+    </div>
+
+</section>
+
+
+</div>
+
+
+<script>
+
+/* =========================================
+   STORY STATE
+========================================= */
+
+let storyStep = 0;
+
+
+/* =========================================
+   STORY MESSAGES
+========================================= */
+
+const stories = [
+
+{
+
+small:"PJLAND",
+
+title:"Before You Were King",
+
+text:
+"Far from the royal castle, beyond the great mountains, there was a small village.<br><br>And in that village, someone lived an ordinary life."
+
+},
+
+{
+
+small:"THE VILLAGE",
+
+title:"You Were Nobody",
+
+text:
+"No title.<br>No wealth.<br>No army.<br>No royal blood.<br><br>You were simply a commoner."
+
+},
+
+{
+
+small:"BUT THEN...",
+
+title:"Something Changed",
+
+text:
+"One morning, a royal messenger arrived at the village.<br><br>The King was searching for someone with extraordinary intelligence."
+
+},
+
+{
+
+small:"THE ROYAL ANNOUNCEMENT",
+
+title:"The Castle Needs A Protector",
+
+text:
+"Every candidate must pass the King's test.<br><br>Those who succeed will earn the right to protect the castle."
+
+},
+
+{
+
+small:"YOUR DESTINY",
+
+title:"This Is Your Chance",
+
+text:
+"You have spent your entire life as a commoner.<br><br>But perhaps your story was never meant to remain ordinary."
+
+}
+
+];
+
+
+/* =========================================
+   CREATE STARS
+========================================= */
+
+function createStars(){
+
+    const container =
+        document.getElementById(
+            "stars"
+        );
+
+    for(
+        let i=0;
+        i<80;
+        i++
+    ){
+
+        const star =
+            document.createElement(
+                "div"
+            );
+
+        star.className =
+            "star";
+
+        star.style.left =
+            Math.random()*100+
+            "%";
+
+        star.style.top =
+            Math.random()*65+
+            "%";
+
+        star.style.animationDelay =
+            Math.random()*2+
+            "s";
+
+        container.appendChild(
+            star
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   SHOW STORY
+========================================= */
+
+function renderStory(){
+
+    const current =
+        stories[storyStep];
+
+    document.querySelector(
+        ".story-small"
+    ).textContent =
+        current.small;
+
+    document.querySelector(
+        ".story-title"
+    ).textContent =
+        current.title;
+
+    document.querySelector(
+        ".story-text"
+    ).innerHTML =
+        current.text;
+
+}
+
+
+/* =========================================
+   NEXT STORY
+========================================= */
+
+function nextStory(){
+
+    storyStep++;
+
+    if(
+        storyStep <
+        stories.length
+    ){
+
+        renderStory();
+
+        return;
+
+    }
+
+
+    /*
+       Hide story.
+    */
+
+    document.getElementById(
+        "story"
+    ).style.opacity = "0";
+
+
+    setTimeout(()=>{
+
+        document.getElementById(
+            "story"
+        ).style.display =
+            "none";
+
+
+        showLogo();
+
+    },1000);
+
+}
+
+
+/* =========================================
+   LOGO
+========================================= */
+
+function showLogo(){
+
+    document.getElementById(
+        "logoScreen"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =========================================
+   NAME SCREEN
+========================================= */
+
+function showNameScreen(){
+
+    document.getElementById(
+        "logoScreen"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "nameScreen"
+    ).style.display =
+        "flex";
+
+
+    document.getElementById(
+        "playerName"
+    ).focus();
+
+}
+
+
+/* =========================================
+   START JOURNEY
+========================================= */
+
+function startJourney(){
+
+    const input =
+        document.getElementById(
+            "playerName"
+        );
+
+    let name =
+        input.value.trim();
+
+
+    if(
+        name === ""
+    ){
+
+        name =
+            "Commoner";
+
+    }
+
+
+    /*
+       Save player name.
+       This can later be used
+       across all 20 levels.
+    */
+
+    localStorage.setItem(
+        "rise2king_playerName",
+        name
+    );
+
+
+    document.getElementById(
+        "nameScreen"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "playerNameDisplay"
+    ).textContent =
+        name;
+
+
+    document.getElementById(
+        "finalIntro"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =========================================
+   GO TO LEVEL 1
+========================================= */
+
+function goToLevel1(){
+
+    /*
+       Your existing Level 1 file.
+
+       Make sure level1.html
+       is in the SAME folder as
+       index.html.
+    */
+
+    window.location.href =
+        "level1.html";
+
+}
+
+
+/* =========================================
+   ENTER KEY
+========================================= */
+
+document.getElementById(
+    "playerName"
+).addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key === "Enter"
+        ){
+
+            startJourney();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   INITIALIZE
+========================================= */
+
+createStars();
+
+renderStory();
+
+</script>
+
+
+</body>
+
+</html>

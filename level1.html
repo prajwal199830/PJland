@@ -1,0 +1,2185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Rise 2 King | Level 1</title>
+
+<meta name="description"
+      content="Rise 2 King Level 1 — The First Trial. Answer 20 questions and prove that you are worthy of entering PJLand's castle.">
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+
+/* =====================================================
+   RESET
+===================================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+    width:100%;
+    min-height:100%;
+}
+
+body{
+
+    font-family:"Inter",sans-serif;
+
+    color:#f3f0e8;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 5%,
+            rgba(147,105,45,.18),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            135deg,
+            #080a0e,
+            #11151b 55%,
+            #080a0d
+        );
+
+}
+
+
+/* =====================================================
+   TOP BAR
+===================================================== */
+
+.topbar{
+
+    height:65px;
+
+    padding:0 28px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    background:rgba(7,9,13,.96);
+
+    border-bottom:
+        1px solid rgba(255,255,255,.08);
+
+}
+
+.logo{
+
+    font-family:Cinzel,serif;
+
+    font-size:19px;
+
+    font-weight:800;
+
+    color:#e3bd62;
+
+    letter-spacing:1px;
+
+}
+
+.logo span{
+
+    color:#ffffff;
+
+}
+
+.level-name{
+
+    color:#aaaeb6;
+
+    font-size:11px;
+
+    letter-spacing:1px;
+
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.container{
+
+    width:min(
+        900px,
+        calc(100% - 24px)
+    );
+
+    margin:0 auto;
+
+    padding:16px 0 30px;
+
+}
+
+
+/* =====================================================
+   QUESTION HEADER
+===================================================== */
+
+.test-header{
+
+    margin-bottom:12px;
+
+}
+
+.test-top{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:8px;
+
+}
+
+.question-number{
+
+    font-family:Cinzel,serif;
+
+    color:#dfbd67;
+
+    font-size:15px;
+
+}
+
+.timer{
+
+    color:#f0c46a;
+
+    font-weight:700;
+
+    font-size:13px;
+
+}
+
+.progress{
+
+    width:100%;
+
+    height:6px;
+
+    background:#292d34;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+}
+
+.progress-fill{
+
+    width:5%;
+
+    height:100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #a67b32,
+            #e5c56c
+        );
+
+    transition:width .3s;
+
+}
+
+
+/* =====================================================
+   QUESTION CARD
+===================================================== */
+
+.question-card{
+
+    background:
+        rgba(17,20,26,.96);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    border-radius:18px;
+
+    padding:25px;
+
+    box-shadow:
+        0 20px 70px
+        rgba(0,0,0,.30);
+
+}
+
+.category{
+
+    color:#9e8350;
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    text-transform:uppercase;
+
+    margin-bottom:9px;
+
+}
+
+.question{
+
+    font-family:Cinzel,serif;
+
+    font-size:
+        clamp(
+            21px,
+            3vw,
+            29px
+        );
+
+    line-height:1.4;
+
+    margin-bottom:20px;
+
+}
+
+
+/* =====================================================
+   ANSWERS
+===================================================== */
+
+.answers{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:10px;
+
+}
+
+.answer{
+
+    padding:15px;
+
+    background:#181c22;
+
+    border:
+        1px solid #30353d;
+
+    border-radius:10px;
+
+    color:#d9dce1;
+
+    cursor:pointer;
+
+    text-align:left;
+
+    font-size:13px;
+
+    transition:.18s;
+
+}
+
+.answer:hover{
+
+    border-color:#c7a65a;
+
+    background:#20242b;
+
+}
+
+.answer.correct{
+
+    border-color:#6e9d6d;
+
+    background:#1b2b1d;
+
+}
+
+.answer.wrong{
+
+    border-color:#a95e5e;
+
+    background:#301b1b;
+
+}
+
+.answer.disabled{
+
+    cursor:default;
+
+}
+
+
+/* =====================================================
+   VISUAL PUZZLES
+===================================================== */
+
+.visual-puzzle{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin:15px 0 20px;
+
+    flex-wrap:wrap;
+
+}
+
+.visual-box{
+
+    width:65px;
+
+    height:65px;
+
+    border:
+        1px solid #454a53;
+
+    background:#20242a;
+
+    border-radius:10px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:30px;
+
+}
+
+.pattern{
+
+    font-size:25px;
+
+    letter-spacing:3px;
+
+    color:#e0c26e;
+
+    text-align:center;
+
+    margin:18px 0;
+
+}
+
+.sequence{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+    margin:10px 0 18px;
+
+}
+
+.sequence span{
+
+    width:55px;
+
+    height:55px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#20242a;
+
+    border:
+        1px solid #424751;
+
+    border-radius:9px;
+
+    font-size:21px;
+
+}
+
+.scrambled{
+
+    text-align:center;
+
+    font-family:Cinzel,serif;
+
+    font-size:36px;
+
+    color:#e4c46b;
+
+    letter-spacing:7px;
+
+    margin:20px 0;
+
+}
+
+
+/* =====================================================
+   NEXT BUTTON
+===================================================== */
+
+.next-area{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    margin-top:16px;
+
+}
+
+.next-btn{
+
+    border:0;
+
+    cursor:pointer;
+
+    padding:11px 23px;
+
+    border-radius:9px;
+
+    background:#d1ae58;
+
+    color:#17130b;
+
+    font-weight:800;
+
+    display:none;
+
+}
+
+.next-btn:hover{
+
+    background:#e4c46b;
+
+}
+
+
+/* =====================================================
+   STORY AT BOTTOM
+===================================================== */
+
+.story-card{
+
+    margin-top:18px;
+
+    padding:24px 25px;
+
+    background:
+        rgba(17,20,26,.82);
+
+    border:
+        1px solid rgba(224,190,100,.16);
+
+    border-radius:16px;
+
+    text-align:center;
+
+}
+
+.story-icon{
+
+    font-size:38px;
+
+    margin-bottom:8px;
+
+}
+
+.eyebrow{
+
+    color:#c6a65b;
+
+    font-size:9px;
+
+    letter-spacing:3px;
+
+    text-transform:uppercase;
+
+    margin-bottom:8px;
+
+}
+
+.story-card h2{
+
+    font-family:Cinzel,serif;
+
+    color:#dfbd67;
+
+    font-size:22px;
+
+    margin-bottom:4px;
+
+}
+
+.story-card h3{
+
+    font-family:Cinzel,serif;
+
+    color:#ffffff;
+
+    font-size:15px;
+
+    margin-bottom:12px;
+
+}
+
+.story-card p{
+
+    max-width:680px;
+
+    margin:0 auto;
+
+    color:#a8adb5;
+
+    font-size:13px;
+
+    line-height:1.7;
+
+}
+
+.story-card strong{
+
+    color:#eeeeee;
+
+}
+
+
+/* =====================================================
+   RESULT
+===================================================== */
+
+.screen{
+
+    display:none;
+
+}
+
+.screen.active{
+
+    display:block;
+
+}
+
+.result-card{
+
+    text-align:center;
+
+    padding:42px 25px;
+
+    background:
+        rgba(17,20,26,.95);
+
+    border:
+        1px solid rgba(224,190,100,.2);
+
+    border-radius:22px;
+
+}
+
+.result-icon{
+
+    font-size:65px;
+
+    margin-bottom:15px;
+
+}
+
+.result-card h1{
+
+    font-family:Cinzel,serif;
+
+    font-size:32px;
+
+    margin-bottom:8px;
+
+}
+
+.score{
+
+    font-family:Cinzel,serif;
+
+    font-size:48px;
+
+    color:#e2bf66;
+
+    margin:15px 0;
+
+}
+
+.result-message{
+
+    color:#a8adb5;
+
+    line-height:1.7;
+
+    font-size:13px;
+
+}
+
+.stats{
+
+    max-width:500px;
+
+    margin:25px auto;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:10px;
+
+}
+
+.stat{
+
+    padding:15px 10px;
+
+    background:#191d23;
+
+    border:
+        1px solid #2b3038;
+
+    border-radius:10px;
+
+}
+
+.stat strong{
+
+    display:block;
+
+    color:#e2bf66;
+
+    font-size:20px;
+
+    margin-bottom:4px;
+
+}
+
+.stat span{
+
+    color:#858b95;
+
+    font-size:9px;
+
+    text-transform:uppercase;
+
+}
+
+
+/* =====================================================
+   BUTTON
+===================================================== */
+
+.primary-btn{
+
+    border:0;
+
+    cursor:pointer;
+
+    margin-top:20px;
+
+    padding:14px 27px;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #a9792e,
+            #e0bd63
+        );
+
+    color:#151109;
+
+    font-weight:800;
+
+    font-size:12px;
+
+    letter-spacing:.5px;
+
+    transition:.2s;
+
+}
+
+.primary-btn:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 12px 30px
+        rgba(218,180,87,.2);
+
+}
+
+
+/* =====================================================
+   PROMOTION
+===================================================== */
+
+.promotion{
+
+    padding:55px 25px;
+
+}
+
+.crown{
+
+    font-size:80px;
+
+    animation:
+        float 2s ease-in-out infinite;
+
+}
+
+.promotion h1{
+
+    font-family:Cinzel,serif;
+
+    font-size:35px;
+
+    margin:18px 0 8px;
+
+}
+
+.promotion h2{
+
+    color:#e2bf66;
+
+    font-family:Cinzel,serif;
+
+    font-size:25px;
+
+}
+
+.promotion p{
+
+    margin-top:15px;
+
+    color:#a7adb5;
+
+    line-height:1.7;
+
+}
+
+@keyframes float{
+
+    0%,100%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-8px);
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:650px){
+
+    .topbar{
+
+        height:60px;
+
+        padding:0 15px;
+
+    }
+
+    .logo{
+
+        font-size:16px;
+
+    }
+
+    .level-name{
+
+        font-size:9px;
+
+    }
+
+    .container{
+
+        width:
+            calc(100% - 16px);
+
+        padding-top:10px;
+
+    }
+
+    .question-card{
+
+        padding:20px 16px;
+
+    }
+
+    .question{
+
+        font-size:20px;
+
+    }
+
+    .answers{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .answer{
+
+        padding:13px;
+
+    }
+
+    .story-card{
+
+        padding:20px 16px;
+
+    }
+
+    .stats{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="topbar">
+
+    <div class="logo">
+
+        👑 RISE <span>2 KING</span>
+
+    </div>
+
+    <div class="level-name">
+
+        PJLAND • LEVEL 1
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<!-- =====================================================
+     GAME SCREEN
+===================================================== -->
+
+<section
+    id="gameScreen"
+    class="screen active">
+
+
+    <!-- QUESTION HEADER -->
+
+    <div class="test-header">
+
+        <div class="test-top">
+
+            <div
+                class="question-number"
+                id="questionNumber">
+
+                Question 1 / 20
+
+            </div>
+
+            <div class="timer">
+
+                ⏱
+                <span id="timer">20</span>s
+
+            </div>
+
+        </div>
+
+
+        <div class="progress">
+
+            <div
+                id="progressFill"
+                class="progress-fill">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- QUESTION -->
+
+    <div class="question-card">
+
+        <div
+            id="category"
+            class="category">
+
+            MATHEMATICS
+
+        </div>
+
+
+        <div
+            id="question"
+            class="question">
+
+            What is 10 + 10?
+
+        </div>
+
+
+        <div id="visualArea"></div>
+
+
+        <div
+            id="answers"
+            class="answers">
+
+        </div>
+
+
+        <div class="next-area">
+
+            <button
+                id="nextButton"
+                class="next-btn"
+                onclick="nextQuestion()">
+
+                NEXT →
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         STORY / INTRODUCTION AT BOTTOM
+    ================================================= -->
+
+    <div class="story-card">
+
+        <div class="story-icon">
+            🏰
+        </div>
+
+        <div class="eyebrow">
+            THE CASTLE GATES
+        </div>
+
+        <h2>
+            The First Trial
+        </h2>
+
+        <h3>
+            Prove You Are Worthy
+        </h3>
+
+
+        <p>
+
+            Welcome,
+            <strong id="playerName">
+                Player
+            </strong>.
+            You have arrived at the castle.
+
+            <br><br>
+
+            The King is searching for someone
+            worthy of becoming a
+            <strong>Castle Protector.</strong>
+
+            <br><br>
+
+            Twenty challenges stand between
+            you and your first rank.
+
+        </p>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     RESULT SCREEN
+===================================================== -->
+
+<section
+    id="resultScreen"
+    class="screen">
+
+    <div class="result-card">
+
+        <div class="result-icon">
+            🧠
+        </div>
+
+        <div class="eyebrow">
+            TRIAL COMPLETE
+        </div>
+
+        <h1>
+            Your Trial Is Complete
+        </h1>
+
+
+        <div
+            id="score"
+            class="score">
+
+            0 / 20
+
+        </div>
+
+
+        <p
+            id="resultMessage"
+            class="result-message">
+
+        </p>
+
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <strong id="accuracy">
+                    0%
+                </strong>
+
+                <span>
+                    Accuracy
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                <strong id="correctCount">
+                    0
+                </strong>
+
+                <span>
+                    Correct
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                <strong id="wrongCount">
+                    0
+                </strong>
+
+                <span>
+                    Wrong
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="primary-btn"
+            onclick="showPromotion()">
+
+            SEE MY DESTINY →
+
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     PROMOTION SCREEN
+===================================================== -->
+
+<section
+    id="promotionScreen"
+    class="screen">
+
+    <div class="result-card promotion">
+
+        <div class="crown">
+            🛡️
+        </div>
+
+        <div class="eyebrow">
+            RANK UNLOCKED
+        </div>
+
+        <h1>
+            Congratulations!
+        </h1>
+
+        <h2>
+            CASTLE PROTECTOR
+        </h2>
+
+        <p>
+
+            You have proven that your mind
+            is worthy of entering the castle.
+
+            <br><br>
+
+            Your journey through
+            <strong>PJLAND</strong>
+            has only just begun.
+
+        </p>
+
+
+        <button
+            class="primary-btn"
+            onclick="goToLevel2()">
+
+            CONTINUE TO LEVEL 2 →
+
+        </button>
+
+    </div>
+
+</section>
+
+
+</main>
+
+
+
+<script>
+
+
+/* =====================================================
+   PLAYER NAME
+===================================================== */
+
+/*
+   The main page should save the name as:
+
+   localStorage.setItem(
+       "rise2king_playerName",
+       playerName
+   );
+*/
+
+
+let playerName =
+    localStorage.getItem(
+        "rise2king_playerName"
+    );
+
+
+/*
+   If no name exists, use Player.
+*/
+
+if(
+    !playerName ||
+    playerName.trim() === ""
+){
+
+    playerName = "Player";
+
+}
+
+
+/*
+   Display player name.
+*/
+
+document.getElementById(
+    "playerName"
+).textContent =
+    playerName;
+
+
+/* =====================================================
+   QUESTIONS
+===================================================== */
+
+const questions = [
+
+    {
+        category:"Mathematics",
+
+        question:"What is 10 + 10?",
+
+        answers:[
+            "15",
+            "20",
+            "25",
+            "30"
+        ],
+
+        correct:1
+    },
+
+
+    {
+        category:"General Knowledge",
+
+        question:"What is the capital of Japan?",
+
+        answers:[
+            "Seoul",
+            "Beijing",
+            "Tokyo",
+            "Bangkok"
+        ],
+
+        correct:2
+    },
+
+
+    {
+        category:"Simple Puzzle",
+
+        question:
+            "Which one does NOT belong with the others?",
+
+        visual:`
+
+            <div class="visual-puzzle">
+
+                <div class="visual-box">
+                    🍎
+                </div>
+
+                <div class="visual-box">
+                    🍊
+                </div>
+
+                <div class="visual-box">
+                    🍌
+                </div>
+
+                <div class="visual-box">
+                    🚗
+                </div>
+
+            </div>
+
+        `,
+
+        answers:[
+            "🍎",
+            "🍊",
+            "🍌",
+            "🚗"
+        ],
+
+        correct:3
+    },
+
+
+    {
+        category:"Pattern",
+
+        question:
+            "What number comes next?",
+
+        visual:`
+
+            <div class="pattern">
+                2 → 4 → 6 → 8 → ?
+            </div>
+
+        `,
+
+        answers:[
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+
+        correct:1
+    },
+
+
+    {
+        category:"Mathematics",
+
+        question:
+            "What is 25 + 50?",
+
+        answers:[
+            "65",
+            "70",
+            "75",
+            "80"
+        ],
+
+        correct:2
+    },
+
+
+    {
+        category:"General Knowledge",
+
+        question:
+            "What is the capital of the United Kingdom?",
+
+        answers:[
+            "Paris",
+            "London",
+            "Dublin",
+            "Berlin"
+        ],
+
+        correct:1
+    },
+
+
+    {
+        category:"Spot the Difference",
+
+        question:
+            "Find the symbol that is different.",
+
+        visual:`
+
+            <div class="sequence">
+
+                <span>★</span>
+                <span>★</span>
+                <span>★</span>
+                <span>☆</span>
+                <span>★</span>
+
+            </div>
+
+        `,
+
+        answers:[
+            "1st",
+            "2nd",
+            "4th",
+            "5th"
+        ],
+
+        correct:2
+    },
+
+
+    {
+        category:"Mathematics",
+
+        question:
+            "What is 50 + 20?",
+
+        answers:[
+            "60",
+            "70",
+            "80",
+            "90"
+        ],
+
+        correct:1
+    },
+
+
+    {
+        category:"General Knowledge",
+
+        question:
+            "What is the capital of China?",
+
+        answers:[
+            "Shanghai",
+            "Hong Kong",
+            "Beijing",
+            "Nanjing"
+        ],
+
+        correct:2
+    },
+
+
+    {
+        category:"Simple Puzzle",
+
+        question:
+            "All cats are animals. Tom is a cat. What is Tom?",
+
+        answers:[
+            "A plant",
+            "An animal",
+            "A bird",
+            "A machine"
+        ],
+
+        correct:1
+    },
+
+
+    {
+        category:"Mathematics",
+
+        question:
+            "What is 20 + 20?",
+
+        answers:[
+            "30",
+            "35",
+            "40",
+            "45"
+        ],
+
+        correct:2
+    },
+
+
+    {
+        category:"Spot the Difference",
+
+        question:
+            "Find the different symbol.",
+
+        visual:`
+
+            <div class="sequence">
+
+                <span>●</span>
+                <span>●</span>
+                <span>○</span>
+                <span>●</span>
+                <span>●</span>
+
+            </div>
+
+        `,
+
+        answers:[
+            "1st",
+            "2nd",
+            "3rd",
+            "5th"
+        ],
+
+        correct:2
+    },
+
+
+    {
+        category:"Mathematics",
+
+        question:
+            "What is 55 + 20?",
+
+        answers:[
+            "65",
+            "70",
+            "75",
+            "80"
+        ],
+
+        correct:2
+    },
+
+
+    {
+        category:"General Knowledge",
+
+        question:
+            "What is the capital of the United States?",
+
+        answers:[
+            "New York",
+            "Los Angeles",
+            "Washington, D.C.",
+            "Chicago"
+        ],
+
+        correct:2
+    },
+
+
+    {
+        category:"Mathematics",
+
+        question:
+            "What is 70 + 20?",
+
+        answers:[
+            "80",
+            "90",
+            "100",
+            "110"
+        ],
+
+        correct:1
+    },
+
+
+    {
+        category:"Visual Reasoning",
+
+        question:
+            "Which shape should come next?",
+
+        visual:`
+
+            <div class="sequence">
+
+                <span>▲</span>
+                <span>■</span>
+                <span>▲</span>
+                <span>■</span>
+                <span>?</span>
+
+            </div>
+
+        `,
+
+        answers:[
+            "▲",
+            "●",
+            "■",
+            "◆"
+        ],
+
+        correct:0
+    },
+
+
+    {
+        category:"General Knowledge",
+
+        question:
+            "What is the capital of South Korea?",
+
+        answers:[
+            "Tokyo",
+            "Seoul",
+            "Busan",
+            "Taipei"
+        ],
+
+        correct:1
+    },
+
+
+    {
+        category:"Spot the Difference",
+
+        question:
+            "Find the different symbol.",
+
+        visual:`
+
+            <div class="sequence">
+
+                <span>◆</span>
+                <span>◆</span>
+                <span>◆</span>
+                <span>◇</span>
+                <span>◆</span>
+
+            </div>
+
+        `,
+
+        answers:[
+            "1st",
+            "2nd",
+            "4th",
+            "5th"
+        ],
+
+        correct:2
+    },
+
+
+    {
+        category:"Mathematics",
+
+        question:
+            "What is 99 + 1?",
+
+        answers:[
+            "90",
+            "99",
+            "100",
+            "101"
+        ],
+
+        correct:2
+    },
+
+
+    {
+        category:"Word Game",
+
+        question:
+            "Unscramble the letters to make a word.",
+
+        visual:`
+
+            <div class="scrambled">
+                T A C
+            </div>
+
+        `,
+
+        answers:[
+            "DOG",
+            "CAT",
+            "CAR",
+            "BAT"
+        ],
+
+        correct:1
+    }
+
+];
+
+
+/* =====================================================
+   GAME VARIABLES
+===================================================== */
+
+let currentQuestion = 0;
+
+let score = 0;
+
+let timer = null;
+
+let timeLeft = 20;
+
+let answered = false;
+
+
+/* =====================================================
+   LOAD QUESTION
+===================================================== */
+
+function loadQuestion(){
+
+    clearInterval(timer);
+
+    answered = false;
+
+    timeLeft = 20;
+
+
+    const q =
+        questions[currentQuestion];
+
+
+    document.getElementById(
+        "questionNumber"
+    ).textContent =
+        `Question ${currentQuestion + 1} / ${questions.length}`;
+
+
+    document.getElementById(
+        "category"
+    ).textContent =
+        q.category;
+
+
+    document.getElementById(
+        "question"
+    ).textContent =
+        q.question;
+
+
+    document.getElementById(
+        "visualArea"
+    ).innerHTML =
+        q.visual || "";
+
+
+    const answers =
+        document.getElementById(
+            "answers"
+        );
+
+
+    answers.innerHTML = "";
+
+
+    q.answers.forEach(
+        function(answer,index){
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.className =
+                "answer";
+
+            button.textContent =
+                answer;
+
+            button.onclick =
+                function(){
+
+                    selectAnswer(
+                        index,
+                        button
+                    );
+
+                };
+
+
+            answers.appendChild(
+                button
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        "nextButton"
+    ).style.display =
+        "none";
+
+
+    updateProgress();
+
+    startTimer();
+
+}
+
+
+/* =====================================================
+   TIMER
+===================================================== */
+
+function startTimer(){
+
+    document.getElementById(
+        "timer"
+    ).textContent =
+        timeLeft;
+
+
+    timer =
+        setInterval(
+            function(){
+
+                timeLeft--;
+
+
+                document.getElementById(
+                    "timer"
+                ).textContent =
+                    timeLeft;
+
+
+                if(
+                    timeLeft <= 0
+                ){
+
+                    clearInterval(timer);
+
+                    timeExpired();
+
+                }
+
+            },
+            1000
+        );
+
+}
+
+
+/* =====================================================
+   ANSWER
+===================================================== */
+
+function selectAnswer(
+    index,
+    button
+){
+
+    if(answered)
+        return;
+
+
+    answered = true;
+
+    clearInterval(timer);
+
+
+    const q =
+        questions[currentQuestion];
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".answer"
+        );
+
+
+    buttons.forEach(
+        function(btn){
+
+            btn.classList.add(
+                "disabled"
+            );
+
+        }
+    );
+
+
+    if(
+        index === q.correct
+    ){
+
+        score++;
+
+        button.classList.add(
+            "correct"
+        );
+
+    }
+
+    else{
+
+        button.classList.add(
+            "wrong"
+        );
+
+        buttons[
+            q.correct
+        ].classList.add(
+            "correct"
+        );
+
+    }
+
+
+    document.getElementById(
+        "nextButton"
+    ).style.display =
+        "block";
+
+}
+
+
+/* =====================================================
+   TIME EXPIRED
+===================================================== */
+
+function timeExpired(){
+
+    answered = true;
+
+
+    const q =
+        questions[currentQuestion];
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".answer"
+        );
+
+
+    buttons.forEach(
+        function(btn){
+
+            btn.classList.add(
+                "disabled"
+            );
+
+        }
+    );
+
+
+    buttons[
+        q.correct
+    ].classList.add(
+        "correct"
+    );
+
+
+    document.getElementById(
+        "nextButton"
+    ).style.display =
+        "block";
+
+}
+
+
+/* =====================================================
+   NEXT QUESTION
+===================================================== */
+
+function nextQuestion(){
+
+    currentQuestion++;
+
+
+    if(
+        currentQuestion >=
+        questions.length
+    ){
+
+        finishTest();
+
+        return;
+
+    }
+
+
+    loadQuestion();
+
+}
+
+
+/* =====================================================
+   PROGRESS
+===================================================== */
+
+function updateProgress(){
+
+    const percentage =
+        (
+            (currentQuestion + 1)
+            /
+            questions.length
+        ) * 100;
+
+
+    document.getElementById(
+        "progressFill"
+    ).style.width =
+        percentage + "%";
+
+}
+
+
+/* =====================================================
+   FINISH
+===================================================== */
+
+function finishTest(){
+
+    clearInterval(timer);
+
+
+    document.getElementById(
+        "gameScreen"
+    ).classList.remove(
+        "active"
+    );
+
+
+    document.getElementById(
+        "resultScreen"
+    ).classList.add(
+        "active"
+    );
+
+
+    const percentage =
+        Math.round(
+            (
+                score /
+                questions.length
+            ) * 100
+        );
+
+
+    document.getElementById(
+        "score"
+    ).textContent =
+        `${score} / ${questions.length}`;
+
+
+    document.getElementById(
+        "accuracy"
+    ).textContent =
+        percentage + "%";
+
+
+    document.getElementById(
+        "correctCount"
+    ).textContent =
+        score;
+
+
+    document.getElementById(
+        "wrongCount"
+    ).textContent =
+        questions.length - score;
+
+
+    let message;
+
+
+    if(score >= 17){
+
+        message =
+            "Outstanding. The King has noticed your potential. " +
+            "Your reasoning skills are exceptional.";
+
+    }
+
+    else if(score >= 14){
+
+        message =
+            "Excellent work. You have shown that you have " +
+            "the potential to rise beyond ordinary village life.";
+
+    }
+
+    else if(score >= 10){
+
+        message =
+            "You have passed the First Trial. " +
+            "The castle gates are now open to you.";
+
+    }
+
+    else{
+
+        message =
+            "The castle gates remain closed for now. " +
+            "You need at least 10 correct answers to continue.";
+
+    }
+
+
+    document.getElementById(
+        "resultMessage"
+    ).textContent =
+        message;
+
+}
+
+
+/* =====================================================
+   PROMOTION
+===================================================== */
+
+function showPromotion(){
+
+    if(score < 10){
+
+        alert(
+            "You did not pass the First Trial.\n\n" +
+            "You need at least 10 correct answers to continue."
+        );
+
+        return;
+
+    }
+
+
+    localStorage.setItem(
+        "rise2king_level1_completed",
+        "true"
+    );
+
+
+    localStorage.setItem(
+        "rise2king_level1_score",
+        score
+    );
+
+
+    document.getElementById(
+        "resultScreen"
+    ).classList.remove(
+        "active"
+    );
+
+
+    document.getElementById(
+        "promotionScreen"
+    ).classList.add(
+        "active"
+    );
+
+}
+
+
+/* =====================================================
+   LEVEL 2
+===================================================== */
+
+function goToLevel2(){
+
+    window.location.href =
+        "level2.html";
+
+}
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+loadQuestion();
+
+</script>
+
+</body>
+
+</html>

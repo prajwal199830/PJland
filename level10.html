@@ -1,0 +1,2263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Level 10 — Royal Memory Vault</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    min-height: 100vh;
+
+    font-family: Arial, sans-serif;
+
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #302447,
+            #120d1c 55%,
+            #07050a
+        );
+
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+
+    height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 30px;
+
+    background:
+        rgba(7,5,10,.96);
+
+    border-bottom:
+        1px solid #392b4d;
+
+}
+
+.logo {
+
+    font-family: Georgia, serif;
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+    color: #d9b75c;
+
+}
+
+.logo span {
+
+    color: white;
+
+}
+
+.level {
+
+    color: #887b98;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.container {
+
+    width:
+        min(1000px, calc(100% - 24px));
+
+    margin: auto;
+
+    padding: 25px 0 50px;
+
+}
+
+
+/* =========================
+   TITLE
+========================= */
+
+.title {
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+}
+
+.title small {
+
+    color: #c8a957;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+}
+
+.title h1 {
+
+    font-family: Georgia, serif;
+
+    font-size:
+        clamp(28px, 5vw, 42px);
+
+    margin: 7px 0;
+
+}
+
+.title p {
+
+    color: #91889d;
+
+    font-size: 13px;
+
+}
+
+
+/* =========================
+   STATS
+========================= */
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 10px;
+
+    margin-bottom: 15px;
+
+}
+
+.stat {
+
+    background:
+        #17111e;
+
+    border:
+        1px solid #3b2e4d;
+
+    border-radius: 11px;
+
+    padding: 12px;
+
+    text-align: center;
+
+}
+
+.stat span {
+
+    display: block;
+
+    color: #766d80;
+
+    font-size: 9px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 5px;
+
+}
+
+.stat strong {
+
+    color: #d8b961;
+
+    font-family: Georgia, serif;
+
+    font-size: 20px;
+
+}
+
+
+/* =========================
+   GAME CARD
+========================= */
+
+.game-card {
+
+    background:
+        linear-gradient(
+            145deg,
+            #1c1525,
+            #100c15
+        );
+
+    border:
+        1px solid #4b3b5d;
+
+    border-radius: 20px;
+
+    padding: 22px;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.5);
+
+}
+
+
+/* =========================
+   ROUND INFO
+========================= */
+
+.round-info {
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+}
+
+.round-label {
+
+    color: #c7a957;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+}
+
+.round-info h2 {
+
+    font-family: Georgia, serif;
+
+    font-size: 25px;
+
+    margin: 6px 0;
+
+}
+
+.round-info p {
+
+    color: #8d8497;
+
+    font-size: 12px;
+
+}
+
+
+/* =========================
+   TIMER
+========================= */
+
+.timer {
+
+    width: 75px;
+
+    height: 75px;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    border:
+        3px solid #665176;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-family: Georgia, serif;
+
+    font-size: 28px;
+
+    color: #e1c463;
+
+    background:
+        #120d18;
+
+}
+
+
+/* =========================
+   MEMORY GRID
+========================= */
+
+.memory-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 12px;
+
+    max-width: 650px;
+
+    margin: auto;
+
+}
+
+
+/* =========================
+   MEMORY CARD
+========================= */
+
+.memory-card {
+
+    aspect-ratio: 1 / 1;
+
+    min-height: 90px;
+
+    border-radius: 12px;
+
+    border:
+        1px solid #59446d;
+
+    background:
+        linear-gradient(
+            145deg,
+            #251a32,
+            #130e1a
+        );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 35px;
+
+    cursor: default;
+
+    transition:
+        transform .2s,
+        background .2s;
+
+}
+
+.memory-card.show {
+
+    background:
+        linear-gradient(
+            145deg,
+            #3b2a50,
+            #20162b
+        );
+
+    border-color:
+        #aa8a4b;
+
+}
+
+.memory-card.hidden-card {
+
+    background:
+        repeating-linear-gradient(
+            45deg,
+            #17111f,
+            #17111f 8px,
+            #21172c 8px,
+            #21172c 16px
+        );
+
+}
+
+.card-number {
+
+    color: #675a70;
+
+    font-size: 13px;
+
+}
+
+
+/* =========================
+   QUESTION AREA
+========================= */
+
+.question-area {
+
+    display: none;
+
+    text-align: center;
+
+}
+
+.question-area.active {
+
+    display: block;
+
+}
+
+.question-number {
+
+    color: #c5a650;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 10px;
+
+}
+
+.question {
+
+    font-family: Georgia, serif;
+
+    font-size:
+        clamp(20px, 4vw, 28px);
+
+    margin-bottom: 22px;
+
+    line-height: 1.4;
+
+}
+
+
+/* =========================
+   ANSWERS
+========================= */
+
+.answers {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 10px;
+
+    max-width: 650px;
+
+    margin: auto;
+
+}
+
+.answer {
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    border:
+        1px solid #453551;
+
+    background:
+        #17111f;
+
+    color: #ddd5e2;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    transition:
+        .2s;
+
+}
+
+.answer:hover {
+
+    border-color:
+        #b08e4d;
+
+    transform:
+        translateY(-2px);
+
+}
+
+.answer.correct {
+
+    background:
+        #243b2b;
+
+    border-color:
+        #62a978;
+
+}
+
+.answer.wrong {
+
+    background:
+        #412328;
+
+    border-color:
+        #a65b62;
+
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+.message {
+
+    min-height: 30px;
+
+    text-align: center;
+
+    margin-top: 18px;
+
+    color: #d5b75f;
+
+    font-family: Georgia, serif;
+
+    font-size: 16px;
+
+}
+
+
+/* =========================
+   NEXT BUTTON
+========================= */
+
+.next-btn {
+
+    display: none;
+
+    margin: 18px auto 0;
+
+    padding: 13px 35px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #96722e,
+            #dfc15f
+        );
+
+    color: #171108;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+.next-btn.show {
+
+    display: block;
+
+}
+
+
+/* =========================
+   RESULT
+========================= */
+
+.result {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(5,3,8,.96);
+
+}
+
+.result.show {
+
+    display: flex;
+
+}
+
+.result-card {
+
+    width:
+        min(650px,100%);
+
+    padding: 35px 25px;
+
+    text-align: center;
+
+    border-radius: 22px;
+
+    background:
+        #17111f;
+
+    border:
+        1px solid #665176;
+
+    box-shadow:
+        0 30px 100px rgba(0,0,0,.7);
+
+}
+
+.result-icon {
+
+    font-size: 65px;
+
+}
+
+.result-card h2 {
+
+    font-family: Georgia, serif;
+
+    font-size: 32px;
+
+    margin: 8px 0;
+
+}
+
+.final-score {
+
+    font-family: Georgia, serif;
+
+    font-size: 48px;
+
+    color: #e2c45f;
+
+    margin: 15px;
+
+}
+
+.result-stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 8px;
+
+    margin: 20px 0;
+
+}
+
+.result-stat {
+
+    background:
+        #0e0a12;
+
+    padding: 13px;
+
+    border-radius: 9px;
+
+}
+
+.result-stat span {
+
+    display: block;
+
+    color: #756b80;
+
+    font-size: 8px;
+
+    text-transform: uppercase;
+
+}
+
+.result-stat strong {
+
+    display: block;
+
+    color: #d4b35b;
+
+    margin-top: 5px;
+
+}
+
+.result-card p {
+
+    color: #918799;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+}
+
+.continue-btn {
+
+    width: 100%;
+
+    margin-top: 20px;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #96722e,
+            #dfc15f
+        );
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:650px) {
+
+    header {
+
+        padding: 0 15px;
+
+    }
+
+    .level {
+
+        display: none;
+
+    }
+
+    .stats {
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+    .game-card {
+
+        padding: 14px;
+
+    }
+
+    .memory-grid {
+
+        grid-template-columns:
+            repeat(4,1fr);
+
+        gap: 7px;
+
+    }
+
+    .memory-card {
+
+        min-height: 65px;
+
+        font-size: 25px;
+
+    }
+
+    .answers {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+
+        <span>PJLand</span>
+
+    </div>
+
+    <div class="level">
+
+        LEVEL 10 • ROYAL MEMORY VAULT
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<div class="title">
+
+    <small>LEVEL 10</small>
+
+    <h1>🧠 Royal Memory Vault</h1>
+
+    <p>
+        Observe carefully. Remember everything.
+    </p>
+
+</div>
+
+
+
+<div class="stats">
+
+
+    <div class="stat">
+
+        <span>
+            Questions
+        </span>
+
+        <strong id="questionCount">
+            0 / 20
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>
+            Correct
+        </span>
+
+        <strong id="correctCount">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>
+            Score
+        </span>
+
+        <strong id="score">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+        <span>
+            Round
+        </span>
+
+        <strong id="round">
+            1
+        </strong>
+
+    </div>
+
+
+</div>
+
+
+
+<div class="game-card">
+
+
+<div class="round-info">
+
+    <div
+        class="round-label"
+        id="roundLabel">
+
+        ROUND 1
+
+    </div>
+
+
+    <h2
+        id="roundTitle">
+
+        The First Memory
+
+    </h2>
+
+
+    <p
+        id="roundDescription">
+
+        Memorize the symbols before they disappear.
+
+    </p>
+
+</div>
+
+
+
+<div
+    class="timer"
+    id="timer">
+
+    8
+
+</div>
+
+
+
+<div
+    class="memory-grid"
+    id="memoryGrid">
+
+</div>
+
+
+
+<div
+    class="question-area"
+    id="questionArea">
+
+
+    <div
+        class="question-number"
+        id="questionNumber">
+
+        QUESTION 1 / 20
+
+    </div>
+
+
+    <div
+        class="question"
+        id="question">
+
+    </div>
+
+
+    <div
+        class="answers"
+        id="answers">
+
+    </div>
+
+
+</div>
+
+
+
+<div
+    class="message"
+    id="message">
+
+    Memorize the symbols...
+
+</div>
+
+
+
+<button
+    class="next-btn"
+    id="nextBtn"
+    onclick="nextQuestion()">
+
+    NEXT QUESTION →
+
+</button>
+
+
+</div>
+
+
+</main>
+
+
+
+<!-- =========================
+     RESULT
+========================= -->
+
+<div
+    class="result"
+    id="result">
+
+
+<div class="result-card">
+
+
+    <div
+        class="result-icon"
+        id="resultIcon">
+
+        👑
+
+    </div>
+
+
+    <h2
+        id="resultTitle">
+
+        Royal Memory Master
+
+    </h2>
+
+
+    <div
+        class="final-score"
+        id="finalScore">
+
+        0 / 100
+
+    </div>
+
+
+    <div class="result-stats">
+
+
+        <div class="result-stat">
+
+            <span>
+                Correct
+            </span>
+
+            <strong
+                id="finalCorrect">
+
+                0 / 20
+
+            </strong>
+
+        </div>
+
+
+        <div class="result-stat">
+
+            <span>
+                Memory
+            </span>
+
+            <strong
+                id="memoryScore">
+
+                0%
+
+            </strong>
+
+        </div>
+
+
+        <div class="result-stat">
+
+            <span>
+                Rank
+            </span>
+
+            <strong
+                id="finalRank">
+
+                —
+
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+    <p
+        id="resultMessage">
+
+    </p>
+
+
+    <button
+        class="continue-btn"
+        onclick="nextLevel()">
+
+        ENTER LEVEL 11 →
+
+    </button>
+
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =========================================
+   GAME DATA
+========================================= */
+
+
+/*
+   Each round contains 5 questions.
+
+   Total = 20 questions.
+*/
+
+const rounds = [
+
+    {
+
+        title:
+            "The First Memory",
+
+        description:
+            "Memorize 8 symbols.",
+
+        time: 8,
+
+        symbols: [
+            "🍎",
+            "⭐",
+            "🔑",
+            "🌙",
+            "⚔️",
+            "🦁",
+            "💎",
+            "🔥"
+        ],
+
+        questions: [
+
+            {
+                q:
+                    "Which symbol was in position 1?",
+
+                options:
+                    ["🍎","⭐","🔑","🌙"],
+
+                answer:
+                    "🍎"
+            },
+
+            {
+                q:
+                    "Which symbol was in position 4?",
+
+                options:
+                    ["🔥","🌙","🦁","💎"],
+
+                answer:
+                    "🌙"
+            },
+
+            {
+                q:
+                    "Which symbol was immediately after the key?",
+
+                options:
+                    ["🌙","⭐","⚔️","🔥"],
+
+                answer:
+                    "🌙"
+            },
+
+            {
+                q:
+                    "Which symbol was last?",
+
+                options:
+                    ["💎","🔥","🦁","⚔️"],
+
+                answer:
+                    "🔥"
+            },
+
+            {
+                q:
+                    "Where was the lion?",
+
+                options:
+                    [
+                        "Position 3",
+                        "Position 5",
+                        "Position 6",
+                        "Position 8"
+                    ],
+
+                answer:
+                    "Position 6"
+            }
+
+        ]
+
+    },
+
+
+    {
+
+        title:
+            "The Scholar's Chamber",
+
+        description:
+            "Memorize 12 symbols.",
+
+        time: 9,
+
+        symbols: [
+
+            "🌞",
+            "🐺",
+            "💰",
+            "🌹",
+            "🛡️",
+            "🍀",
+            "👑",
+            "🎯",
+            "🕯️",
+            "🐉",
+            "📜",
+            "🏰"
+
+        ],
+
+        questions: [
+
+            {
+                q:
+                    "Which symbol was in position 2?",
+
+                options:
+                    ["🐺","🌹","👑","🐉"],
+
+                answer:
+                    "🐺"
+            },
+
+            {
+                q:
+                    "Which symbol was in position 7?",
+
+                options:
+                    ["🎯","👑","🕯️","🏰"],
+
+                answer:
+                    "👑"
+            },
+
+            {
+                q:
+                    "What came immediately after the shield?",
+
+                options:
+                    ["🍀","👑","🎯","🌹"],
+
+                answer:
+                    "🍀"
+            },
+
+            {
+                q:
+                    "Which symbol was in position 10?",
+
+                options:
+                    ["🐉","📜","🏰","🕯️"],
+
+                answer:
+                    "🐉"
+            },
+
+            {
+                q:
+                    "Where was the castle?",
+
+                options:
+                    [
+                        "Position 9",
+                        "Position 10",
+                        "Position 11",
+                        "Position 12"
+                    ],
+
+                answer:
+                    "Position 12"
+            }
+
+        ]
+
+    },
+
+
+    {
+
+        title:
+            "The Strategist's Hall",
+
+        description:
+            "Memorize 16 symbols.",
+
+        time: 10,
+
+        symbols: [
+
+            "🦅",
+            "💡",
+            "🌊",
+            "🔔",
+            "🍋",
+            "🗝️",
+            "🐯",
+            "🌲",
+            "💰",
+            "☀️",
+            "🎲",
+            "🧭",
+            "🦊",
+            "🏹",
+            "📚",
+            "👑"
+
+        ],
+
+        questions: [
+
+            {
+                q:
+                    "Which symbol was in position 3?",
+
+                options:
+                    ["🌊","🍋","💡","🧭"],
+
+                answer:
+                    "🌊"
+            },
+
+            {
+                q:
+                    "Which symbol was in position 6?",
+
+                options:
+                    ["🐯","🗝️","🌲","💰"],
+
+                answer:
+                    "🗝️"
+            },
+
+            {
+                q:
+                    "What came after the compass?",
+
+                options:
+                    ["🦊","🏹","📚","👑"],
+
+                answer:
+                    "🦊"
+            },
+
+            {
+                q:
+                    "Which symbol was position 14?",
+
+                options:
+                    ["🏹","📚","🦊","👑"],
+
+                answer:
+                    "🏹"
+            },
+
+            {
+                q:
+                    "Where was the crown?",
+
+                options:
+                    [
+                        "Position 13",
+                        "Position 14",
+                        "Position 15",
+                        "Position 16"
+                    ],
+
+                answer:
+                    "Position 16"
+            }
+
+        ]
+
+    },
+
+
+    {
+
+        title:
+            "The Royal Memory Trial",
+
+        description:
+            "The final challenge. Memorize 20 symbols.",
+
+        time: 10,
+
+        symbols: [
+
+            "⚡",
+            "🐉",
+            "🌹",
+            "🦁",
+            "💎",
+            "🏹",
+            "🌙",
+            "🔥",
+            "👑",
+            "🛡️",
+            "🍀",
+            "🦅",
+            "🔑",
+            "⭐",
+            "🏰",
+            "🐺",
+            "💰",
+            "📜",
+            "🎯",
+            "⚔️"
+
+        ],
+
+        questions: [
+
+            {
+                q:
+                    "Which symbol was in position 5?",
+
+                options:
+                    ["💎","🌙","🏹","🔥"],
+
+                answer:
+                    "💎"
+            },
+
+            {
+                q:
+                    "Which symbol was in position 9?",
+
+                options:
+                    ["👑","🛡️","🏰","🎯"],
+
+                answer:
+                    "👑"
+            },
+
+            {
+                q:
+                    "What came immediately after the key?",
+
+                options:
+                    ["⭐","🏰","🐺","💰"],
+
+                answer:
+                    "⭐"
+            },
+
+            {
+                q:
+                    "Which symbol was in position 17?",
+
+                options:
+                    ["🐺","💰","📜","🎯"],
+
+                answer:
+                    "💰"
+            },
+
+            {
+                q:
+                    "Where was the sword?",
+
+                options:
+                    [
+                        "Position 17",
+                        "Position 18",
+                        "Position 19",
+                        "Position 20"
+                    ],
+
+                answer:
+                    "Position 20"
+            }
+
+        ]
+
+    }
+
+];
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let currentRound = 0;
+
+let currentQuestion = 0;
+
+let totalQuestions = 0;
+
+let correctAnswers = 0;
+
+let score = 0;
+
+let timerInterval;
+
+let questionLocked = false;
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const memoryGrid =
+    document.getElementById(
+        "memoryGrid"
+    );
+
+const questionArea =
+    document.getElementById(
+        "questionArea"
+    );
+
+const timer =
+    document.getElementById(
+        "timer"
+    );
+
+const message =
+    document.getElementById(
+        "message"
+    );
+
+const nextBtn =
+    document.getElementById(
+        "nextBtn"
+    );
+
+
+/* =========================================
+   START ROUND
+========================================= */
+
+function startRound() {
+
+    const round =
+        rounds[currentRound];
+
+
+    document
+        .getElementById("round")
+        .textContent =
+        currentRound + 1;
+
+
+    document
+        .getElementById("roundLabel")
+        .textContent =
+        "ROUND " +
+        (currentRound + 1);
+
+
+    document
+        .getElementById("roundTitle")
+        .textContent =
+        round.title;
+
+
+    document
+        .getElementById("roundDescription")
+        .textContent =
+        round.description;
+
+
+    questionArea
+        .classList
+        .remove("active");
+
+
+    nextBtn
+        .classList
+        .remove("show");
+
+
+    createMemoryCards();
+
+
+    startTimer(
+        round.time
+    );
+
+}
+
+
+/* =========================================
+   CREATE CARDS
+========================================= */
+
+function createMemoryCards() {
+
+    const round =
+        rounds[currentRound];
+
+
+    memoryGrid.innerHTML =
+        "";
+
+
+    round.symbols.forEach(
+        function(symbol,index) {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "memory-card show";
+
+
+            card.dataset.symbol =
+                symbol;
+
+
+            card.innerHTML =
+                `<span>${symbol}</span>`;
+
+
+            memoryGrid.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   TIMER
+========================================= */
+
+function startTimer(seconds) {
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    let remaining =
+        seconds;
+
+
+    timer.textContent =
+        remaining;
+
+
+    message.textContent =
+        "Memorize the symbols...";
+
+
+    timerInterval =
+        setInterval(
+            function() {
+
+                remaining--;
+
+                timer.textContent =
+                    remaining;
+
+
+                if (
+                    remaining <= 0
+                ) {
+
+                    clearInterval(
+                        timerInterval
+                    );
+
+
+                    hideMemory();
+
+                }
+
+            },
+            1000
+        );
+
+}
+
+
+/* =========================================
+   HIDE MEMORY
+========================================= */
+
+function hideMemory() {
+
+    const cards =
+        document.querySelectorAll(
+            ".memory-card"
+        );
+
+
+    cards.forEach(
+        function(card,index) {
+
+            card.classList
+                .remove("show");
+
+
+            card.classList
+                .add("hidden-card");
+
+
+            card.innerHTML =
+                `<span class="card-number">
+                    ${index + 1}
+                </span>`;
+
+        }
+    );
+
+
+    timer.textContent =
+        "✓";
+
+
+    message.textContent =
+        "Memory locked. Answer the questions.";
+
+
+    currentQuestion = 0;
+
+
+    setTimeout(
+        showQuestion,
+        700
+    );
+
+}
+
+
+/* =========================================
+   SHOW QUESTION
+========================================= */
+
+function showQuestion() {
+
+    const round =
+        rounds[currentRound];
+
+
+    const q =
+        round.questions[
+            currentQuestion
+        ];
+
+
+    questionArea
+        .classList
+        .add("active");
+
+
+    document
+        .getElementById(
+            "questionNumber"
+        )
+        .textContent =
+
+        `QUESTION
+        ${totalQuestions + 1}
+        / 20`;
+
+
+    document
+        .getElementById(
+            "question"
+        )
+        .textContent =
+        q.q;
+
+
+    const answers =
+        document.getElementById(
+            "answers"
+        );
+
+
+    answers.innerHTML =
+        "";
+
+
+    q.options.forEach(
+        function(option) {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className =
+                "answer";
+
+
+            button.textContent =
+                option;
+
+
+            button.onclick =
+                function() {
+
+                    checkAnswer(
+                        option,
+                        q.answer,
+                        button
+                    );
+
+                };
+
+
+            answers.appendChild(
+                button
+            );
+
+        }
+    );
+
+
+    questionLocked =
+        false;
+
+}
+
+
+/* =========================================
+   CHECK ANSWER
+========================================= */
+
+function checkAnswer(
+    selected,
+    correct,
+    button
+) {
+
+    if (
+        questionLocked
+    )
+        return;
+
+
+    questionLocked =
+        true;
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".answer"
+        );
+
+
+    buttons.forEach(
+        function(btn) {
+
+            btn.disabled =
+                true;
+
+        }
+    );
+
+
+    if (
+        selected === correct
+    ) {
+
+        button.classList
+            .add("correct");
+
+
+        correctAnswers++;
+
+        score += 5;
+
+
+        message.textContent =
+            "✓ Correct! Your memory is sharp.";
+
+
+    }
+
+    else {
+
+        button.classList
+            .add("wrong");
+
+
+        buttons.forEach(
+            function(btn) {
+
+                if (
+                    btn.textContent ===
+                    correct
+                ) {
+
+                    btn.classList
+                        .add("correct");
+
+                }
+
+            }
+        );
+
+
+        message.textContent =
+            "✗ Incorrect. Remember carefully.";
+
+    }
+
+
+    totalQuestions++;
+
+
+    document
+        .getElementById(
+            "questionCount"
+        )
+        .textContent =
+        `${totalQuestions} / 20`;
+
+
+    document
+        .getElementById(
+            "correctCount"
+        )
+        .textContent =
+        correctAnswers;
+
+
+    document
+        .getElementById(
+            "score"
+        )
+        .textContent =
+        score;
+
+
+    nextBtn
+        .classList
+        .add("show");
+
+}
+
+
+/* =========================================
+   NEXT QUESTION
+========================================= */
+
+function nextQuestion() {
+
+    nextBtn
+        .classList
+        .remove("show");
+
+
+    currentQuestion++;
+
+
+    if (
+        currentQuestion <
+        rounds[currentRound]
+            .questions.length
+    ) {
+
+        showQuestion();
+
+        return;
+
+    }
+
+
+    /*
+       Round complete
+    */
+
+    currentRound++;
+
+
+    if (
+        currentRound <
+        rounds.length
+    ) {
+
+        memoryGrid.innerHTML =
+            "";
+
+
+        questionArea
+            .classList
+            .remove("active");
+
+
+        message.textContent =
+            "Excellent. Prepare for the next memory chamber.";
+
+
+        setTimeout(
+            startRound,
+            1000
+        );
+
+    }
+
+    else {
+
+        showFinalResult();
+
+    }
+
+}
+
+
+/* =========================================
+   FINAL RESULT
+========================================= */
+
+function showFinalResult() {
+
+    const percentage =
+        Math.round(
+            (correctAnswers / 20) *
+            100
+        );
+
+
+    let rank;
+
+    let icon;
+
+    let title;
+
+    let resultMessage;
+
+
+    if (
+        correctAnswers >= 18
+    ) {
+
+        icon =
+            "👑";
+
+        title =
+            "Royal Memory Master";
+
+        rank =
+            "Master";
+
+        resultMessage =
+            "Extraordinary memory. You have demonstrated the mental discipline expected of the highest rulers.";
+
+    }
+
+    else if (
+        correctAnswers >= 15
+    ) {
+
+        icon =
+            "🏰";
+
+        title =
+            "Castle Strategist";
+
+        rank =
+            "Strategist";
+
+        resultMessage =
+            "Excellent memory. Your ability to retain information is becoming a powerful royal skill.";
+
+    }
+
+    else if (
+        correctAnswers >= 11
+    ) {
+
+        icon =
+            "⚔️";
+
+        title =
+            "Royal Scholar";
+
+        rank =
+            "Scholar";
+
+        resultMessage =
+            "A solid performance. Continue sharpening your memory as the trials become harder.";
+
+    }
+
+    else if (
+        correctAnswers >= 8
+    ) {
+
+        icon =
+            "📜";
+
+        title =
+            "Apprentice Scholar";
+
+        rank =
+            "Apprentice";
+
+        resultMessage =
+            "You have potential, but the Royal Council expects stronger memory before higher ranks.";
+
+    }
+
+    else {
+
+        icon =
+            "🛡️";
+
+        title =
+            "Memory Training Required";
+
+        rank =
+            "Trainee";
+
+        resultMessage =
+            "The journey continues. Strengthen your memory and return to the Royal Vault.";
+
+    }
+
+
+    document
+        .getElementById(
+            "resultIcon"
+        )
+        .textContent =
+        icon;
+
+
+    document
+        .getElementById(
+            "resultTitle"
+        )
+        .textContent =
+        title;
+
+
+    document
+        .getElementById(
+            "finalScore"
+        )
+        .textContent =
+        percentage +
+        " / 100";
+
+
+    document
+        .getElementById(
+            "finalCorrect"
+        )
+        .textContent =
+        `${correctAnswers} / 20`;
+
+
+    document
+        .getElementById(
+            "memoryScore"
+        )
+        .textContent =
+        percentage +
+        "%";
+
+
+    document
+        .getElementById(
+            "finalRank"
+        )
+        .textContent =
+        rank;
+
+
+    document
+        .getElementById(
+            "resultMessage"
+        )
+        .textContent =
+        resultMessage;
+
+
+    document
+        .getElementById(
+            "result"
+        )
+        .classList
+        .add("show");
+
+}
+
+
+/* =========================================
+   LEVEL 11
+========================================= */
+
+function nextLevel() {
+
+    window.location.href =
+        "level11.html";
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+startRound();
+
+</script>
+
+
+</body>
+
+</html>

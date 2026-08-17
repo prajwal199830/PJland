@@ -1,0 +1,2131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Level 5 — The Decision Master's Trial</title>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Inter, sans-serif;
+    color: #f4f1e9;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(151,109,43,.18),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #080a0e,
+            #12161c 55%,
+            #080a0d
+        );
+}
+
+
+/* ===============================
+   HEADER
+================================ */
+
+.topbar {
+
+    height: 70px;
+
+    padding: 0 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: rgba(7,9,13,.97);
+
+    border-bottom:
+        1px solid rgba(255,255,255,.08);
+}
+
+.logo {
+
+    font-family: Cinzel, serif;
+
+    font-size: 21px;
+
+    font-weight: 800;
+
+    color: #e2bd61;
+
+    letter-spacing: 1px;
+}
+
+.logo span {
+    color: white;
+}
+
+.level-title {
+
+    color: #9fa5ae;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+}
+
+
+/* ===============================
+   MAIN
+================================ */
+
+.container {
+
+    width:
+        min(900px, calc(100% - 25px));
+
+    margin: auto;
+
+    padding: 35px 0 70px;
+}
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+
+/* ===============================
+   INTRO
+================================ */
+
+.intro {
+
+    min-height:
+        calc(100vh - 120px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+.intro-card {
+
+    width: 100%;
+
+    max-width: 760px;
+
+    padding: 50px 30px;
+
+    text-align: center;
+
+    border-radius: 22px;
+
+    background:
+        rgba(17,20,26,.97);
+
+    border:
+        1px solid rgba(224,190,100,.2);
+
+    box-shadow:
+        0 30px 90px rgba(0,0,0,.4);
+}
+
+.intro-icon {
+
+    font-size: 75px;
+
+    margin-bottom: 18px;
+}
+
+.eyebrow {
+
+    color: #c5a45a;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 12px;
+}
+
+.intro h1 {
+
+    font-family: Cinzel, serif;
+
+    font-size:
+        clamp(30px,5vw,48px);
+
+    margin-bottom: 12px;
+}
+
+.intro h2 {
+
+    font-family: Cinzel, serif;
+
+    color: #dfbd67;
+
+    font-size: 21px;
+
+    margin-bottom: 20px;
+}
+
+.intro p {
+
+    color: #a8adb5;
+
+    max-width: 620px;
+
+    margin: auto;
+
+    line-height: 1.8;
+
+    font-size: 14px;
+}
+
+
+/* ===============================
+   BUTTON
+================================ */
+
+.primary-btn {
+
+    border: 0;
+
+    cursor: pointer;
+
+    margin-top: 30px;
+
+    padding: 15px 28px;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #a9792e,
+            #e1bd62
+        );
+
+    color: #161107;
+
+    font-weight: 800;
+
+    font-size: 13px;
+
+    transition: .2s;
+}
+
+.primary-btn:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 12px 30px
+        rgba(214,174,78,.2);
+}
+
+
+/* ===============================
+   GAME HEADER
+================================ */
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+.stat {
+
+    background: #15191f;
+
+    border:
+        1px solid #2d3239;
+
+    border-radius: 12px;
+
+    padding: 14px;
+
+    text-align: center;
+}
+
+.stat-label {
+
+    display: block;
+
+    color: #818892;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 6px;
+}
+
+.stat-value {
+
+    color: #e0bc60;
+
+    font-family: Cinzel, serif;
+
+    font-size: 21px;
+
+    font-weight: 700;
+}
+
+.warning {
+    color: #d97863 !important;
+}
+
+
+/* ===============================
+   PROGRESS
+================================ */
+
+.progress-wrapper {
+
+    margin-bottom: 20px;
+}
+
+.progress-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    color: #858b94;
+
+    font-size: 11px;
+
+    margin-bottom: 7px;
+}
+
+.progress-bar {
+
+    height: 6px;
+
+    background: #252a30;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.progress-fill {
+
+    width: 5%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #a9792e,
+            #e1bd62
+        );
+
+    transition: width .3s;
+}
+
+
+/* ===============================
+   QUESTION CARD
+================================ */
+
+.question-card {
+
+    background:
+        rgba(17,20,26,.97);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    border-radius: 22px;
+
+    padding: 35px;
+
+    box-shadow:
+        0 20px 70px rgba(0,0,0,.3);
+}
+
+.scenario-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 11px;
+
+    border-radius: 20px;
+
+    background: #242019;
+
+    border:
+        1px solid #4b3b1e;
+
+    color: #d8b65c;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 20px;
+}
+
+.question-number {
+
+    color: #818792;
+
+    font-size: 11px;
+
+    margin-bottom: 10px;
+}
+
+.question-title {
+
+    font-family: Cinzel, serif;
+
+    font-size:
+        clamp(22px,4vw,31px);
+
+    margin-bottom: 20px;
+
+    line-height: 1.35;
+}
+
+.scenario {
+
+    color: #c0c5cc;
+
+    font-size: 14px;
+
+    line-height: 1.9;
+
+    padding: 20px;
+
+    border-left:
+        3px solid #a9792e;
+
+    background: #14181d;
+
+    border-radius: 0 10px 10px 0;
+
+    margin-bottom: 28px;
+}
+
+
+/* ===============================
+   CHOICES
+================================ */
+
+.choices {
+
+    display: grid;
+
+    gap: 12px;
+}
+
+.choice {
+
+    width: 100%;
+
+    padding: 17px;
+
+    border-radius: 12px;
+
+    border:
+        1px solid #30353d;
+
+    background: #181c21;
+
+    color: #d7dbe0;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    transition: .18s;
+
+    font-family: Inter, sans-serif;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+.choice:hover:not(:disabled) {
+
+    background: #22272e;
+
+    border-color: #77602e;
+
+    transform:
+        translateX(3px);
+}
+
+.choice-letter {
+
+    min-width: 31px;
+
+    height: 31px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    border-radius: 8px;
+
+    background: #272c33;
+
+    color: #d9b65a;
+
+    font-weight: 800;
+}
+
+.choice.correct {
+
+    border-color: #4e8056;
+
+    background: #1d3022;
+
+    color: #b8dfbd;
+}
+
+.choice.correct .choice-letter {
+
+    background: #315b38;
+
+    color: white;
+}
+
+.choice.wrong {
+
+    border-color: #804b42;
+
+    background: #321f1d;
+
+    color: #dfaaa0;
+}
+
+.choice.wrong .choice-letter {
+
+    background: #66352f;
+
+    color: white;
+}
+
+.choice:disabled {
+    cursor: default;
+}
+
+
+/* ===============================
+   EXPLANATION
+================================ */
+
+.explanation {
+
+    display: none;
+
+    margin-top: 22px;
+
+    padding: 18px;
+
+    border-radius: 12px;
+
+    background: #171c20;
+
+    border:
+        1px solid #30363d;
+}
+
+.explanation.show {
+    display: block;
+}
+
+.explanation-title {
+
+    color: #e1bd63;
+
+    font-family: Cinzel, serif;
+
+    font-size: 14px;
+
+    margin-bottom: 8px;
+}
+
+.explanation-text {
+
+    color: #9da4ac;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+.next-btn {
+
+    display: none;
+
+    margin-top: 18px;
+}
+
+
+/* ===============================
+   RESULT
+================================ */
+
+.result-card {
+
+    max-width: 720px;
+
+    margin: 50px auto;
+
+    padding: 55px 30px;
+
+    text-align: center;
+
+    background:
+        rgba(17,20,26,.97);
+
+    border:
+        1px solid rgba(224,190,100,.2);
+
+    border-radius: 22px;
+}
+
+.result-icon {
+
+    font-size: 85px;
+
+    margin-bottom: 15px;
+}
+
+.result-card h1 {
+
+    font-family: Cinzel, serif;
+
+    font-size: 35px;
+
+    margin-bottom: 10px;
+}
+
+.result-score {
+
+    color: #e1bd63;
+
+    font-family: Cinzel, serif;
+
+    font-size: 52px;
+
+    margin: 20px 0;
+}
+
+.result-message {
+
+    color: #a6adb5;
+
+    font-size: 14px;
+
+    line-height: 1.8;
+
+    max-width: 580px;
+
+    margin: auto;
+}
+
+.stats-final {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 10px;
+
+    margin-top: 25px;
+}
+
+.final-stat {
+
+    padding: 15px;
+
+    background: #181c21;
+
+    border-radius: 10px;
+}
+
+.final-stat strong {
+
+    display: block;
+
+    color: #e0bc60;
+
+    font-family: Cinzel, serif;
+
+    font-size: 21px;
+
+    margin-bottom: 5px;
+}
+
+.final-stat span {
+
+    color: #777f89;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+}
+
+
+/* ===============================
+   MOBILE
+================================ */
+
+@media(max-width:600px) {
+
+    .topbar {
+        padding: 0 15px;
+    }
+
+    .level-title {
+        display: none;
+    }
+
+    .container {
+        width:
+            calc(100% - 15px);
+
+        padding-top: 20px;
+    }
+
+    .question-card {
+        padding: 20px;
+    }
+
+    .stats {
+        gap: 6px;
+    }
+
+    .stat {
+        padding: 10px 5px;
+    }
+
+    .stat-value {
+        font-size: 17px;
+    }
+
+    .scenario {
+        padding: 15px;
+    }
+
+    .choice {
+        padding: 14px;
+    }
+
+    .stats-final {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header class="topbar">
+
+    <div class="logo">
+
+        MIND<span>PJLand</span>
+
+    </div>
+
+    <div class="level-title">
+
+        LEVEL 5 • DECISION MASTER'S TRIAL
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<!-- =================================================
+     INTRO SCREEN
+================================================= -->
+
+<section
+    id="introScreen"
+    class="screen active intro">
+
+    <div class="intro-card">
+
+        <div class="intro-icon">
+            ⚖️
+        </div>
+
+        <div class="eyebrow">
+            Level 5
+        </div>
+
+        <h1>
+            The Decision Master's Trial
+        </h1>
+
+        <h2>
+            The Castle Needs Your Judgment
+        </h2>
+
+        <p>
+
+            You have proven your ability to
+            solve puzzles.
+
+            <br><br>
+
+            Now the castle wants to know
+            something more important:
+
+            <br>
+
+            <strong>
+                Can you make the right decision
+                when everything is at stake?
+            </strong>
+
+            <br><br>
+
+            You will face
+            <strong>20 scenarios</strong>
+            involving leadership, logic,
+            risk, resources and unexpected
+            problems.
+
+            <br><br>
+
+            Choose carefully.
+
+        </p>
+
+        <button
+            class="primary-btn"
+            onclick="startGame()">
+
+            ENTER THE COUNCIL →
+
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- =================================================
+     GAME SCREEN
+================================================= -->
+
+<section
+    id="gameScreen"
+    class="screen">
+
+
+    <!-- STATS -->
+
+    <div class="stats">
+
+        <div class="stat">
+
+            <span class="stat-label">
+                Scenario
+            </span>
+
+            <span
+                id="questionCounter"
+                class="stat-value">
+
+                1 / 20
+
+            </span>
+
+        </div>
+
+
+        <div class="stat">
+
+            <span class="stat-label">
+                Decision Score
+            </span>
+
+            <span
+                id="score"
+                class="stat-value">
+
+                0
+
+            </span>
+
+        </div>
+
+
+        <div class="stat">
+
+            <span class="stat-label">
+                Time
+            </span>
+
+            <span
+                id="timer"
+                class="stat-value">
+
+                10:00
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- PROGRESS -->
+
+    <div class="progress-wrapper">
+
+        <div class="progress-top">
+
+            <span>
+                Castle Leadership Trial
+            </span>
+
+            <span
+                id="progressText">
+
+                5%
+
+            </span>
+
+        </div>
+
+        <div class="progress-bar">
+
+            <div
+                id="progressFill"
+                class="progress-fill">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- QUESTION -->
+
+    <div class="question-card">
+
+        <div class="scenario-badge">
+
+            🏰 Castle Council
+
+        </div>
+
+
+        <div
+            id="questionNumber"
+            class="question-number">
+
+            SCENARIO 01
+
+        </div>
+
+
+        <h1
+            id="questionTitle"
+            class="question-title">
+
+        </h1>
+
+
+        <div
+            id="scenarioText"
+            class="scenario">
+
+        </div>
+
+
+        <div
+            id="choices"
+            class="choices">
+
+        </div>
+
+
+        <div
+            id="explanation"
+            class="explanation">
+
+            <div class="explanation-title">
+
+                🧠 Council Analysis
+
+            </div>
+
+            <div
+                id="explanationText"
+                class="explanation-text">
+
+            </div>
+
+        </div>
+
+
+        <button
+            id="nextButton"
+            class="primary-btn next-btn"
+            onclick="nextQuestion()">
+
+            NEXT SCENARIO →
+
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- =================================================
+     RESULT SCREEN
+================================================= -->
+
+<section
+    id="resultScreen"
+    class="screen">
+
+    <div class="result-card">
+
+        <div
+            id="resultIcon"
+            class="result-icon">
+
+            👑
+
+        </div>
+
+        <div class="eyebrow">
+            Trial Complete
+        </div>
+
+        <h1
+            id="resultTitle">
+
+            The Council Has Decided
+
+        </h1>
+
+
+        <div
+            id="resultScore"
+            class="result-score">
+
+            0 / 2000
+
+        </div>
+
+
+        <p
+            id="resultMessage"
+            class="result-message">
+
+        </p>
+
+
+        <div class="stats-final">
+
+            <div class="final-stat">
+
+                <strong
+                    id="correctAnswers">
+
+                    0
+
+                </strong>
+
+                <span>
+                    Strong Decisions
+                </span>
+
+            </div>
+
+
+            <div class="final-stat">
+
+                <strong
+                    id="accuracy">
+
+                    0%
+
+                </strong>
+
+                <span>
+                    Accuracy
+                </span>
+
+            </div>
+
+
+            <div class="final-stat">
+
+                <strong
+                    id="rank">
+
+                    -
+
+                </strong>
+
+                <span>
+                    Council Rank
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <button
+            id="continueButton"
+            class="primary-btn"
+            onclick="continueJourney()">
+
+            CONTINUE JOURNEY →
+
+        </button>
+
+    </div>
+
+</section>
+
+
+</main>
+
+
+
+<script>
+
+
+/* =====================================================
+   20 SCENARIOS
+===================================================== */
+
+const questions = [
+
+{
+    title: "The Village Food Shortage",
+
+    scenario:
+    "You are responsible for 100 villagers. The food supply will last only three days. A merchant arrives with enough food for everyone, but he is asking a very high price. What do you do?",
+
+    options: [
+        "Buy everything immediately regardless of the price.",
+        "Refuse the offer and hope another merchant arrives.",
+        "Negotiate a reasonable price while rationing the existing food.",
+        "Take the merchant's food by force."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "The strongest decision balances immediate survival with long-term resources. Negotiation plus rationing gives the village time while protecting its remaining resources."
+},
+
+
+{
+    title: "The Broken Bridge",
+
+    scenario:
+    "A bridge connecting your village to the castle has collapsed. People need to cross the river, but the water is dangerous. What is your first priority?",
+
+    options: [
+        "Tell everyone to swim across.",
+        "Send people across immediately because supplies are needed.",
+        "Secure a safe temporary crossing before allowing people to cross.",
+        "Close the village permanently."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "A good leader doesn't sacrifice lives simply to save time. Establishing a safe crossing protects people while still solving the transportation problem."
+},
+
+
+{
+    title: "Two Conflicting Reports",
+
+    scenario:
+    "Two guards report completely different information about an approaching army. One says there are 100 soldiers. The other says there are only 20. What should you do?",
+
+    options: [
+        "Believe the first guard.",
+        "Believe the second guard.",
+        "Immediately attack.",
+        "Gather additional information before committing your forces."
+    ],
+
+    answer: 3,
+
+    explanation:
+    "When critical information conflicts, making a major decision immediately is risky. Verification reduces the chance of making a disastrous decision based on unreliable information."
+},
+
+
+{
+    title: "The Missing Soldier",
+
+    scenario:
+    "A soldier has disappeared during patrol. You don't know whether he is injured, captured, or simply lost. What should you do?",
+
+    options: [
+        "Ignore it because one soldier cannot matter.",
+        "Send a small search team while keeping the main defense ready.",
+        "Send the entire army to search.",
+        "Assume he deserted and punish his family."
+    ],
+
+    answer: 1,
+
+    explanation:
+    "A limited search protects the missing soldier without unnecessarily weakening the castle's defenses."
+},
+
+
+{
+    title: "The Suspicious Merchant",
+
+    scenario:
+    "A merchant offers your castle weapons at half the normal price. He cannot clearly explain where he obtained them. What do you do?",
+
+    options: [
+        "Buy all the weapons immediately.",
+        "Reject the merchant immediately.",
+        "Investigate the source and inspect the weapons before deciding.",
+        "Arrest the merchant without evidence."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "An unusually cheap offer with an unclear source is a warning sign. Investigation gives you information before making a costly commitment."
+},
+
+
+{
+    title: "The Castle Fire",
+
+    scenario:
+    "A fire starts inside the castle. You can send your first response team to either the crowded living quarters or the empty storage building. What should you prioritize?",
+
+    options: [
+        "The empty storage building.",
+        "The crowded living quarters.",
+        "Whichever building looks more expensive.",
+        "Wait until the fire spreads before deciding."
+    ],
+
+    answer: 1,
+
+    explanation:
+    "Protecting human life should be the first priority during an emergency."
+},
+
+
+{
+    title: "Three Roads",
+
+    scenario:
+    "You must deliver medicine to a village. Road A is safe but takes two days. Road B is dangerous but takes half a day. Road C is unknown. What should you choose?",
+
+    options: [
+        "Always choose the fastest road.",
+        "Always choose the safest road.",
+        "Choose based on the urgency of the medicine and the actual risk of each road.",
+        "Choose the unknown road because it could be faster."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "Good decision-making considers both urgency and risk rather than blindly choosing speed or safety."
+},
+
+
+{
+    title: "The Castle Budget",
+
+    scenario:
+    "Your castle has money for only one major improvement. The walls need repairs, the hospital needs supplies, and the roads need maintenance. What should you do?",
+
+    options: [
+        "Spend everything on the walls.",
+        "Spend everything on the hospital.",
+        "Choose based on which problem creates the greatest immediate risk.",
+        "Split the money equally regardless of need."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "Limited resources should be directed toward the highest-priority problem rather than divided automatically."
+},
+
+
+{
+    title: "The False Alarm",
+
+    scenario:
+    "A guard claims an enemy army is approaching, but no other guard has seen anything. What should you do?",
+
+    options: [
+        "Immediately attack.",
+        "Ignore the guard.",
+        "Increase surveillance and verify the report.",
+        "Punish the guard for causing panic."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "Verification is better than either overreacting or completely ignoring potentially important information."
+},
+
+
+{
+    title: "Two Leaders Arguing",
+
+    scenario:
+    "Two senior officers are arguing about how to defend the castle. Their disagreement is affecting the soldiers. What should you do?",
+
+    options: [
+        "Choose one officer immediately.",
+        "Let them continue arguing.",
+        "Hear both plans and choose based on evidence and strategy.",
+        "Remove both officers."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "A strong leader listens to competing ideas, evaluates them objectively and then makes a clear decision."
+},
+
+
+{
+    title: "The Coming Storm",
+
+    scenario:
+    "A powerful storm will reach the castle within one hour. You have enough workers to complete only two tasks: repair the roof, secure the food, or reinforce the main gate. What should you do?",
+
+    options: [
+        "Choose randomly.",
+        "Protect whichever resources are most vulnerable and essential.",
+        "Repair the prettiest part of the castle.",
+        "Do nothing because the storm may change direction."
+    ],
+
+    answer: 1,
+
+    explanation:
+    "The correct approach is prioritization. Protecting essential and vulnerable resources gives the castle the best chance of surviving the storm."
+},
+
+
+{
+    title: "The Stranger at the Gate",
+
+    scenario:
+    "A stranger arrives claiming to be a royal messenger. He has no official identification but knows several details about the kingdom. What should you do?",
+
+    options: [
+        "Let him enter immediately.",
+        "Attack him immediately.",
+        "Keep him outside while verifying his identity.",
+        "Believe everything he says."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "Important claims should be verified before granting access to sensitive areas."
+},
+
+
+{
+    title: "The Water Shortage",
+
+    scenario:
+    "The castle has enough drinking water for only two days. You cannot immediately obtain more. How should the remaining water be distributed?",
+
+    options: [
+        "Give it all to the richest citizens.",
+        "Give it all to soldiers.",
+        "Create a fair rationing system based on essential needs.",
+        "Allow everyone to take whatever they can."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "A fair rationing system protects essential needs while preventing panic and uncontrolled consumption."
+},
+
+
+{
+    title: "The Weak Castle Wall",
+
+    scenario:
+    "Inspection reveals three weak sections of the castle wall, but you have enough workers to repair only one today. One protects the main gate, one protects the storage area, and one is rarely approached. Which should you prioritize?",
+
+    options: [
+        "The rarely approached section.",
+        "The storage section automatically.",
+        "The section presenting the greatest security risk.",
+        "Choose randomly."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "The strongest decision is based on risk, not convenience. The section creating the greatest threat should receive priority."
+},
+
+
+{
+    title: "The Lost Map",
+
+    scenario:
+    "Your map is damaged and you must guide a group through unfamiliar territory. You have three pieces of information from different travelers, but one may be wrong. What should you do?",
+
+    options: [
+        "Choose the first route mentioned.",
+        "Choose the longest route.",
+        "Compare the information and look for independent confirmation.",
+        "Ignore all information."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "Comparing sources and looking for confirmation reduces the chance of following incorrect information."
+},
+
+
+{
+    title: "The Trade Agreement",
+
+    scenario:
+    "A neighboring kingdom offers your castle cheaper food in exchange for access to your main trade road. The deal could help your economy but may create dependence. What should you do?",
+
+    options: [
+        "Accept immediately.",
+        "Reject immediately.",
+        "Evaluate the long-term benefits, risks and alternatives before agreeing.",
+        "Give them permanent control of the road."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "Good leaders consider both short-term benefits and long-term consequences."
+},
+
+
+{
+    title: "The Night Watch",
+
+    scenario:
+    "You have 30 guards but four areas need protection. The main gate is critical, the treasury is valuable, the village is large, and the rear wall is difficult to access. How should you distribute guards?",
+
+    options: [
+        "Divide them equally.",
+        "Put everyone at the treasury.",
+        "Allocate guards according to risk and importance.",
+        "Put everyone at the main gate."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "Resources should be allocated according to risk. Equal distribution is not always the safest strategy."
+},
+
+
+{
+    title: "The Multiple Emergencies",
+
+    scenario:
+    "At the same moment, a small fire starts in the village, a horse is injured, a merchant arrives, and a guard reports suspicious movement near the castle. What should you handle first?",
+
+    options: [
+        "The merchant.",
+        "The injured horse.",
+        "The potential security threat.",
+        "The least complicated problem."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "When several problems occur simultaneously, prioritize threats that could cause the greatest immediate harm."
+},
+
+
+{
+    title: "The Final Council Decision",
+
+    scenario:
+    "You are now responsible for the castle. Supplies are limited, an uncertain enemy threat exists, villagers need protection, and your advisers disagree about what to do. What is your first step?",
+
+    options: [
+        "Make the biggest decision immediately.",
+        "Choose the adviser you like most.",
+        "Gather the critical facts, identify the biggest risks, then prioritize actions.",
+        "Wait and hope the situation resolves itself."
+    ],
+
+    answer: 2,
+
+    explanation:
+    "Strong leadership begins with understanding the situation, identifying the highest risks and then acting with a clear priority."
+}
+
+];
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let currentQuestion = 0;
+
+let score = 0;
+
+let correctAnswers = 0;
+
+let answered = false;
+
+let timeRemaining = 600;
+
+let timerInterval;
+
+
+/* =====================================================
+   START
+===================================================== */
+
+function startGame() {
+
+    document
+        .getElementById("introScreen")
+        .classList.remove("active");
+
+    document
+        .getElementById("gameScreen")
+        .classList.add("active");
+
+    currentQuestion = 0;
+
+    score = 0;
+
+    correctAnswers = 0;
+
+    timeRemaining = 600;
+
+    loadQuestion();
+
+    startTimer();
+
+}
+
+
+/* =====================================================
+   LOAD QUESTION
+===================================================== */
+
+function loadQuestion() {
+
+    answered = false;
+
+    const q =
+        questions[currentQuestion];
+
+
+    document
+        .getElementById("questionCounter")
+        .textContent =
+        `${currentQuestion + 1} / ${questions.length}`;
+
+
+    document
+        .getElementById("questionNumber")
+        .textContent =
+        `SCENARIO ${String(currentQuestion + 1).padStart(2,"0")}`;
+
+
+    document
+        .getElementById("questionTitle")
+        .textContent =
+        q.title;
+
+
+    document
+        .getElementById("scenarioText")
+        .textContent =
+        q.scenario;
+
+
+    document
+        .getElementById("score")
+        .textContent =
+        score;
+
+
+    const percent =
+        ((currentQuestion + 1) /
+        questions.length) * 100;
+
+
+    document
+        .getElementById("progressFill")
+        .style.width =
+        percent + "%";
+
+
+    document
+        .getElementById("progressText")
+        .textContent =
+        Math.round(percent) + "%";
+
+
+    const choices =
+        document.getElementById(
+            "choices"
+        );
+
+    choices.innerHTML = "";
+
+
+    q.options.forEach(
+        (option,index) => {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.className =
+                "choice";
+
+
+            button.innerHTML = `
+
+                <span class="choice-letter">
+                    ${String.fromCharCode(65 + index)}
+                </span>
+
+                <span>
+                    ${option}
+                </span>
+
+            `;
+
+
+            button.onclick = () =>
+                selectAnswer(
+                    index,
+                    button
+                );
+
+
+            choices.appendChild(
+                button
+            );
+
+        }
+    );
+
+
+    document
+        .getElementById("explanation")
+        .classList.remove("show");
+
+
+    document
+        .getElementById("nextButton")
+        .style.display =
+        "none";
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+/* =====================================================
+   ANSWER
+===================================================== */
+
+function selectAnswer(
+    selected,
+    selectedButton
+) {
+
+    if (answered) return;
+
+    answered = true;
+
+
+    const q =
+        questions[currentQuestion];
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".choice"
+        );
+
+
+    buttons.forEach(
+        button =>
+        button.disabled = true
+    );
+
+
+    if (
+        selected === q.answer
+    ) {
+
+        selectedButton.classList.add(
+            "correct"
+        );
+
+        score += 100;
+
+        correctAnswers++;
+
+    }
+
+    else {
+
+        selectedButton.classList.add(
+            "wrong"
+        );
+
+
+        buttons[
+            q.answer
+        ].classList.add(
+            "correct"
+        );
+
+    }
+
+
+    document
+        .getElementById("score")
+        .textContent =
+        score;
+
+
+    document
+        .getElementById("explanationText")
+        .textContent =
+        q.explanation;
+
+
+    document
+        .getElementById("explanation")
+        .classList.add(
+            "show"
+        );
+
+
+    const nextButton =
+        document.getElementById(
+            "nextButton"
+        );
+
+
+    nextButton.style.display =
+        "inline-block";
+
+
+    if (
+        currentQuestion ===
+        questions.length - 1
+    ) {
+
+        nextButton.textContent =
+            "SEE MY RESULT →";
+
+    }
+
+}
+
+
+/* =====================================================
+   NEXT
+===================================================== */
+
+function nextQuestion() {
+
+    if (!answered) return;
+
+
+    currentQuestion++;
+
+
+    if (
+        currentQuestion >=
+        questions.length
+    ) {
+
+        finishGame();
+
+        return;
+
+    }
+
+
+    loadQuestion();
+
+}
+
+
+/* =====================================================
+   TIMER
+===================================================== */
+
+function startTimer() {
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    timerInterval =
+        setInterval(() => {
+
+            timeRemaining--;
+
+            updateTimer();
+
+
+            if (
+                timeRemaining <= 0
+            ) {
+
+                clearInterval(
+                    timerInterval
+                );
+
+                finishGame();
+
+            }
+
+        },1000);
+
+}
+
+
+/* =====================================================
+   UPDATE TIMER
+===================================================== */
+
+function updateTimer() {
+
+    const minutes =
+        Math.floor(
+            timeRemaining / 60
+        );
+
+    const seconds =
+        timeRemaining % 60;
+
+
+    const timer =
+        document.getElementById(
+            "timer"
+        );
+
+
+    timer.textContent =
+        `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+
+
+    if (
+        timeRemaining <= 60
+    ) {
+
+        timer.classList.add(
+            "warning"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   FINISH
+===================================================== */
+
+function finishGame() {
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    document
+        .getElementById("gameScreen")
+        .classList.remove("active");
+
+
+    document
+        .getElementById("resultScreen")
+        .classList.add("active");
+
+
+    const accuracy =
+        Math.round(
+            (correctAnswers /
+            questions.length) * 100
+        );
+
+
+    document
+        .getElementById(
+            "resultScore"
+        )
+        .textContent =
+        `${score} / 2000`;
+
+
+    document
+        .getElementById(
+            "correctAnswers"
+        )
+        .textContent =
+        `${correctAnswers} / 20`;
+
+
+    document
+        .getElementById(
+            "accuracy"
+        )
+        .textContent =
+        accuracy + "%";
+
+
+    let rank;
+
+    let title;
+
+    let icon;
+
+    let message;
+
+
+    if (
+        correctAnswers >= 18
+    ) {
+
+        rank =
+            "Master Strategist";
+
+        title =
+            "The Council Is Impressed";
+
+        icon =
+            "👑";
+
+        message =
+            "Exceptional judgment. You consistently identified risks, considered consequences and made strong decisions. The castle sees leadership potential in you.";
+
+    }
+
+    else if (
+        correctAnswers >= 15
+    ) {
+
+        rank =
+            "Castle Strategist";
+
+        title =
+            "Trial Passed";
+
+        icon =
+            "🏆";
+
+        message =
+            "Strong decision-making. You have demonstrated good judgment and an ability to prioritize difficult situations.";
+
+    }
+
+    else if (
+        correctAnswers >= 12
+    ) {
+
+        rank =
+            "Junior Commander";
+
+        title =
+            "You Have Potential";
+
+        icon =
+            "⚔️";
+
+        message =
+            "You passed the trial, but the council believes your judgment still needs development.";
+
+    }
+
+    else if (
+        correctAnswers >= 10
+    ) {
+
+        rank =
+            "Castle Recruit";
+
+        title =
+            "Barely Passed";
+
+        icon =
+            "🛡️";
+
+        message =
+            "You showed some good instincts, but stronger leadership requires better risk assessment and prioritization.";
+
+    }
+
+    else {
+
+        rank =
+            "Village Commoner";
+
+        title =
+            "Trial Failed";
+
+        icon =
+            "📜";
+
+        message =
+            "The council does not believe you are ready for greater responsibility yet. Train your judgment and return.";
+
+    }
+
+
+    document
+        .getElementById(
+            "rank"
+        )
+        .textContent =
+        rank;
+
+
+    document
+        .getElementById(
+            "resultTitle"
+        )
+        .textContent =
+        title;
+
+
+    document
+        .getElementById(
+            "resultIcon"
+        )
+        .textContent =
+        icon;
+
+
+    document
+        .getElementById(
+            "resultMessage"
+        )
+        .textContent =
+        message;
+
+}
+
+
+/* =====================================================
+   CONTINUE
+===================================================== */
+
+function continueJourney() {
+
+    /*
+       When Level 6 is ready,
+       this will open level6.html.
+    */
+
+    window.location.href =
+        "level6.html";
+
+}
+
+</script>
+
+</body>
+</html>
