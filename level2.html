@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,1175 +7,569 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Level 2 — The Watcher's Challenge | PJ LAND</title>
+<title>Level 2 — The First Challenge | Rise2King</title>
+
+<meta name="description"
+      content="Rise2King Level 2 — The First Challenge. Test your strategy in a game of Tic-Tac-Toe.">
 
 <style>
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-body {
+body{
 
-    font-family: Inter, sans-serif;
+    min-height:100vh;
 
-    color: #f4f1e9;
+    font-family:Arial,sans-serif;
 
-    min-height: 100vh;
+    color:#eee;
 
     background:
         radial-gradient(
             circle at 50% 10%,
-            rgba(145,104,45,.18),
-            transparent 30%
-        ),
-        linear-gradient(
-            135deg,
-            #080a0e,
-            #12161c 55%,
-            #080a0d
+            #29204b,
+            #100d1c 45%,
+            #05050a
         );
+
+    display:flex;
+    flex-direction:column;
 }
 
-/* =========================
-   TOP BAR
-========================= */
 
-.topbar {
+/* =========================================
+   HEADER
+========================================= */
 
-    height: 70px;
+header{
 
-    padding: 0 30px;
+    height:70px;
 
-    display: flex;
+    display:flex;
 
-    align-items: center;
+    align-items:center;
 
-    justify-content: space-between;
+    justify-content:space-between;
 
-    background: rgba(7,9,13,.95);
+    padding:0 28px;
 
-    border-bottom:
-        1px solid rgba(255,255,255,.08);
+    background:#07070d;
+
+    border-bottom:1px solid #393452;
 }
 
-.logo {
+.logo{
 
-    font-family: Cinzel, serif;
+    font-family:Georgia,serif;
 
-    font-size: 22px;
+    font-size:21px;
 
-    font-weight: 800;
+    font-weight:bold;
 
-    color: #e4bf63;
-
-    letter-spacing: 1px;
+    color:#b9a6ff;
 }
 
-.logo span {
-    color: white;
+.logo span{
+    color:white;
 }
 
-.level-title {
+.level{
 
-    color: #a6abb3;
+    font-size:10px;
 
-    font-size: 12px;
+    letter-spacing:3px;
 
-    letter-spacing: 1px;
+    color:#77728e;
 }
 
-/* =========================
-   CONTAINER
-========================= */
 
-.container {
+/* =========================================
+   MAIN
+========================================= */
 
-    width:
-        min(1250px, calc(100% - 30px));
+.container{
 
-    margin: auto;
+    width:min(
+        850px,
+        calc(100% - 24px)
+    );
 
-    padding: 28px 0 50px;
+    margin:auto;
+
+    padding:35px 0 50px;
+
+    text-align:center;
 }
 
-.screen {
-    display: none;
+
+/* =========================================
+   TITLE
+========================================= */
+
+.title small{
+
+    color:#9f8cff;
+
+    letter-spacing:3px;
+
+    font-size:10px;
 }
 
-.screen.active {
-    display: block;
-}
+.title h1{
 
-/* =========================
-   INTRO
-========================= */
-
-.intro {
-
-    min-height:
-        calc(100vh - 120px);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-}
-
-.intro-card {
-
-    width: 100%;
-
-    max-width: 760px;
-
-    text-align: center;
-
-    padding: 50px 30px;
-
-    border-radius: 22px;
-
-    background:
-        rgba(17,20,26,.96);
-
-    border:
-        1px solid rgba(224,190,100,.2);
-
-    box-shadow:
-        0 30px 90px rgba(0,0,0,.4);
-}
-
-.intro-icon {
-
-    font-size: 75px;
-
-    margin-bottom: 20px;
-}
-
-.eyebrow {
-
-    color: #c4a258;
-
-    font-size: 10px;
-
-    letter-spacing: 3px;
-
-    text-transform: uppercase;
-
-    margin-bottom: 12px;
-}
-
-.intro h1 {
-
-    font-family: Cinzel, serif;
+    font-family:Georgia,serif;
 
     font-size:
-        clamp(30px,5vw,48px);
-
-    margin-bottom: 12px;
-}
-
-.intro h2 {
-
-    font-family: Cinzel, serif;
-
-    color: #dfbd67;
-
-    font-size: 21px;
-
-    margin-bottom: 20px;
-}
-
-.intro p {
-
-    color: #a9aeb6;
-
-    max-width: 600px;
-
-    margin: auto;
-
-    line-height: 1.8;
-
-    font-size: 14px;
-}
-
-.primary-btn {
-
-    border: 0;
-
-    cursor: pointer;
-
-    margin-top: 30px;
-
-    padding: 15px 28px;
-
-    border-radius: 10px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #a8782e,
-            #e1bd63
+        clamp(
+            32px,
+            6vw,
+            48px
         );
 
-    color: #171208;
+    color:#ddd5ff;
 
-    font-weight: 800;
-
-    font-size: 13px;
-
-    transition: .2s;
+    margin:8px 0;
 }
 
-.primary-btn:hover {
+.title p{
 
-    transform: translateY(-2px);
+    color:#858095;
 
-    box-shadow:
-        0 12px 30px
-        rgba(214,174,78,.2);
+    font-size:13px;
+
+    line-height:1.6;
+
+    max-width:600px;
+
+    margin:auto;
 }
 
-/* =========================
-   GAME SCREEN
-========================= */
 
-.game-screen {
+/* =========================================
+   STATS
+========================================= */
 
-    width: 100%;
-}
+.stats{
 
-/* =========================
-   GAME TITLE
-========================= */
-
-.game-title {
-
-    text-align: center;
-
-    margin-bottom: 18px;
-}
-
-.game-title h1 {
-
-    font-family: Cinzel, serif;
-
-    font-size:
-        clamp(25px,4vw,36px);
-
-    color: #f4f1e9;
-
-    margin-bottom: 8px;
-}
-
-.game-title .sub {
-
-    color: #a5abb3;
-
-    font-size: 13px;
-}
-
-/* =========================
-   SCORE
-========================= */
-
-.score-area {
-
-    max-width: 800px;
-
-    margin: 0 auto 22px;
-
-    text-align: center;
-}
-
-.score {
-
-    color: #e3bd62;
-
-    font-weight: 700;
-
-    font-size: 14px;
-
-    margin-bottom: 9px;
-}
-
-.progress {
-
-    width: 100%;
-
-    height: 7px;
-
-    background: #292d34;
-
-    border-radius: 10px;
-
-    overflow: hidden;
-}
-
-.progress-fill {
-
-    width: 0%;
-
-    height: 100%;
-
-    background:
-        linear-gradient(
-            90deg,
-            #a77931,
-            #e4c46b
-        );
-
-    transition: width .3s;
-}
-
-/* =========================
-   IMAGES
-========================= */
-
-.images-wrapper {
-
-    display: grid;
+    display:grid;
 
     grid-template-columns:
-        repeat(2,1fr);
+        repeat(3,1fr);
 
-    gap: 18px;
+    gap:8px;
 
-    max-width: 1150px;
+    margin:25px auto 18px;
 
-    margin: auto;
+    max-width:600px;
 }
 
-.scene-card {
+.stat{
 
-    background: #171a20;
+    padding:12px;
+
+    background:#0c0b13;
 
     border:
-        1px solid #363b43;
+        1px solid #332e49;
 
-    border-radius: 15px;
-
-    padding: 8px;
-
-    overflow: hidden;
+    border-radius:10px;
 }
 
-.scene {
+.stat span{
 
-    position: relative;
+    display:block;
 
-    width: 100%;
+    font-size:8px;
 
-    aspect-ratio: 16 / 10;
+    color:#77718b;
 
-    overflow: hidden;
+    letter-spacing:2px;
+}
 
-    border-radius: 10px;
+.stat strong{
+
+    display:block;
+
+    margin-top:4px;
+
+    font-family:Georgia,serif;
+
+    font-size:18px;
+
+    color:#bcaeff;
+}
+
+
+/* =========================================
+   GAME CARD
+========================================= */
+
+.game{
+
+    max-width:600px;
+
+    margin:auto;
+
+    padding:22px;
+
+    background:#0c0b12;
+
+    border:
+        1px solid #353047;
+
+    border-radius:17px;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,.35);
+}
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+.status{
+
+    min-height:45px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    margin-bottom:15px;
+
+    padding:10px;
+
+    background:#12101a;
+
+    border:
+        1px solid #332d44;
+
+    border-radius:9px;
+
+    color:#c9bfff;
+
+    font-family:Georgia,serif;
+
+    font-size:16px;
+}
+
+
+/* =========================================
+   BOARD
+========================================= */
+
+.board{
+
+    width:min(
+        360px,
+        90vw
+    );
+
+    aspect-ratio:1;
+
+    margin:0 auto 20px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:8px;
+
+    padding:8px;
+
+    background:#08070d;
+
+    border:
+        1px solid #39324e;
+
+    border-radius:12px;
+}
+
+
+/* =========================================
+   CELLS
+========================================= */
+
+.cell{
+
+    border:1px solid #393147;
+
+    border-radius:9px;
+
+    background:#15121e;
+
+    color:#c9bfff;
+
+    font-family:Georgia,serif;
+
+    font-size:clamp(
+        38px,
+        10vw,
+        65px
+    );
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.cell:hover{
+
+    background:#1e192b;
+
+    border-color:#9589d0;
+
+    transform:scale(.97);
+}
+
+.cell.x{
+
+    color:#bcaeff;
+}
+
+.cell.o{
+
+    color:#d6a6ff;
+}
+
+.cell.winner{
+
+    background:#30275a;
+
+    border-color:#bcaeff;
+
+    box-shadow:
+        0 0 20px
+        rgba(150,130,255,.25);
+}
+
+
+/* =========================================
+   CONTROLS
+========================================= */
+
+.controls{
+
+    display:flex;
+
+    gap:8px;
+
+    justify-content:center;
+
+    flex-wrap:wrap;
+}
+
+button{
+
+    font-family:Arial,sans-serif;
+}
+
+.control-button{
+
+    padding:12px 18px;
+
+    border:1px solid #463d62;
+
+    border-radius:8px;
+
+    background:#15121e;
+
+    color:#ddd6ee;
+
+    cursor:pointer;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+    transition:.2s;
+}
+
+.control-button:hover{
+
+    background:#211b31;
+
+    border-color:#9f91df;
+}
+
+
+/* =========================================
+   NEXT LEVEL
+========================================= */
+
+.next-button{
+
+    display:none;
+
+    width:100%;
+
+    margin-top:10px;
+
+    padding:14px;
+
+    border:0;
+
+    border-radius:8px;
 
     background:
         linear-gradient(
-            #536d86 0%,
-            #8399aa 55%,
-            #4f653e 56%,
-            #26341f 100%
+            135deg,
+            #40366f,
+            #7769bc
         );
 
-    cursor: crosshair;
-}
-
-/* =========================
-   SUN
-========================= */
-
-.sun {
-
-    position: absolute;
-
-    width: 55px;
-
-    height: 55px;
-
-    border-radius: 50%;
-
-    background: #e4c56c;
-
-    top: 12%;
-
-    right: 12%;
-}
-
-/* =========================
-   MOUNTAINS
-========================= */
-
-.mountain {
-
-    position: absolute;
-
-    bottom: 42%;
-
-    width: 0;
-
-    height: 0;
-
-    border-left: 90px solid transparent;
-
-    border-right: 90px solid transparent;
-
-    border-bottom: 120px solid #3d4c55;
-}
-
-.mountain.one {
-    left: 5%;
-}
-
-.mountain.two {
-
-    left: 25%;
-
-    border-left-width: 120px;
-
-    border-right-width: 120px;
-
-    border-bottom-width: 150px;
-}
-
-.mountain.three {
-
-    right: 5%;
-
-    border-left-width: 100px;
-
-    border-right-width: 100px;
-
-    border-bottom-width: 130px;
-}
-
-/* =========================
-   CASTLE
-========================= */
-
-.castle {
-
-    position: absolute;
-
-    bottom: 31%;
-
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    width: 52%;
-
-    height: 38%;
-
-    background: #696a67;
-
-    border:
-        3px solid #3e4140;
-}
-
-/* =========================
-   TOWERS
-========================= */
-
-.tower {
-
-    position: absolute;
-
-    bottom: 0;
-
-    width: 22%;
-
-    height: 135%;
-
-    background: #777874;
-
-    border:
-        3px solid #3e4140;
-}
-
-.tower.left {
-    left: -13%;
-}
-
-.tower.right {
-    right: -13%;
-}
-
-/* =========================
-   ROOFS
-========================= */
-
-.roof {
-
-    position: absolute;
-
-    top: -32px;
-
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    width: 0;
-
-    height: 0;
-
-    border-left: 35px solid transparent;
-
-    border-right: 35px solid transparent;
-
-    border-bottom: 38px solid #3d2920;
-}
-
-/* =========================
-   WINDOWS
-========================= */
-
-.window {
-
-    position: absolute;
-
-    width: 18px;
-
-    height: 28px;
-
-    background: #20262a;
-
-    border-radius:
-        50% 50% 0 0;
-}
-
-.window.one {
-
-    left: 30%;
-
-    top: 30%;
-}
-
-.window.two {
-
-    right: 30%;
-
-    top: 30%;
-}
-
-/* =========================
-   GATE
-========================= */
-
-.gate {
-
-    position: absolute;
-
-    bottom: 0;
-
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    width: 23%;
-
-    height: 55%;
-
-    background: #34261d;
-
-    border-radius:
-        50% 50% 0 0;
-
-    border:
-        3px solid #22201c;
-}
-
-/* =========================
-   FLAG
-========================= */
-
-.flag {
-
-    position: absolute;
-
-    top: -70px;
-
-    left: 50%;
-
-    width: 3px;
-
-    height: 70px;
-
-    background: #282828;
-}
-
-.flag::after {
-
-    content: "";
-
-    position: absolute;
-
-    top: 3px;
-
-    left: 3px;
-
-    width: 35px;
-
-    height: 22px;
-
-    background: #b13f3f;
-
-    clip-path:
-        polygon(
-            0 0,
-            100% 0,
-            75% 50%,
-            100% 100%,
-            0 100%
-        );
-}
-
-/* =========================
-   TREES
-========================= */
-
-.tree {
-
-    position: absolute;
-
-    bottom: 22%;
-
-    width: 0;
-
-    height: 0;
-
-    border-left: 25px solid transparent;
-
-    border-right: 25px solid transparent;
+    color:white;
 
-    border-bottom: 70px solid #263f27;
-}
-
-.tree.one {
-    left: 7%;
-}
-
-.tree.two {
-
-    left: 16%;
-
-    transform: scale(.8);
-}
-
-.tree.three {
-    right: 10%;
-}
-
-.tree.four {
-
-    right: 18%;
-
-    transform: scale(.7);
-}
-
-/* =========================
-   ROAD
-========================= */
-
-.road {
-
-    position: absolute;
-
-    bottom: 0;
-
-    left: 40%;
-
-    width: 20%;
-
-    height: 34%;
-
-    background: #8d8067;
-
-    clip-path:
-        polygon(
-            35% 0,
-            65% 0,
-            100% 100%,
-            0 100%
-        );
-}
-
-/* =========================
-   REAL DIFFERENCES
-========================= */
-
-/*
-IMAGE B deliberately has differences
-through these classes.
-*/
-
-/* Difference 1 - sun */
-.scene-b .sun {
-    width: 42px;
-    height: 42px;
-}
-
-/* Difference 2 - mountain */
-.scene-b .mountain.two {
-    border-bottom-color: #34434d;
-}
-
-/* Difference 3 - tree */
-.scene-b .tree.one {
-    transform: scale(.65);
-}
-
-/* Difference 4 - tree */
-.scene-b .tree.three {
-    display: none;
-}
-
-/* Difference 5 - road */
-.scene-b .road {
-    left: 43%;
-    width: 16%;
-}
-
-/* Difference 6 - castle */
-.scene-b .castle {
-    width: 49%;
-}
-
-/* Difference 7 - left tower */
-.scene-b .tower.left {
-    height: 120%;
-}
-
-/* Difference 8 - right tower */
-.scene-b .tower.right {
-    width: 26%;
-}
-
-/* Difference 9 - window */
-.scene-b .window.one {
-    display: none;
-}
-
-/* Difference 10 - window */
-.scene-b .window.two {
-    width: 25px;
-}
-
-/* Difference 11 - gate */
-.scene-b .gate {
-    width: 18%;
-}
-
-/* Difference 12 - flag */
-.scene-b .flag::after {
-    background: #d9a944;
-}
-
-/* Difference 13 */
-.scene-b .tree.two {
-    display: none;
-}
-
-/* Difference 14 */
-.scene-b .tree.four {
-    transform: scale(1);
-}
-
-/* Difference 15 */
-.scene-b .mountain.one {
-    border-bottom-color: #34434d;
-}
-
-/* Difference 16 */
-.scene-b .mountain.three {
-    right: 8%;
-}
-
-/* Difference 17 */
-.scene-b .castle {
-    bottom: 33%;
-}
-
-/* Difference 18 */
-.scene-b .sun {
-    top: 15%;
-}
-
-/* Difference 19 */
-.scene-b .road {
-    height: 30%;
-}
+    font-weight:bold;
 
-/* Difference 20 */
-.scene-b .flag {
-    height: 60px;
+    cursor:pointer;
 }
 
-/* =========================
-   CLICK TARGETS
-========================= */
+.next-button.show{
 
-.difference {
-
-    position: absolute;
-
-    width: 42px;
-
-    height: 42px;
-
-    border-radius: 50%;
-
-    transform:
-        translate(-50%,-50%);
-
-    z-index: 50;
-
-    cursor: pointer;
-
-    background: transparent;
-}
-
-/*
-20 positions corresponding to the
-20 visual differences.
-*/
-
-.target1 {
-    left: 88%;
-    top: 16%;
-}
-
-.target2 {
-    left: 48%;
-    top: 28%;
-}
-
-.target3 {
-    left: 8%;
-    top: 68%;
-}
-
-.target4 {
-    left: 89%;
-    top: 65%;
-}
-
-.target5 {
-    left: 48%;
-    top: 82%;
-}
-
-.target6 {
-    left: 50%;
-    top: 45%;
-}
-
-.target7 {
-    left: 42%;
-    top: 46%;
-}
-
-.target8 {
-    left: 60%;
-    top: 46%;
-}
-
-.target9 {
-    left: 45%;
-    top: 52%;
-}
-
-.target10 {
-    left: 58%;
-    top: 52%;
-}
-
-.target11 {
-    left: 50%;
-    top: 65%;
+    display:block;
 }
 
-.target12 {
-    left: 52%;
-    top: 20%;
-}
-
-.target13 {
-    left: 18%;
-    top: 70%;
-}
-
-.target14 {
-    left: 82%;
-    top: 70%;
-}
-
-.target15 {
-    left: 15%;
-    top: 35%;
-}
-
-.target16 {
-    left: 88%;
-    top: 38%;
-}
-
-.target17 {
-    left: 50%;
-    top: 40%;
-}
-
-.target18 {
-    left: 50%;
-    top: 18%;
-}
-
-.target19 {
-    left: 50%;
-    top: 78%;
-}
-
-.target20 {
-    left: 52%;
-    top: 8%;
-}
-
-/* =========================
-   FOUND MARKER
-========================= */
-
-.found-marker {
-
-    position: absolute;
-
-    width: 38px;
-
-    height: 38px;
-
-    border:
-        2px solid #e3bd62;
-
-    border-radius: 50%;
+.next-button:hover{
 
-    transform:
-        translate(-50%,-50%);
-
-    pointer-events: none;
-
-    z-index: 100;
-
-    background:
-        rgba(224,190,99,.15);
-
-    box-shadow:
-        0 0 18px
-        rgba(224,190,99,.5);
-
-    animation:
-        markerPop .25s ease;
+    filter:brightness(1.12);
 }
-
-@keyframes markerPop {
 
-    from {
-        transform:
-            translate(-50%,-50%)
-            scale(.4);
-    }
-
-    to {
-        transform:
-            translate(-50%,-50%)
-            scale(1);
-    }
-}
 
-/* =========================
+/* =========================================
    MESSAGE
-========================= */
+========================================= */
 
-.message {
+.message{
 
-    text-align: center;
+    margin-top:15px;
 
-    margin: 15px 0 35px;
+    color:#77718b;
 
-    min-height: 22px;
+    font-size:10px;
 
-    color: #a9afb8;
-
-    font-size: 13px;
+    line-height:1.6;
 }
 
-/* =========================
-   STORY AT BOTTOM
-========================= */
 
-.story-card {
+/* =========================================
+   MODAL
+========================================= */
 
-    max-width: 850px;
+.modal{
 
-    margin: 25px auto 0;
+    position:fixed;
 
-    padding: 35px 30px;
+    inset:0;
 
-    text-align: center;
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
 
     background:
-        rgba(17,20,26,.95);
+        rgba(0,0,0,.9);
+
+    z-index:100;
+}
+
+.modal.show{
+
+    display:flex;
+}
+
+.modal-card{
+
+    width:min(
+        500px,
+        100%
+    );
+
+    padding:30px;
+
+    text-align:center;
+
+    background:#100e17;
 
     border:
-        1px solid rgba(224,190,100,.18);
+        1px solid #585078;
 
-    border-radius: 20px;
+    border-radius:17px;
 }
 
-.story-card h2 {
+.modal-icon{
 
-    font-family: Cinzel, serif;
+    font-size:65px;
 
-    color: #e2bf66;
-
-    font-size: 24px;
-
-    margin-bottom: 12px;
+    margin-bottom:8px;
 }
 
-.story-card h3 {
+.modal-card h2{
 
-    font-family: Cinzel, serif;
+    font-family:Georgia,serif;
 
-    font-size: 19px;
+    color:#c7bbff;
 
-    margin-bottom: 18px;
+    margin-bottom:10px;
 }
 
-.story-card p {
+.modal-card p{
 
-    color: #a8adb5;
+    color:#9991a5;
 
-    line-height: 1.8;
+    font-size:11px;
 
-    font-size: 14px;
-
-    margin-bottom: 8px;
+    line-height:1.7;
 }
 
-.story-card strong {
 
-    color: #e1bd63;
-}
+/* =========================================
+   RESPONSIVE
+========================================= */
 
-/* =========================
-   RESULT
-========================= */
+@media(max-width:500px){
 
-.result-card {
+    header{
 
-    max-width: 700px;
-
-    margin: 60px auto;
-
-    text-align: center;
-
-    padding: 55px 30px;
-
-    background:
-        rgba(17,20,26,.96);
-
-    border:
-        1px solid rgba(224,190,100,.2);
-
-    border-radius: 22px;
-}
-
-.result-icon {
-
-    font-size: 75px;
-
-    margin-bottom: 15px;
-}
-
-.result-card h1 {
-
-    font-family: Cinzel, serif;
-
-    font-size: 36px;
-
-    margin-bottom: 12px;
-}
-
-.final-score {
-
-    font-family: Cinzel, serif;
-
-    color: #e1bd63;
-
-    font-size: 50px;
-
-    margin: 20px 0;
-}
-
-.result-card p {
-
-    color: #a8adb5;
-
-    line-height: 1.7;
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:750px) {
-
-    .topbar {
-        padding: 0 17px;
+        padding:0 15px;
     }
 
-    .level-title {
-        display: none;
+    .level{
+
+        display:none;
     }
 
-    .container {
+    .container{
 
-        width:
-            calc(100% - 20px);
-
-        padding-top: 20px;
+        padding-top:25px;
     }
 
-    .images-wrapper {
+    .game{
 
-        grid-template-columns: 1fr;
-
+        padding:14px;
     }
 
-    .game-title h1 {
+    .stats{
 
-        font-size: 25px;
-
+        grid-template-columns:
+            repeat(3,1fr);
     }
 
-    .story-card {
+    .stat{
 
-        padding: 28px 18px;
-
-    }
-
-    .story-card h2 {
-
-        font-size: 21px;
-
+        padding:9px 5px;
     }
 
 }
@@ -1187,18 +582,14 @@ through these classes.
 <body>
 
 
-<!-- =========================
-     HEADER
-========================= -->
-
-<header class="topbar">
+<header>
 
     <div class="logo">
-        PJ <span>LAND</span>
+        RISE<span>2KING</span>
     </div>
 
-    <div class="level-title">
-        LEVEL 2 • THE WATCHER'S CHALLENGE
+    <div class="level">
+        LEVEL 2 • THE FIRST CHALLENGE
     </div>
 
 </header>
@@ -1207,450 +598,565 @@ through these classes.
 <main class="container">
 
 
-<!-- ==================================================
-     INTRO SCREEN
-================================================== -->
+<div class="title">
 
-<section
-    id="introScreen"
-    class="screen active intro">
+    <small>LEVEL 2</small>
 
-    <div class="intro-card">
+    <h1>♟️ The First Challenge</h1>
 
-        <div class="intro-icon">
-            🏰
-        </div>
+    <p>
+        Your journey has begun. Before you can rise further,
+        prove that you can think ahead.
+    </p>
 
-        <div class="eyebrow">
-            Level 2
-        </div>
-
-        <h1>
-            The Castle Gate
-        </h1>
-
-        <h2>
-            The Watcher's Challenge
-        </h2>
-
-        <p>
-
-            Welcome,
-            <strong id="introName">
-                PJ
-            </strong>.
-
-            You have reached the gates of the castle.
-
-            <br><br>
-
-            The guards have prepared two views
-            of the kingdom.
-
-            At first glance, they appear identical.
-
-            <br><br>
-
-            But the Watcher has hidden
-            <strong>
-                20 differences
-            </strong>
-            between them.
-
-            <br><br>
-
-            Find them all to prove that
-            nothing escapes your attention.
-
-        </p>
-
-        <button
-            class="primary-btn"
-            onclick="startGame()">
-
-            BEGIN THE CHALLENGE →
-
-        </button>
-
-    </div>
-
-</section>
+</div>
 
 
-<!-- ==================================================
-     GAME SCREEN
-================================================== -->
+<!-- STATS -->
 
-<section
-    id="gameScreen"
-    class="screen game-screen">
+<div class="stats">
 
+    <div class="stat">
 
-    <!-- TOP TITLE -->
+        <span>PLAYER</span>
 
-    <div class="game-title">
-
-        <h1>
-            🏰 Find the Differences
-        </h1>
-
-        <div class="sub">
-            Study both scenes carefully.
-        </div>
+        <strong id="playerScore">
+            0
+        </strong>
 
     </div>
 
 
-    <!-- SCORE -->
+    <div class="stat">
 
-    <div class="score-area">
+        <span>DRAW</span>
 
-        <div class="score">
-
-            Differences Found:
-            <span id="foundCount">0</span>
-            / 20
-
-        </div>
-
-        <div class="progress">
-
-            <div
-                id="progressFill"
-                class="progress-fill">
-            </div>
-
-        </div>
+        <strong id="drawScore">
+            0
+        </strong>
 
     </div>
 
 
-    <!-- IMAGES -->
+    <div class="stat">
 
-    <div class="images-wrapper">
+        <span>OPPONENT</span>
 
+        <strong id="computerScore">
+            0
+        </strong>
 
-        <!-- IMAGE A -->
+    </div>
 
-        <div class="scene-card">
-
-            <div
-                id="sceneA"
-                class="scene">
-
-                <div class="sun"></div>
-
-                <div class="mountain one"></div>
-                <div class="mountain two"></div>
-                <div class="mountain three"></div>
-
-                <div class="tree one"></div>
-                <div class="tree two"></div>
-                <div class="tree three"></div>
-                <div class="tree four"></div>
-
-                <div class="castle">
-
-                    <div class="tower left">
-                        <div class="roof"></div>
-                    </div>
-
-                    <div class="tower right">
-                        <div class="roof"></div>
-                    </div>
-
-                    <div class="window one"></div>
-                    <div class="window two"></div>
-
-                    <div class="gate"></div>
-
-                    <div class="flag"></div>
-
-                </div>
-
-                <div class="road"></div>
-
-            </div>
-
-        </div>
+</div>
 
 
-        <!-- IMAGE B -->
+<!-- GAME -->
 
-        <div class="scene-card">
+<div class="game">
 
-            <div
-                id="sceneB"
-                class="scene scene-b">
 
-                <div class="sun"></div>
+    <div
+        class="status"
+        id="status">
 
-                <div class="mountain one"></div>
-                <div class="mountain two"></div>
-                <div class="mountain three"></div>
-
-                <div class="tree one"></div>
-                <div class="tree two"></div>
-                <div class="tree three"></div>
-                <div class="tree four"></div>
-
-                <div class="castle">
-
-                    <div class="tower left">
-                        <div class="roof"></div>
-                    </div>
-
-                    <div class="tower right">
-                        <div class="roof"></div>
-                    </div>
-
-                    <div class="window one"></div>
-                    <div class="window two"></div>
-
-                    <div class="gate"></div>
-
-                    <div class="flag"></div>
-
-                </div>
-
-                <div class="road"></div>
-
-            </div>
-
-        </div>
+        Your turn — You are X
 
     </div>
 
 
     <div
-        id="message"
-        class="message">
-
-        Search carefully. The differences are hidden.
-
-    </div>
-
-
-    <!-- STORY AT BOTTOM -->
-
-    <div class="story-card">
-
-        <h2>
-            The Watcher's Challenge
-        </h2>
-
-        <h3>
-            Welcome,
-            <span id="gameName">
-                PJ
-            </span>
-        </h3>
-
-        <p>
-            You have reached the gates of the castle.
-        </p>
-
-        <p>
-            The guards have prepared two views
-            of the kingdom.
-            At first glance, they appear identical.
-        </p>
-
-        <p>
-            But the Watcher has hidden
-            <strong>
-                20 differences
-            </strong>
-            between them.
-        </p>
-
-        <p>
-            Find them all to prove that
-            nothing escapes your attention.
-        </p>
-
-    </div>
-
-</section>
-
-
-<!-- ==================================================
-     RESULT SCREEN
-================================================== -->
-
-<section
-    id="resultScreen"
-    class="screen">
-
-    <div class="result-card">
-
-        <div class="result-icon">
-            🏆
-        </div>
-
-        <div class="eyebrow">
-            Trial Complete
-        </div>
-
-        <h1>
-            The Watcher Is Impressed
-        </h1>
-
-        <div
-            id="finalScore"
-            class="final-score">
-
-            20 / 20
-
-        </div>
-
-        <p>
-
-            You examined the kingdom carefully
-            and discovered every hidden difference.
-
-            <br><br>
-
-            Your attention to detail has been recognized.
-
-            <br><br>
-
-            <strong>
-                You are one step closer to
-                becoming a true protector of PJ LAND.
-            </strong>
-
-        </p>
+        class="board"
+        id="board">
 
         <button
-            class="primary-btn"
-            onclick="goToNextLevel()">
+            class="cell"
+            data-index="0">
+        </button>
 
-            CONTINUE TO LEVEL 3 →
+        <button
+            class="cell"
+            data-index="1">
+        </button>
+
+        <button
+            class="cell"
+            data-index="2">
+        </button>
+
+        <button
+            class="cell"
+            data-index="3">
+        </button>
+
+        <button
+            class="cell"
+            data-index="4">
+        </button>
+
+        <button
+            class="cell"
+            data-index="5">
+        </button>
+
+        <button
+            class="cell"
+            data-index="6">
+        </button>
+
+        <button
+            class="cell"
+            data-index="7">
+        </button>
+
+        <button
+            class="cell"
+            data-index="8">
+        </button>
+
+    </div>
+
+
+    <div class="controls">
+
+        <button
+            class="control-button"
+            onclick="resetBoard()">
+
+            🔄 PLAY AGAIN
 
         </button>
 
     </div>
 
-</section>
 
+    <button
+        class="next-button"
+        id="nextButton"
+        onclick="nextLevel()">
+
+        CONTINUE TO LEVEL 3 →
+
+    </button>
+
+
+    <div class="message">
+
+        Win the challenge to continue your journey.
+        A draw gives you another chance.
+
+    </div>
+
+</div>
 
 </main>
 
 
+<!-- RESULT MODAL -->
+
+<div
+    class="modal"
+    id="modal">
+
+    <div class="modal-card">
+
+        <div
+            class="modal-icon"
+            id="modalIcon">
+
+            🏆
+
+        </div>
+
+
+        <h2
+            id="modalTitle">
+
+            Challenge Complete
+
+        </h2>
+
+
+        <p
+            id="modalText">
+
+        </p>
+
+    </div>
+
+</div>
+
+
 <script>
 
-/* ==================================================
-   USER NAME
-================================================== */
 
-let playerName =
-    localStorage.getItem("playerName") ||
-    localStorage.getItem("username") ||
-    localStorage.getItem("userName") ||
-    "PJ";
-
-
-document.getElementById("introName").textContent =
-    playerName;
-
-document.getElementById("gameName").textContent =
-    playerName;
-
-
-/* ==================================================
+/* =========================================
    GAME VARIABLES
-================================================== */
+========================================= */
 
-let foundDifferences = 0;
+let board = [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+];
 
-const totalDifferences = 20;
+let playerTurn = true;
 
-const foundTargets = new Set();
+let gameOver = false;
+
+let playerScore = 0;
+
+let computerScore = 0;
+
+let drawScore = 0;
 
 
-/* ==================================================
-   START GAME
-================================================== */
+/* =========================================
+   WINNING COMBINATIONS
+========================================= */
 
-function startGame() {
+const winningCombos = [
 
-    document
-        .getElementById("introScreen")
-        .classList.remove("active");
+    [0,1,2],
 
-    document
-        .getElementById("gameScreen")
-        .classList.add("active");
+    [3,4,5],
 
-    setupTargets();
+    [6,7,8],
+
+    [0,3,6],
+
+    [1,4,7],
+
+    [2,5,8],
+
+    [0,4,8],
+
+    [2,4,6]
+
+];
+
+
+/* =========================================
+   CELLS
+========================================= */
+
+const cells =
+    document.querySelectorAll(".cell");
+
+
+cells.forEach(cell => {
+
+    cell.addEventListener(
+        "click",
+        () => playerMove(
+            Number(
+                cell.dataset.index
+            )
+        )
+    );
+
+});
+
+
+/* =========================================
+   PLAYER MOVE
+========================================= */
+
+function playerMove(index){
+
+    if(
+        !playerTurn ||
+        gameOver ||
+        board[index] !== ""
+    ){
+
+        return;
+
+    }
+
+
+    board[index] = "X";
+
+    render();
+
+
+    if(
+        checkWinner("X")
+    ){
+
+        playerWins();
+
+        return;
+
+    }
+
+
+    if(
+        board.every(
+            cell => cell !== ""
+        )
+    ){
+
+        drawGame();
+
+        return;
+
+    }
+
+
+    playerTurn = false;
+
+
+    document.getElementById(
+        "status"
+    ).textContent =
+        "Opponent is thinking...";
+
+
+    setTimeout(
+        computerMove,
+        500
+    );
 
 }
 
 
-/* ==================================================
-   TARGET SETUP
-================================================== */
+/* =========================================
+   COMPUTER MOVE
+========================================= */
 
-function setupTargets() {
+function computerMove(){
 
-    const targetClasses = [
-
-        "target1",
-        "target2",
-        "target3",
-        "target4",
-        "target5",
-        "target6",
-        "target7",
-        "target8",
-        "target9",
-        "target10",
-        "target11",
-        "target12",
-        "target13",
-        "target14",
-        "target15",
-        "target16",
-        "target17",
-        "target18",
-        "target19",
-        "target20"
-
-    ];
+    if(gameOver)
+        return;
 
 
-    targetClasses.forEach(
-        (className, index) => {
-
-            const target =
-                document.createElement("div");
-
-            target.className =
-                "difference " + className;
-
-            target.dataset.id =
-                index + 1;
+    let move =
+        findWinningMove("O");
 
 
-            target.addEventListener(
-                "click",
-                function(event) {
+    if(move === -1){
 
-                    event.stopPropagation();
+        move =
+            findWinningMove("X");
 
-                    findDifference(
-                        target,
-                        index + 1
-                    );
+    }
 
-                }
+
+    if(move === -1){
+
+        const available =
+            board
+                .map(
+                    (value,index) =>
+                        value === ""
+                            ? index
+                            : -1
+                )
+                .filter(
+                    index => index !== -1
+                );
+
+
+        /*
+           Prefer center.
+        */
+
+        if(
+            board[4] === ""
+        ){
+
+            move = 4;
+
+        }
+        else{
+
+            move =
+                available[
+                    Math.floor(
+                        Math.random() *
+                        available.length
+                    )
+                ];
+
+        }
+
+    }
+
+
+    board[move] = "O";
+
+    render();
+
+
+    if(
+        checkWinner("O")
+    ){
+
+        computerWins();
+
+        return;
+
+    }
+
+
+    if(
+        board.every(
+            cell => cell !== ""
+        )
+    ){
+
+        drawGame();
+
+        return;
+
+    }
+
+
+    playerTurn = true;
+
+
+    document.getElementById(
+        "status"
+    ).textContent =
+        "Your turn — You are X";
+
+}
+
+
+/* =========================================
+   FIND WINNING MOVE
+========================================= */
+
+function findWinningMove(symbol){
+
+    for(
+        let i=0;
+        i<9;
+        i++
+    ){
+
+        if(
+            board[i] !== ""
+        ){
+
+            continue;
+
+        }
+
+
+        board[i] = symbol;
+
+
+        const wins =
+            checkWinner(symbol);
+
+
+        board[i] = "";
+
+
+        if(wins){
+
+            return i;
+
+        }
+
+    }
+
+
+    return -1;
+
+}
+
+
+/* =========================================
+   CHECK WINNER
+========================================= */
+
+function checkWinner(symbol){
+
+    for(
+        const combo
+        of winningCombos
+    ){
+
+        if(
+            board[combo[0]] === symbol &&
+            board[combo[1]] === symbol &&
+            board[combo[2]] === symbol
+        ){
+
+            highlightWinner(combo);
+
+            return true;
+
+        }
+
+    }
+
+
+    return false;
+
+}
+
+
+/* =========================================
+   HIGHLIGHT WINNER
+========================================= */
+
+function highlightWinner(combo){
+
+    combo.forEach(index => {
+
+        cells[index]
+            .classList
+            .add("winner");
+
+    });
+
+}
+
+
+/* =========================================
+   RENDER
+========================================= */
+
+function render(){
+
+    cells.forEach(
+        (cell,index) => {
+
+            cell.textContent =
+                board[index];
+
+            cell.classList.remove(
+                "x",
+                "o"
             );
 
 
-            document
-                .getElementById("sceneB")
-                .appendChild(target);
+            if(
+                board[index] === "X"
+            ){
+
+                cell.classList.add("x");
+
+            }
+
+
+            if(
+                board[index] === "O"
+            ){
+
+                cell.classList.add("o");
+
+            }
 
         }
     );
@@ -1658,133 +1164,220 @@ function setupTargets() {
 }
 
 
-/* ==================================================
-   FIND DIFFERENCE
-================================================== */
+/* =========================================
+   PLAYER WINS
+========================================= */
 
-function findDifference(target, id) {
+function playerWins(){
 
-    if (
-        foundTargets.has(id)
-    ) {
-        return;
-    }
+    gameOver = true;
 
+    playerScore++;
 
-    foundTargets.add(id);
-
-    foundDifferences++;
+    document.getElementById(
+        "playerScore"
+    ).textContent =
+        playerScore;
 
 
-    /* CREATE MARKER */
-
-    const marker =
-        document.createElement("div");
-
-    marker.className =
-        "found-marker";
+    document.getElementById(
+        "status"
+    ).textContent =
+        "🏆 You won the challenge!";
 
 
-    marker.style.left =
-        getComputedStyle(target).left;
-
-    marker.style.top =
-        getComputedStyle(target).top;
-
-
-    document
-        .getElementById("sceneB")
-        .appendChild(marker);
+    showModal(
+        "👑",
+        "Challenge Complete",
+        "Excellent strategy. You have proven that you can think ahead. The path to Level 3 is now open."
+    );
 
 
-    target.style.display =
-        "none";
+    document.getElementById(
+        "nextButton"
+    ).classList.add("show");
+
+}
 
 
-    /* UPDATE SCORE */
+/* =========================================
+   COMPUTER WINS
+========================================= */
 
-    document
-        .getElementById("foundCount")
-        .textContent =
-        foundDifferences;
+function computerWins(){
 
+    gameOver = true;
 
-    /* UPDATE PROGRESS */
+    computerScore++;
 
-    const percentage =
-        (
-            foundDifferences /
-            totalDifferences
-        ) * 100;
-
-
-    document
-        .getElementById("progressFill")
-        .style.width =
-        percentage + "%";
+    document.getElementById(
+        "computerScore"
+    ).textContent =
+        computerScore;
 
 
-    /* MESSAGE */
-
-    document
-        .getElementById("message")
-        .textContent =
-        "✓ Difference found! Keep searching.";
+    document.getElementById(
+        "status"
+    ).textContent =
+        "The opponent won this round.";
 
 
-    /* COMPLETE */
+    showModal(
+        "⚔️",
+        "Not This Time",
+        "Your opponent was one step ahead. Study the board and try again."
+    );
 
-    if (
-        foundDifferences >=
-        totalDifferences
-    ) {
+}
 
-        setTimeout(
-            finishGame,
-            900
+
+/* =========================================
+   DRAW
+========================================= */
+
+function drawGame(){
+
+    gameOver = true;
+
+    drawScore++;
+
+    document.getElementById(
+        "drawScore"
+    ).textContent =
+        drawScore;
+
+
+    document.getElementById(
+        "status"
+    ).textContent =
+        "🤝 Draw — Try again!";
+
+
+    showModal(
+        "🤝",
+        "The Board Is Even",
+        "Neither side could claim victory. A true strategist knows when to try again."
+    );
+
+}
+
+
+/* =========================================
+   RESET BOARD
+========================================= */
+
+function resetBoard(){
+
+    board = [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+    ];
+
+
+    playerTurn = true;
+
+    gameOver = false;
+
+
+    cells.forEach(cell => {
+
+        cell.textContent = "";
+
+        cell.classList.remove(
+            "x",
+            "o",
+            "winner"
         );
 
-    }
+    });
+
+
+    document.getElementById(
+        "status"
+    ).textContent =
+        "Your turn — You are X";
 
 }
 
 
-/* ==================================================
-   FINISH GAME
-================================================== */
+/* =========================================
+   MODAL
+========================================= */
 
-function finishGame() {
+function showModal(
+    icon,
+    title,
+    text
+){
 
-    document
-        .getElementById("gameScreen")
-        .classList.remove("active");
+    document.getElementById(
+        "modalIcon"
+    ).textContent =
+        icon;
 
 
-    document
-        .getElementById("resultScreen")
-        .classList.add("active");
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        title;
 
 
-    document
-        .getElementById("finalScore")
-        .textContent =
-        `${foundDifferences} / ${totalDifferences}`;
+    document.getElementById(
+        "modalText"
+    ).textContent =
+        text;
+
+
+    document.getElementById(
+        "modal"
+    ).classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        () => {
+
+            document.getElementById(
+                "modal"
+            ).classList.remove(
+                "show"
+            );
+
+        },
+        1800
+    );
 
 }
 
 
-/* ==================================================
+/* =========================================
    NEXT LEVEL
-================================================== */
+========================================= */
 
-function goToNextLevel() {
+function nextLevel(){
 
     window.location.href =
         "level3.html";
 
 }
 
+
+/* =========================================
+   START
+========================================= */
+
+render();
+
 </script>
 
 </body>
+
 </html>
+
