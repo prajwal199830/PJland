@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>THE KING'S HUNT - 3D Royal Adventure</title>
+    <!-- Tailwind CSS for clean HUD styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js r128 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Google Fonts: Cinzel for Royal titles, Inter for clean HUD -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #132215;
+            font-family: 'Inter', sans-serif;
+        }
+        #game-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .font-royal {
+            font-family: 'Cinzel', serif;
+        }
+        .royal-panel {
+            background: linear-gradient(145deg, rgba(24, 20, 32, 0.88), rgba(14, 12, 20, 0.94));
+            border: 2px solid #d4af37;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(212, 175, 55, 0.25);
+            backdrop-filter: blur(6px);
+        }
+        .royal-btn {
+            background: linear-gradient(180deg, #f3ce5e 0%, #c99722 100%);
+            border: 2px solid #fff0b3;
+            color: #1c1304;
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            box-shadow: 0 5px 0 #7a580b, 0 10px 20px rgba(0,0,0,0.5);
+            transition: transform 0.1s ease, filter 0.15s ease;
+            cursor: pointer;
+        }
+        .royal-btn:hover {
+            filter: brightness(1.08);
+            transform: translateY(-2px);
+        }
+        .royal-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #7a580b, 0 4px 10px rgba(0,0,0,0.5);
+        }
+        #crosshair {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 44px;
+            height: 44px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 20;
+            transition: transform 0.08s ease-out;
+        }
+        .ch-line {
+            position: absolute;
+            background-color: #ffffff;
+            box-shadow: 0 0 4px rgba(0,0,0,0.9);
+            transition: all 0.1s ease;
+        }
+        .ch-targeted .ch-line {
+            background-color: #ff3b3b;
+            box-shadow: 0 0 8px #ff2222;
+        }
+        .ch-targeted #ch-dot {
+            background-color: #ff3b3b;
+            transform: translate(-50%, -50%) scale(1.4);
+        }
+        #damage-vignette {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle, transparent 55%, rgba(210, 15, 15, 0.72) 100%);
+            opacity: 0;
+            transition: opacity 0.2s ease-out;
+            z-index: 15;
+        }
+        .floating-dmg {
+            position: fixed;
+            pointer-events: none;
+            font-weight: 900;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.95);
+            z-index: 25;
+            animation: floatUp 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translate(-50%, 0) scale(0.7); }
+            25% { opacity: 1; transform: translate(-50%, -18px) scale(1.15); }
+            100% { opacity: 0; transform: translate(-50%, -58px) scale(0.95); }
+        }
+        #tiger-alert-badge {
+            position: fixed;
+            pointer-events: none;
+            z-index: 24;
+            transform: translate(-50%, -100%);
+            transition: opacity 0.2s ease;
+        }
+        .bullet-pip {
+            width: 10px;
+            height: 26px;
+            border-radius: 5px 5px 2px 2px;
+            transition: all 0.15s ease;
+        }
+        .bullet-loaded {
+            background: linear-gradient(180deg, #ffd966 0%, #d49b1a 35%, #b8860b 100%);
+            border: 1px solid #fff3c4;
+            box-shadow: 0 0 6px rgba(255, 215, 0, 0.45);
+        }
+        .bullet-spent {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: scaleY(0.82);
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+            50% { box-shadow: 0 0 22px rgba(239, 68, 68, 0.95); }
+        }
+        .tiger-danger-pulse {
+            animation: pulseGlow 1.4s infinite;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="game-canvas"></canvas>
+    <div id="damage-vignette"></div>
+
+    <div id="crosshair" class="hidden">
+        <div id="ch-top" class="ch-line" style="width: 2px; height: 10px; left: 21px; top: 3px;"></div>
+        <div id="ch-bottom" class="ch-line" style="width: 2px; height: 10px; left: 21px; bottom: 3px;"></div>
+        <div id="ch-left" class="ch-line" style="height: 2px; width: 10px; top: 21px; left: 3px;"></div>
+        <div id="ch-right" class="ch-line" style="height: 2px; width: 10px; top: 21px; right: 3px;"></div>
+        <div id="ch-dot" style="position:absolute; width:4px; height:4px; border-radius:50%; background:#ffd700; top:50%; left:50%; transform:translate(-50%,-50%); box-shadow:0 0 4px #000;"></div>
+    </div>
+
+    <div id="tiger-alert-badge" class="hidden flex flex-col items-center">
+        <div id="tiger-exclamation" class="hidden text-3xl font-black text-red-500 drop-shadow-[0_2px_6px_rgba(0,0,0,1)] animate-bounce">!</div>
+        <div id="tiger-world-hp-wrap" class="w-24 h-2 bg-black/80 border border-amber-400/70 rounded-full overflow-hidden shadow-lg">
+            <div id="tiger-world-hp-bar" class="h-full bg-gradient-to-r from-red-600 to-orange-500 transition-all duration-100" style="width: 100%;"></div>
+        </div>
+    </div>
+
+    <div id="floating-texts"></div>
+
+    <div id="hud-layer" class="hidden fixed inset-0 pointer-events-none z-10 p-3 sm:p-5 flex flex-col justify-between">
+        <div class="flex items-start justify-between gap-2 sm:gap-4 w-full">
+            <div class="royal-panel rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 w-48 sm:w-64 pointer-events-auto">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="font-royal text-amber-300 font-bold text-xs sm:text-sm tracking-wider flex items-center gap-1.5">
+                        <span>👑</span> KING ARTHUR
+                    </span>
+                    <span id="king-hp-text" class="text-white font-extrabold text-xs sm:text-sm">100 / 100</span>
+                </div>
+                <div class="w-full h-3.5 bg-stone-900 rounded-full overflow-hidden border border-amber-500/50 p-0.5">
+                    <div id="king-hp-bar" class="h-full rounded-full bg-gradient-to-r from-red-600 via-rose-500 to-emerald-400 transition-all duration-200" style="width: 100%;"></div>
+                </div>
+                <div class="mt-1.5 flex items-center justify-between text-[10px] sm:text-xs text-amber-200/80">
+                    <span>SPRINT</span>
+                    <div class="w-28 sm:w-36 h-1.5 bg-stone-900 rounded-full overflow-hidden">
+                        <div id="king-stamina-bar" class="h-full bg-amber-400 transition-all duration-75" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center flex-1 max-w-md mx-auto">
+                <div class="royal-panel rounded-2xl px-4 py-1.5 sm:px-6 sm:py-2 text-center shadow-lg">
+                    <div class="flex items-center justify-center gap-2 mb-0.5">
+                        <span class="font-royal text-[10px] sm:text-xs font-black tracking-widest text-amber-200">THE KING'S HUNT</span>
+                        <span class="text-amber-500/60">•</span>
+                        <span id="stage-badge" class="text-[10px] sm:text-xs uppercase tracking-widest text-emerald-300 font-extrabold">STAGE 1 / 3</span>
+                    </div>
+                    <div id="mission-objective-text" class="text-white font-bold text-xs sm:text-sm">Track and defeat the Wild Boar.</div>
+                </div>
+
+                <div id="tiger-hud-panel" class="hidden mt-2.5 w-full royal-panel rounded-xl px-4 py-2.5 tiger-danger-pulse">
+                    <div class="flex items-center justify-between mb-1">
+                        <span id="boss-name-label" class="font-royal text-orange-400 font-black text-xs sm:text-sm tracking-wider flex items-center gap-1.5">
+                            <span>🐗</span> IRON-TUSK WILD BOAR
+                        </span>
+                        <span id="tiger-hp-text" class="text-orange-200 font-extrabold text-xs sm:text-sm">150 / 150</span>
+                    </div>
+                    <div class="w-full h-3.5 bg-stone-950 rounded-full overflow-hidden border border-orange-500/70 p-0.5">
+                        <div id="tiger-hp-bar" class="h-full rounded-full bg-gradient-to-r from-red-700 via-orange-600 to-amber-400 transition-all duration-150" style="width: 100%;"></div>
+                    </div>
+                    <div id="tiger-state-label" class="text-center text-[10px] uppercase tracking-widest text-orange-300/90 font-bold mt-1">
+                        ROAMING THE WOODS
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 pointer-events-auto">
+                <div class="royal-panel rounded-xl px-3.5 py-2 text-right">
+                    <div class="text-[10px] uppercase tracking-wider text-amber-300 font-bold">Hunt Points</div>
+                    <div id="hud-points" class="font-royal text-white font-black text-base sm:text-xl">0</div>
+                </div>
+                <button id="btn-sound-toggle" title="Toggle Audio" class="royal-panel rounded-xl p-2.5 sm:p-3 text-amber-300 hover:text-white hover:border-amber-300 transition cursor-pointer">
+                    <span id="sound-icon" class="text-base sm:text-lg">🔊</span>
+                </button>
+                <button id="btn-pause" title="Pause Game (P or Esc)" class="royal-panel rounded-xl px-3 py-2.5 sm:px-3.5 sm:py-3 text-amber-300 hover:text-white hover:border-amber-300 font-bold text-xs sm:text-sm transition cursor-pointer">
+                    ⏸ PAUSE
+                </button>
+            </div>
+        </div>
+
+        <div class="flex items-end justify-between w-full gap-3">
+            <div class="royal-panel rounded-xl px-3.5 py-2.5 text-[11px] sm:text-xs text-stone-200 hidden sm:block">
+                <div class="font-bold text-amber-300 mb-1">ROYAL HUNT CONTROLS</div>
+                <div class="grid grid-cols-2 gap-x-4 gap-y-0.5 text-stone-300">
+                    <span><strong class="text-white">WASD / Arrows:</strong> Move</span>
+                    <span><strong class="text-white">Shift:</strong> Sprint</span>
+                    <span><strong class="text-white">Mouse:</strong> Aim Camera</span>
+                    <span><strong class="text-white">Right-Click / Q:</strong> Zoom Aim</span>
+                    <span><strong class="text-white">Left-Click:</strong> Fire Rifle</span>
+                    <span><strong class="text-white">R:</strong> Reload Rifle</span>
+                </div>
+                <div id="pointer-lock-hint" class="mt-1.5 text-[10px] text-amber-400/90 italic">
+                    Click game view to lock cursor for 360° aiming
+                </div>
+            </div>
+
+            <div id="mobile-controls" class="flex sm:hidden gap-2 pointer-events-auto">
+                <button id="mob-aim" class="royal-panel rounded-xl px-3.5 py-3 text-amber-300 font-bold text-xs active:bg-amber-500/30">🎯 AIM</button>
+                <button id="mob-reload" class="royal-panel rounded-xl px-3.5 py-3 text-amber-300 font-bold text-xs active:bg-amber-500/30">🔄 R</button>
+                <button id="mob-fire" class="royal-btn rounded-xl px-5 py-3 text-xs">🔥 FIRE</button>
+            </div>
+
+            <div class="royal-panel rounded-xl px-4 py-3 ml-auto pointer-events-auto min-w-[180px] sm:min-w-[225px]">
+                <div class="flex items-center justify-between mb-1.5">
+                    <span class="font-royal text-amber-300 font-bold text-xs tracking-wider">ROYAL RIFLE</span>
+                    <span id="ammo-count-text" class="text-white font-black text-base sm:text-lg">6 <span class="text-stone-400 text-xs sm:text-sm font-semibold">/ 24</span></span>
+                </div>
+                <div id="bullet-icons-row" class="flex items-center justify-between gap-1.5 my-1.5">
+                    <div class="bullet-pip bullet-loaded"></div>
+                    <div class="bullet-pip bullet-loaded"></div>
+                    <div class="bullet-pip bullet-loaded"></div>
+                    <div class="bullet-pip bullet-loaded"></div>
+                    <div class="bullet-pip bullet-loaded"></div>
+                    <div class="bullet-pip bullet-loaded"></div>
+                </div>
+                <div class="h-5 flex items-center justify-center mt-1">
+                    <span id="reload-indicator" class="text-[11px] font-extrabold tracking-wider uppercase text-emerald-400">
+                        READY TO FIRE
+                    </span>
+                </div>
+                <div id="reload-progress-wrap" class="hidden w-full h-1.5 bg-stone-900 rounded-full overflow-hidden mt-1">
+                    <div id="reload-progress-bar" class="h-full bg-amber-400 transition-all duration-75" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="start-screen" class="fixed inset-0 z-30 flex items-center justify-center p-4 bg-gradient-to-b from-black/75 via-emerald-950/65 to-black/85 backdrop-blur-sm">
+        <div class="royal-panel rounded-2xl max-w-xl w-full p-6 sm:p-9 text-center relative overflow-hidden">
+            <div class="text-4xl sm:text-5xl mb-2">👑🏹🐅</div>
+            <div class="text-xs sm:text-sm uppercase tracking-[0.28em] text-amber-400 font-bold mb-1">A 3-Stage Royal Forest Campaign</div>
+            <h1 class="font-royal text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-400 to-amber-600 drop-shadow mb-3">
+                THE KING'S HUNT
+            </h1>
+            <p class="text-stone-300 text-sm sm:text-base leading-relaxed mb-5">
+                Embark on a three-stage royal expedition! Track the charging <strong class="text-amber-300">Wild Boar</strong> in the Whispering Woods, survive the flanking <strong class="text-sky-300">Shadow Wolf Pack</strong> at dusk, and conquer the <strong class="text-orange-400">Apex Bengal Tiger</strong> in the Royal Sanctuary!
+            </p>
+            <button id="btn-start-game" class="royal-btn rounded-xl px-10 py-4 text-lg w-full sm:w-auto">
+                START ROYAL EXPEDITION
+            </button>
+        </div>
+    </div>
+
+    <div id="pause-screen" class="hidden fixed inset-0 z-30 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="royal-panel rounded-2xl max-w-md w-full p-6 sm:p-8 text-center">
+            <div class="text-4xl mb-2">⏸️👑</div>
+            <h2 class="font-royal text-2xl sm:text-3xl font-black text-amber-300 mb-4">EXPEDITION PAUSED</h2>
+            <div class="space-y-3">
+                <button id="btn-resume-game" class="royal-btn rounded-xl px-6 py-3 text-base w-full">RESUME HUNT</button>
+                <button id="btn-pause-sound" class="royal-panel rounded-xl px-6 py-3 text-base text-amber-300 w-full hover:border-amber-300 transition">TOGGLE SOUND: ON</button>
+                <button id="btn-pause-restart" class="royal-panel rounded-xl px-6 py-3 text-base text-rose-400 w-full hover:border-rose-400 transition">RESTART EXPEDITION</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="stage-complete-screen" class="hidden fixed inset-0 z-30 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+        <div class="royal-panel rounded-2xl max-w-lg w-full p-6 sm:p-8 text-center">
+            <div id="stage-clear-icon" class="text-5xl mb-2">🐗👑</div>
+            <div id="stage-clear-sub" class="text-xs uppercase tracking-[0.25em] text-emerald-400 font-bold mb-1">STAGE 1 CLEARED</div>
+            <h2 class="font-royal text-3xl sm:text-4xl font-black text-amber-300 mb-2">STAGE COMPLETE!</h2>
+            <p id="stage-clear-desc" class="text-stone-300 text-sm sm:text-base mb-5">
+                The Wild Boar has fallen! Fresh supply crates have been dropped into the forest ahead of your next hunt.
+            </p>
+            <div class="bg-black/50 border border-amber-500/40 rounded-xl p-3.5 mb-6 space-y-1.5 text-sm">
+                <div class="flex justify-between text-stone-300">
+                    <span>Stage Clear Bonus:</span>
+                    <span id="stage-bonus-pts" class="font-bold text-amber-300">+300</span>
+                </div>
+                <div class="flex justify-between text-stone-300">
+                    <span>Royal Field Recovery:</span>
+                    <span class="font-bold text-emerald-400">+25 HP & Resupply Crates</span>
+                </div>
+                <div class="flex justify-between text-stone-200 font-bold pt-1 border-t border-amber-500/20">
+                    <span>Next Region:</span>
+                    <span id="next-stage-name" class="text-sky-300">Stage 2: The Shadow Grove</span>
+                </div>
+            </div>
+            <button id="btn-next-stage" class="royal-btn rounded-xl px-9 py-3.5 text-base sm:text-lg w-full sm:w-auto">
+                ENTER NEXT STAGE →
+            </button>
+        </div>
+    </div>
+
+    <div id="end-screen" class="hidden fixed inset-0 z-30 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="royal-panel rounded-2xl max-w-lg w-full p-6 sm:p-9 text-center">
+            <div id="end-icon" class="text-5xl mb-2">🏆👑</div>
+            <div id="end-subtitle" class="text-xs uppercase tracking-[0.25em] text-amber-400 font-bold mb-1">ROYAL TRIUMPH</div>
+            <h2 id="end-title" class="font-royal text-3xl sm:text-4xl font-black text-amber-300 mb-3">
+                HUNT COMPLETE!
+            </h2>
+            <p id="end-desc" class="text-stone-300 text-sm sm:text-base mb-6">
+                With steady aim and royal courage, you have defeated the ferocious tiger!
+            </p>
+
+            <div class="bg-black/50 border border-amber-500/40 rounded-xl p-4 mb-6 space-y-2 text-sm">
+                <div class="flex justify-between text-stone-300">
+                    <span>Base Hunt Score:</span>
+                    <span id="score-base" class="font-bold text-white">0</span>
+                </div>
+                <div class="flex justify-between text-stone-300">
+                    <span>Marksmanship Accuracy (<span id="score-acc-pct">0%</span>):</span>
+                    <span id="score-acc-bonus" class="font-bold text-emerald-400">+0</span>
+                </div>
+                <div class="flex justify-between text-stone-300">
+                    <span>Royal Vitality Bonus:</span>
+                    <span id="score-hp-bonus" class="font-bold text-amber-300">+0</span>
+                </div>
+                <div class="border-t border-amber-500/30 pt-2 flex justify-between text-base sm:text-lg font-royal font-black text-amber-300">
+                    <span>TOTAL HUNT POINTS:</span>
+                    <span id="score-total">0</span>
+                </div>
+            </div>
+
+            <button id="btn-restart-game" class="royal-btn rounded-xl px-9 py-4 text-base sm:text-lg w-full sm:w-auto">
+                PLAY AGAIN
+            </button>
+        </div>
+    </div>
+
+    <script>
+    /**
+     * ============================================================================
+     * THE KING'S HUNT - Complete 3-Stage 3D Browser Game
+     * Built with Three.js (r128) & Procedural Web Audio Synthesizer
+     * ============================================================================
+     */
+
+    class SoundEngine {
+        constructor() {
+            this.ctx = null;
+            this.muted = false;
+        }
+
+        init() {
+            if (!this.ctx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    this.ctx = new AudioContext();
+                }
+            } else if (this.ctx.state === 'suspended') {
+                this.ctx.resume();
+            }
+        }
+
+        toggleMute() {
+            this.muted = !this.muted;
+            return this.muted;
+        }
+
+        playGunshot() {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(140, now);
+            osc.frequency.exponentialRampToValueAtTime(24, now + 0.35);
+
+            gain.gain.setValueAtTime(0.75, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.4);
+        }
+
+        playEmptyClick() {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(800, now);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.06);
+        }
+
+        playReloadStep(step = 0) {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(step === 0 ? 320 : (step === 1 ? 480 : 650), now);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.14);
+        }
+
+        playHitImpact(isCrit = false) {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = isCrit ? 'sawtooth' : 'triangle';
+            osc.frequency.setValueAtTime(isCrit ? 360 : 180, now);
+            osc.frequency.exponentialRampToValueAtTime(50, now + 0.18);
+            gain.gain.setValueAtTime(0.4, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.22);
+        }
+
+        playKingHurt() {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220, now);
+            osc.frequency.linearRampToValueAtTime(110, now + 0.3);
+            gain.gain.setValueAtTime(0.5, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        }
+
+        playFootstep(isRunning) {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(isRunning ? 95 : 70, now);
+            osc.frequency.exponentialRampToValueAtTime(25, now + 0.08);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.12);
+        }
+
+        playPickup() {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(440, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.25);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.3);
+        }
+
+        playBoarGrunt(intense = true) {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const dur = intense ? 0.52 : 0.3;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(intense ? 92 : 76, now);
+            osc.frequency.linearRampToValueAtTime(intense ? 145 : 64, now + dur * 0.45);
+            gain.gain.setValueAtTime(0.35, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + dur + 0.02);
+        }
+
+        playWolfSound(isHowl = true) {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const dur = isHowl ? 0.95 : 0.35;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = isHowl ? 'triangle' : 'sawtooth';
+            if (isHowl) {
+                osc.frequency.setValueAtTime(280, now);
+                osc.frequency.exponentialRampToValueAtTime(540, now + 0.28);
+            } else {
+                osc.frequency.setValueAtTime(210, now);
+                osc.frequency.exponentialRampToValueAtTime(110, now + dur);
+            }
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + dur + 0.02);
+        }
+
+        playTigerRoar(intense = true) {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const dur = intense ? 0.85 : 0.45;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(intense ? 110 : 85, now);
+            osc.frequency.linearRampToValueAtTime(intense ? 190 : 130, now + dur * 0.4);
+            osc.frequency.exponentialRampToValueAtTime(40, now + dur);
+            gain.gain.setValueAtTime(0.45, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + dur + 0.02);
+        }
+
+        playShockwaveRoar() {
+            this.playTigerRoar(true);
+        }
+
+        playVictoryFanfare() {
+            if (this.muted || !this.ctx) return;
+            const now = this.ctx.currentTime;
+            const notes = [523.25, 659.25, 783.99, 1046.5];
+            notes.forEach((freq, idx) => {
+                const startTime = now + idx * 0.18;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, startTime);
+                gain.gain.setValueAtTime(0.35, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.38);
+            });
+        }
+
+        updateAmbience(dt) {}
+    }
+
+    const sound = new SoundEngine();
+
+    const CONFIG = {
+        worldRadius: 92,
+        kingMaxHp: 100,
+        kingWalkSpeed: 7.4,
+        kingRunSpeed: 13.0,
+        magCapacity: 6,
+        reserveStart: 24,
+        reloadDuration: 1.5,
+        bodyDamage: 38,
+        headshotDamage: 76
+    };
+
+    const STAGES = [
+        {
+            number: 1,
+            name: 'The Whispering Woods',
+            shortTitle: 'STAGE 1 / 3 • WHISPERING WOODS',
+            objective: 'Track and defeat the Wild Boar.',
+            bossLabel: '🐗 IRON-TUSK WILD BOAR',
+            clearIcon: '🐗👑',
+            clearDesc: 'The Iron-Tusk Wild Boar has been vanquished! Deeper shadows gather ahead in the grove.',
+            bonusPoints: 300,
+            atmosphere: {
+                bg: 0x87ceeb,
+                fog: 0x9bd6b2,
+                fogDensity: 0.008,
+                sunColor: 0xfff1c9,
+                sunIntensity: 1.38,
+                sunPos: [42, 68, 35],
+                hemiSky: 0xfff6d6,
+                hemiGround: 0x2d5a27,
+                hemiIntensity: 0.8,
+                sunSphereColor: 0xfff5b8
+            },
+            enemies: [
+                {
+                    type: 'BOAR',
+                    name: 'Wild Boar',
+                    pos: [8, 0, -22],
+                    maxHp: 150,
+                    walkSpeed: 4.8,
+                    stalkSpeed: 6.4,
+                    chargeSpeed: 15.2,
+                    detectRange: 36,
+                    attackRange: 3.0,
+                    damage: 16,
+                    scale: 1.05
+                }
+            ]
+        },
+        {
+            number: 2,
+            name: 'The Shadow Grove',
+            shortTitle: 'STAGE 2 / 3 • SHADOW GROVE',
+            objective: 'Survive the Shadow Wolf Pack (3 Wolves).',
+            bossLabel: '🐺 SHADOW WOLF PACK',
+            clearIcon: '🐺👑',
+            clearDesc: 'The Shadow Wolf Pack scatters into the mist! Only the Apex Bengal Tiger remains.',
+            bonusPoints: 500,
+            atmosphere: {
+                bg: 0xd98245,
+                fog: 0xb86b3d,
+                fogDensity: 0.0105,
+                sunColor: 0xff9e54,
+                sunIntensity: 1.25,
+                sunPos: [-55, 34, -25],
+                hemiSky: 0xffcfa3,
+                hemiGround: 0x283618,
+                hemiIntensity: 0.68,
+                sunSphereColor: 0xff8c42
+            },
+            enemies: [
+                {
+                    type: 'WOLF',
+                    name: 'Shadow Alpha',
+                    pos: [0, 0, -28],
+                    maxHp: 90,
+                    walkSpeed: 5.8,
+                    stalkSpeed: 8.6,
+                    chargeSpeed: 17.5,
+                    detectRange: 42,
+                    attackRange: 2.8,
+                    damage: 14,
+                    scale: 1.0,
+                    flankAngle: 0
+                },
+                {
+                    type: 'WOLF',
+                    name: 'Shadow Stalker',
+                    pos: [-18, 0, -20],
+                    maxHp: 90,
+                    walkSpeed: 5.8,
+                    stalkSpeed: 8.8,
+                    chargeSpeed: 17.8,
+                    detectRange: 42,
+                    attackRange: 2.8,
+                    damage: 14,
+                    scale: 0.96,
+                    flankAngle: 2.1
+                },
+                {
+                    type: 'WOLF',
+                    name: 'Shadow Fang',
+                    pos: [18, 0, -20],
+                    maxHp: 90,
+                    walkSpeed: 5.8,
+                    stalkSpeed: 8.8,
+                    chargeSpeed: 17.8,
+                    detectRange: 42,
+                    attackRange: 2.8,
+                    damage: 14,
+                    scale: 0.96,
+                    flankAngle: -2.1
+                }
+            ]
+        },
+        {
+            number: 3,
+            name: 'The Royal Sanctuary',
+            shortTitle: 'STAGE 3 / 3 • ROYAL SANCTUARY',
+            objective: 'Defeat the Apex Bengal Tiger!',
+            bossLabel: '🐅 APEX BENGAL TIGER',
+            clearIcon: '🐅🏆',
+            clearDesc: 'The Apex Bengal Tiger is defeated! Peace returns to the Royal Sanctuary.',
+            bonusPoints: 800,
+            atmosphere: {
+                bg: 0x1e1b38,
+                fog: 0x28234a,
+                fogDensity: 0.0125,
+                sunColor: 0x93c5fd,
+                sunIntensity: 0.92,
+                sunPos: [-35, 58, -45],
+                hemiSky: 0x818cf8,
+                hemiGround: 0x132a1c,
+                hemiIntensity: 0.62,
+                sunSphereColor: 0xe0e7ff
+            },
+            enemies: [
+                {
+                    type: 'TIGER',
+                    name: 'Apex Bengal Tiger',
+                    pos: [6, 0, -26],
+                    maxHp: 320,
+                    walkSpeed: 5.0,
+                    stalkSpeed: 6.8,
+                    chargeSpeed: 18.2,
+                    detectRange: 44,
+                    attackRange: 3.3,
+                    damage: 26,
+                    scale: 1.15
+                }
+            ]
+        }
+    ];
+
+    const state = {
+        phase: 'START',
+        currentStageIndex: 0,
+        points: 0,
+        shotsFired: 0,
+        shotsHit: 0,
+        headshots: 0,
+        camYaw: 0,
+        camPitch: 0.24,
+        isAiming: false,
+        currentFov: 60,
+        king: {
+            pos: new THREE.Vector3(0, 0, 32),
+            rotY: Math.PI,
+            hp: CONFIG.kingMaxHp,
+            stamina: 100,
+            isMoving: false,
+            isRunning: false,
+            animTime: 0,
+            recoilTimer: 0,
+            hitFlashTimer: 0,
+            stepTimer: 0,
+            invulnTimer: 0,
+            stunTimer: 0
+        },
+        weapon: {
+            mag: CONFIG.magCapacity,
+            reserve: CONFIG.reserveStart,
+            isReloading: false,
+            reloadTimer: 0,
+            reloadStepPlayed: 0,
+            fireCooldown: 0
+        },
+        enemies: [],
+        stageSpotted: false,
+        stageTransitionTriggered: false
+    };
+
+    const keys = {};
+    let isPointerLocked = false;
+    let isMouseDragging = false;
+    let lastMouseX = 0;
+    let lastMouseY = 0;
+
+    const canvas = document.getElementById('game-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87ceeb);
+    scene.fog = new THREE.FogExp2(0x9bd6b2, 0.0085);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 260);
+
+    const hemiLight = new THREE.HemisphereLight(0xfff6d6, 0x2d5a27, 0.78);
+    hemiLight.position.set(0, 50, 0);
+    scene.add(hemiLight);
+
+    const sunLight = new THREE.DirectionalLight(0xfff1c9, 1.35);
+    sunLight.position.set(42, 68, 35);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    sunLight.shadow.camera.near = 10;
+    sunLight.shadow.camera.far = 180;
+    const shadowBound = 65;
+    sunLight.shadow.camera.left = -shadowBound;
+    sunLight.shadow.camera.right = shadowBound;
+    sunLight.shadow.camera.top = shadowBound;
+    sunLight.shadow.camera.bottom = -shadowBound;
+    sunLight.shadow.bias = -0.0005;
+    scene.add(sunLight);
+
+    const sunMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(6, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0xfff5b8, fog: false })
+    );
+    sunMesh.position.set(85, 115, -90);
+    scene.add(sunMesh);
+
+    const colliders = [];
+    const shootableEnvironment = [];
+    const supplyCrates = [];
+    const birdFlocks = [];
+    let pollenParticles = null;
+    let kingRig = {};
+
+    function getPathX(z) {
+        return Math.sin(z * 0.055) * 14 + Math.cos(z * 0.025) * 6;
+    }
+
+    function buildForestEnvironment() {
+        const groundGeo = new THREE.CircleGeometry(CONFIG.worldRadius + 25, 64);
+        const groundMat = new THREE.MeshStandardMaterial({ color: 0x3b8c36, roughness: 0.88, metalness: 0.02 });
+        const ground = new THREE.Mesh(groundGeo, groundMat);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        scene.add(ground);
+        shootableEnvironment.push(ground);
+
+        const pathMat = new THREE.MeshStandardMaterial({ color: 0xb88a56, roughness: 0.95 });
+        const pathBorderMat = new THREE.MeshStandardMaterial({ color: 0x8f683c, roughness: 0.95 });
+
+        for (let z = -78; z <= 78; z += 1.6) {
+            const x = getPathX(z);
+            const nextX = getPathX(z + 1.6);
+            const angle = Math.atan2(nextX - x, 1.6);
+
+            const pathSeg = new THREE.Mesh(new THREE.CylinderGeometry(2.6, 2.7, 0.08, 12), pathMat);
+            pathSeg.position.set(x, 0.03, z);
+            pathSeg.scale.set(1.15, 1, 1.1);
+            pathSeg.rotation.y = angle;
+            pathSeg.receiveShadow = true;
+            scene.add(pathSeg);
+        }
+
+        for (let i = 0; i < 64; i++) {
+            const a = (i / 64) * Math.PI * 2;
+            const r = CONFIG.worldRadius + 2 + (i % 3) * 1.8;
+            createStylizedTree(Math.cos(a) * r, Math.sin(a) * r, 1.25 + (i % 3) * 0.2, i % 2 === 0);
+        }
+
+        const treeSpots = [
+            [-14, 24], [16, 26], [-22, 10], [20, 12], [-12, -4], [24, -6],
+            [-28, -18], [14, -20], [-18, -36], [26, -34], [-8, -48], [18, -50],
+            [-36, 4], [35, 2], [-38, -28], [38, -22], [-32, 32], [30, 34],
+            [-45, -10], [46, 14], [4, -62], [-25, -58], [28, -58], [-48, 22],
+            [52, -12], [-54, -36], [48, -42], [-15, 48], [22, 48], [0, 56]
+        ];
+
+        treeSpots.forEach(([tx, tz], idx) => {
+            if (Math.abs(tx - getPathX(tz)) < 4.8) return;
+            createStylizedTree(tx, tz, 0.95 + (idx % 4) * 0.22, idx % 3 !== 0);
+        });
+
+        const rockSpots = [
+            [-9, 18, 1.2], [11, 8, 1.5], [-16, -12, 1.8], [19, -15, 1.3],
+            [-6, -28, 1.4], [22, -42, 1.9], [-28, 20, 1.6], [32, -8, 1.7]
+        ];
+        rockSpots.forEach(([rx, rz, rScale]) => {
+            if (Math.abs(rx - getPathX(rz)) < 4.0) return;
+            createRock(rx, rz, rScale);
+        });
+
+        createSupplyCrate(-7, 14, 'AMMO');
+        createSupplyCrate(10, -10, 'HEALTH');
+        createSupplyCrate(-11, -34, 'AMMO');
+        createSupplyCrate(16, 20, 'HEALTH');
+
+        for (let b = 0; b < 7; b++) {
+            createBird(b);
+        }
+
+        const partCount = 140;
+        const partGeo = new THREE.BufferGeometry();
+        const positions = new Float32Array(partCount * 3);
+        for (let i = 0; i < partCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 110;
+            positions[i * 3 + 1] = 1 + Math.random() * 14;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 110;
+        }
+        partGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        pollenParticles = new THREE.Points(partGeo, new THREE.PointsMaterial({
+            color: 0xfff5ba, size: 0.24, transparent: true, opacity: 0.75
+        }));
+        scene.add(pollenParticles);
+    }
+
+    function createStylizedTree(x, z, scale = 1, isPine = true) {
+        const group = new THREE.Group();
+        group.position.set(x, 0, z);
+
+        const trunkH = 4.2 * scale;
+        const trunk = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.32 * scale, 0.55 * scale, trunkH, 8),
+            new THREE.MeshStandardMaterial({ color: 0x6b4423, roughness: 0.9 })
+        );
+        trunk.position.y = trunkH / 2;
+        trunk.castShadow = true;
+        trunk.receiveShadow = true;
+        group.add(trunk);
+        shootableEnvironment.push(trunk);
+
+        if (isPine) {
+            const foliageColors = [0x236b2c, 0x2d8237, 0x389c43];
+            for (let tier = 0; tier < 3; tier++) {
+                const cone = new THREE.Mesh(
+                    new THREE.ConeGeometry((2.6 - tier * 0.55) * scale, (3.4 - tier * 0.4) * scale, 8),
+                    new THREE.MeshStandardMaterial({ color: foliageColors[tier], roughness: 0.8 })
+                );
+                cone.position.y = (3.6 + tier * 2.1) * scale;
+                cone.castShadow = true;
+                cone.receiveShadow = true;
+                group.add(cone);
+                shootableEnvironment.push(cone);
+            }
+        } else {
+            const leafMat = new THREE.MeshStandardMaterial({ color: 0x3ca336, roughness: 0.78 });
+            const sphere = new THREE.Mesh(new THREE.DodecahedronGeometry(2.5 * scale, 1), leafMat);
+            sphere.position.y = 5.2 * scale;
+            sphere.castShadow = true;
+            sphere.receiveShadow = true;
+            group.add(sphere);
+            shootableEnvironment.push(sphere);
+        }
+
+        scene.add(group);
+        colliders.push({ x, z, r: 0.85 * scale });
+    }
+
+    function createRock(x, z, scale = 1) {
+        const rock = new THREE.Mesh(
+            new THREE.DodecahedronGeometry(1.15 * scale, 0),
+            new THREE.MeshStandardMaterial({ color: 0x7d848c, roughness: 0.88, flatShading: true })
+        );
+        rock.position.set(x, 0.65 * scale, z);
+        rock.scale.set(1.25, 0.85, 1.1);
+        rock.castShadow = true;
+        rock.receiveShadow = true;
+        scene.add(rock);
+        shootableEnvironment.push(rock);
+        colliders.push({ x, z, r: 1.25 * scale });
+    }
+
+    function createSupplyCrate(x, z, type) {
+        const group = new THREE.Group();
+        group.position.set(x, 0.45, z);
+        const isAmmo = type === 'AMMO';
+        const box = new THREE.Mesh(
+            new THREE.BoxGeometry(0.95, 0.75, 0.95),
+            new THREE.MeshStandardMaterial({ color: isAmmo ? 0x8c5a2b : 0xb82929, roughness: 0.6 })
+        );
+        box.castShadow = true;
+        group.add(box);
+
+        const ring = new THREE.Mesh(
+            new THREE.TorusGeometry(0.65, 0.05, 8, 24),
+            new THREE.MeshBasicMaterial({ color: isAmmo ? 0xffd700 : 0x4ade80 })
+        );
+        ring.rotation.x = Math.PI / 2;
+        ring.position.y = 0.65;
+        group.add(ring);
+
+        scene.add(group);
+        supplyCrates.push({ mesh: group, ring, x, z, type, collected: false });
+    }
+
+    function createBird(index) {
+        const bird = new THREE.Group();
+        const bodyMat = new THREE.MeshStandardMaterial({ color: 0xfff3b0 });
+        const body = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.55, 6), bodyMat);
+        body.rotation.x = Math.PI / 2;
+        bird.add(body);
+
+        const leftWing = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.04, 0.22), bodyMat);
+        leftWing.position.set(-0.28, 0, 0);
+        bird.add(leftWing);
+
+        const rightWing = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.04, 0.22), bodyMat);
+        rightWing.position.set(0.28, 0, 0);
+        bird.add(rightWing);
+
+        scene.add(bird);
+        birdFlocks.push({ group: bird, leftWing, rightWing, radius: 18 + index * 6, speed: 0.28, height: 13, phase: index * 1.1 });
+    }
+
+    function buildKingCharacter() {
+        const root = new THREE.Group();
+        kingRig.root = root;
+
+        const royalGold = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.8, roughness: 0.2 });
+        const royalRed = new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.6 });
+        const royalBlue = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.7 });
+        const bootMat = new THREE.MeshStandardMaterial({ color: 0x1c1917, roughness: 0.8 });
+        const skinMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.5 });
+        const rifleMat = new THREE.MeshStandardMaterial({ color: 0x292524, metalness: 0.5, roughness: 0.4 });
+        const woodMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.8 });
+
+        const pelvis = new THREE.Group();
+        pelvis.position.y = 1.05;
+        root.add(pelvis);
+        kingRig.pelvis = pelvis;
+
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.82, 0.42), royalBlue);
+        torso.position.y = 0.42;
+        torso.castShadow = true;
+        pelvis.add(torso);
+        kingRig.torso = torso;
+
+        const crown = new THREE.Group();
+        crown.position.set(0, 1.05, 0);
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.26, 12, 12), skinMat);
+        head.position.y = 0.92;
+        pelvis.add(head);
+
+        const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.24, 0.2, 8), royalGold);
+        crownBase.position.y = 1.12;
+        pelvis.add(crownBase);
+        crown.add(crownBase);
+        pelvis.add(crown);
+
+        const cape = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.95, 0.12), royalRed);
+        cape.position.set(0, 0.38, -0.25);
+        cape.castShadow = true;
+        pelvis.add(cape);
+        kingRig.cape = cape;
+
+        const leftLeg = new THREE.Group();
+        leftLeg.position.set(-0.18, 0, 0);
+        pelvis.add(leftLeg);
+        const lBoot = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.55, 0.26), bootMat);
+        lBoot.position.y = -0.28;
+        leftLeg.add(lBoot);
+        kingRig.leftLeg = leftLeg;
+
+        const rightLeg = new THREE.Group();
+        rightLeg.position.set(0.18, 0, 0);
+        pelvis.add(rightLeg);
+        const rBoot = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.55, 0.26), bootMat);
+        rBoot.position.y = -0.28;
+        rightLeg.add(rBoot);
+        kingRig.rightLeg = rightLeg;
+
+        const leftArm = new THREE.Group();
+        leftArm.position.set(-0.44, 0.72, 0);
+        pelvis.add(leftArm);
+        const lArmMesh = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.55, 0.2), royalBlue);
+        lArmMesh.position.y = -0.22;
+        leftArm.add(lArmMesh);
+        kingRig.leftArm = leftArm;
+
+        const rightArm = new THREE.Group();
+        rightArm.position.set(0.44, 0.72, 0);
+        pelvis.add(rightArm);
+        const rArmMesh = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.55, 0.2), royalBlue);
+        rArmMesh.position.y = -0.22;
+        rightArm.add(rArmMesh);
+        kingRig.rightArm = rightArm;
+
+        const rifle = new THREE.Group();
+        rifle.position.set(0, -0.4, 0.35);
+        rightArm.add(rifle);
+
+        const stock = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.16, 0.95), woodMat);
+        stock.position.z = -0.3;
+        rifle.add(stock);
+
+        const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.3, 8), rifleMat);
+        barrel.rotation.x = Math.PI / 2;
+        barrel.position.z = 0.45;
+        rifle.add(barrel);
+
+        const scope = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.35, 8), rifleMat);
+        scope.rotation.x = Math.PI / 2;
+        scope.position.set(0, 0.14, 0.1);
+        rifle.add(scope);
+
+        const muzzleFlash = new THREE.Mesh(
+            new THREE.ConeGeometry(0.22, 0.6, 8),
+            new THREE.MeshBasicMaterial({ color: 0xffd700, transparent: true, opacity: 0.9 })
+        );
+        muzzleFlash.rotation.x = Math.PI / 2;
+        muzzleFlash.position.z = 1.15;
+        muzzleFlash.visible = false;
+        rifle.add(muzzleFlash);
+        kingRig.muzzleFlashMesh = muzzleFlash;
+
+        const mLight = new THREE.PointLight(0xffaa00, 0, 8);
+        mLight.position.set(0, 0, 1.2);
+        rifle.add(mLight);
+        kingRig.muzzleLight = mLight;
+
+        scene.add(root);
+    }
+
+    let enemyHitboxes = [];
+
+    function clearCurrentEnemies() {
+        state.enemies.forEach(en => {
+            if (en.rig && en.rig.root) scene.remove(en.rig.root);
+        });
+        state.enemies = [];
+        enemyHitboxes = [];
+    }
+
+    function applyStageAtmosphere(stageCfg) {
+        const atm = stageCfg.atmosphere;
+        scene.background = new THREE.Color(atm.bg);
+        scene.fog = new THREE.FogExp2(atm.fog, atm.fogDensity);
+        sunLight.color.setHex(atm.sunColor);
+        sunLight.intensity = atm.sunIntensity;
+        sunLight.position.set(atm.sunPos[0], atm.sunPos[1], atm.sunPos[2]);
+        hemiLight.color.setHex(atm.hemiSky);
+        hemiLight.groundColor.setHex(atm.hemiGround);
+        hemiLight.intensity = atm.hemiIntensity;
+        sunMesh.material.color.setHex(atm.sunSphereColor);
+    }
+
+    function spawnStageEnemies(stageIndex) {
+        clearCurrentEnemies();
+        const stageCfg = STAGES[stageIndex];
+        applyStageAtmosphere(stageCfg);
+
+        state.stageSpotted = false;
+        state.stageTransitionTriggered = false;
+
+        stageCfg.enemies.forEach((def, idx) => {
+            const enemyObj = {
+                id: idx,
+                type: def.type,
+                name: def.name,
+                pos: new THREE.Vector3(def.pos[0], def.pos[1], def.pos[2]),
+                rotY: 0,
+                hp: def.maxHp,
+                maxHp: def.maxHp,
+                walkSpeed: def.walkSpeed,
+                stalkSpeed: def.stalkSpeed,
+                chargeSpeed: def.chargeSpeed,
+                detectRange: def.detectRange,
+                attackRange: def.attackRange,
+                damage: def.damage,
+                scale: def.scale || 1,
+                flankAngle: def.flankAngle || 0,
+                aiState: 'ROAMING',
+                stateTimer: 0,
+                waypointIndex: idx % 5,
+                animTime: idx * 1.3,
+                hitFlashTimer: 0,
+                attackDealtInCharge: false,
+                retreatDir: new THREE.Vector3(),
+                roarCooldown: 4.5,
+                rig: null
+            };
+
+            if (def.type === 'BOAR') enemyObj.rig = buildBoarRig(enemyObj);
+            else if (def.type === 'WOLF') enemyObj.rig = buildWolfRig(enemyObj);
+            else enemyObj.rig = buildTigerRig(enemyObj);
+
+            enemyObj.rig.root.scale.setScalar(enemyObj.scale);
+            enemyObj.rig.root.position.copy(enemyObj.pos);
+            scene.add(enemyObj.rig.root);
+            state.enemies.push(enemyObj);
+        });
+
+        document.getElementById('stage-badge').textContent = stageCfg.shortTitle;
+        document.getElementById('mission-objective-text').textContent = stageCfg.objective;
+        document.getElementById('boss-name-label').textContent = stageCfg.bossLabel;
+        document.getElementById('tiger-hud-panel').classList.add('hidden');
+        updateStageEnemyHUD();
+    }
+
+    function buildBoarRig(enemyObj) {
+        const rig = {};
+        const root = new THREE.Group();
+        rig.root = root;
+        const furMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21, roughness: 0.85 });
+        const bodyPivot = new THREE.Group();
+        bodyPivot.position.y = 0.88;
+        root.add(bodyPivot);
+        rig.body = bodyPivot;
+        rig.baseY = 0.88;
+
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.92, 1.75), furMat);
+        torso.castShadow = true;
+        bodyPivot.add(torso);
+        rig.torsoMesh = torso;
+        enemyHitboxes.push({ mesh: torso, zone: 'BODY', enemy: enemyObj });
+
+        const headPivot = new THREE.Group();
+        headPivot.position.set(0, 0.05, 0.98);
+        bodyPivot.add(headPivot);
+        rig.head = headPivot;
+
+        const skull = new THREE.Mesh(new THREE.BoxGeometry(0.84, 0.76, 0.72), furMat);
+        skull.position.z = 0.22;
+        headPivot.add(skull);
+        enemyHitboxes.push({ mesh: skull, zone: 'HEAD', enemy: enemyObj });
+
+        rig.jaw = new THREE.Group();
+        headPivot.add(rig.jaw);
+
+        function createLeg(lx, lz) {
+            const leg = new THREE.Group();
+            leg.position.set(lx, -0.25, lz);
+            bodyPivot.add(leg);
+            const limb = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.62, 0.28), furMat);
+            limb.position.y = -0.3;
+            leg.add(limb);
+            return leg;
+        }
+        rig.legFL = createLeg(-0.36, 0.58);
+        rig.legFR = createLeg(0.36, 0.58);
+        rig.legBL = createLeg(-0.36, -0.58);
+        rig.legBR = createLeg(0.36, -0.58);
+        rig.tailBase = new THREE.Group();
+        bodyPivot.add(rig.tailBase);
+        rig.tailTip = new THREE.Group();
+        rig.tailBase.add(rig.tailTip);
+        return rig;
+    }
+
+    function buildWolfRig(enemyObj) {
+        const rig = {};
+        const root = new THREE.Group();
+        rig.root = root;
+        const coatMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.72 });
+        const bodyPivot = new THREE.Group();
+        bodyPivot.position.y = 0.94;
+        root.add(bodyPivot);
+        rig.body = bodyPivot;
+        rig.baseY = 0.94;
+
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.68, 1.72), coatMat);
+        torso.castShadow = true;
+        bodyPivot.add(torso);
+        rig.torsoMesh = torso;
+        enemyHitboxes.push({ mesh: torso, zone: 'BODY', enemy: enemyObj });
+
+        const headPivot = new THREE.Group();
+        headPivot.position.set(0, 0.28, 0.96);
+        bodyPivot.add(headPivot);
+        rig.head = headPivot;
+
+        const skull = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.58, 0.62), coatMat);
+        headPivot.add(skull);
+        enemyHitboxes.push({ mesh: skull, zone: 'HEAD', enemy: enemyObj });
+
+        rig.jaw = new THREE.Group();
+        headPivot.add(rig.jaw);
+
+        function createLeg(lx, lz) {
+            const leg = new THREE.Group();
+            leg.position.set(lx, -0.22, lz);
+            bodyPivot.add(leg);
+            const upper = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.68, 0.22), coatMat);
+            upper.position.y = -0.32;
+            leg.add(upper);
+            return leg;
+        }
+        rig.legFL = createLeg(-0.25, 0.62);
+        rig.legFR = createLeg(0.25, 0.62);
+        rig.legBL = createLeg(-0.25, -0.62);
+        rig.legBR = createLeg(0.25, -0.62);
+        rig.tailBase = new THREE.Group();
+        bodyPivot.add(rig.tailBase);
+        rig.tailTip = new THREE.Group();
+        rig.tailBase.add(rig.tailTip);
+        return rig;
+    }
+
+    function buildTigerRig(enemyObj) {
+        const rig = {};
+        const root = new THREE.Group();
+        rig.root = root;
+        const orangeMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.65 });
+        const bodyPivot = new THREE.Group();
+        bodyPivot.position.y = 1.08;
+        root.add(bodyPivot);
+        rig.body = bodyPivot;
+        rig.baseY = 1.08;
+
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.86, 2.05), orangeMat);
+        torso.castShadow = true;
+        bodyPivot.add(torso);
+        rig.torsoMesh = torso;
+        enemyHitboxes.push({ mesh: torso, zone: 'BODY', enemy: enemyObj });
+
+        const headPivot = new THREE.Group();
+        headPivot.position.set(0, 0.28, 1.15);
+        bodyPivot.add(headPivot);
+        rig.head = headPivot;
+
+        const skull = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.74, 0.78), orangeMat);
+        headPivot.add(skull);
+        enemyHitboxes.push({ mesh: skull, zone: 'HEAD', enemy: enemyObj });
+
+        rig.jaw = new THREE.Group();
+        headPivot.add(rig.jaw);
+
+        function createLeg(lx, lz) {
+            const legPivot = new THREE.Group();
+            legPivot.position.set(lx, -0.25, lz);
+            bodyPivot.add(legPivot);
+            const upper = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.72, 0.3), orangeMat);
+            upper.position.y = -0.34;
+            legPivot.add(upper);
+            return legPivot;
+        }
+        rig.legFL = createLeg(-0.34, 0.72);
+        rig.legFR = createLeg(0.34, 0.72);
+        rig.legBL = createLeg(-0.34, -0.72);
+        rig.legBR = createLeg(0.34, -0.72);
+
+        rig.tailBase = new THREE.Group();
+        bodyPivot.add(rig.tailBase);
+        rig.tailTip = new THREE.Group();
+        rig.tailBase.add(rig.tailTip);
+        return rig;
+    }
+
+    const activeEffects = [];
+
+    function spawnBulletTracer(startPos, endPos) {
+        const dist = startPos.distanceTo(endPos);
+        const geo = new THREE.CylinderGeometry(0.03, 0.03, dist, 6);
+        geo.rotateX(Math.PI / 2);
+        const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xfff59d, transparent: true, opacity: 0.92 }));
+        mesh.position.copy(startPos).lerp(endPos, 0.5);
+        mesh.lookAt(endPos);
+        scene.add(mesh);
+        activeEffects.push({ type: 'TRACER', mesh, life: 0.14, maxLife: 0.14 });
+    }
+
+    function spawnImpactBurst(pos, colorHex, count = 10) {
+        for (let i = 0; i < count; i++) {
+            const p = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.14, 0.14), new THREE.MeshBasicMaterial({ color: colorHex }));
+            p.position.copy(pos);
+            const vel = new THREE.Vector3((Math.random() - 0.5) * 9, 2 + Math.random() * 6, (Math.random() - 0.5) * 9);
+            scene.add(p);
+            activeEffects.push({ type: 'PARTICLE', mesh: p, vel, life: 0.45 + Math.random() * 0.25, maxLife: 0.65 });
+        }
+    }
+
+    function spawnFloatingDamage(worldPos, text, isCrit = false) {
+        const projected = worldPos.clone().project(camera);
+        if (projected.z > 1) return;
+        const sx = (projected.x * 0.5 + 0.5) * window.innerWidth;
+        const sy = (-projected.y * 0.5 + 0.5) * window.innerHeight;
+
+        const el = document.createElement('div');
+        el.className = `floating-dmg ${isCrit ? 'text-amber-300 text-2xl' : 'text-white text-lg'}`;
+        el.style.left = `${sx}px`;
+        el.style.top = `${sy}px`;
+        el.textContent = text;
+        document.getElementById('floating-texts').appendChild(el);
+        setTimeout(() => el.remove(), 950);
+    }
+
+    function updateEffects(dt) {
+        for (let i = activeEffects.length - 1; i >= 0; i--) {
+            const ef = activeEffects[i];
+            ef.life -= dt;
+            if (ef.life <= 0) {
+                scene.remove(ef.mesh);
+                if (ef.mesh.geometry) ef.mesh.geometry.dispose();
+                if (ef.mesh.material) ef.mesh.material.dispose();
+                activeEffects.splice(i, 1);
+                continue;
+            }
+            if (ef.type === 'TRACER') {
+                ef.mesh.material.opacity = ef.life / ef.maxLife;
+            } else if (ef.type === 'PARTICLE') {
+                ef.vel.y -= 18 * dt;
+                ef.mesh.position.addScaledVector(ef.vel, dt);
+                ef.mesh.scale.setScalar(ef.life / ef.maxLife);
+            }
+        }
+    }
+
+    const raycaster = new THREE.Raycaster();
+
+    function fireRifle() {
+        if (state.phase !== 'PLAYING') return;
+        const w = state.weapon;
+        if (w.isReloading || w.fireCooldown > 0) return;
+
+        if (w.mag <= 0) {
+            sound.playEmptyClick();
+            updateAmmoHUD();
+            return;
+        }
+
+        w.mag--;
+        w.fireCooldown = 0.42;
+        state.shotsFired++;
+        state.king.recoilTimer = 0.28;
+
+        sound.playGunshot();
+        kingRig.muzzleFlashMesh.visible = true;
+        kingRig.muzzleLight.intensity = 5.5;
+        setTimeout(() => {
+            if (kingRig.muzzleFlashMesh) kingRig.muzzleFlashMesh.visible = false;
+            if (kingRig.muzzleLight) kingRig.muzzleLight.intensity = 0;
+        }, 65);
+
+        raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+        const activeEnemyMeshes = enemyHitboxes.filter(h => h.enemy.aiState !== 'DEFEATED').map(h => h.mesh);
+        const hits = raycaster.intersectObjects([...activeEnemyMeshes, ...shootableEnvironment], false);
+
+        let endPoint = raycaster.ray.origin.clone().addScaledVector(raycaster.ray.direction, 95);
+        if (hits.length > 0) {
+            const firstHit = hits[0];
+            endPoint = firstHit.point.clone();
+            const hitZoneObj = enemyHitboxes.find(h => h.mesh === firstHit.object);
+            if (hitZoneObj && hitZoneObj.enemy.aiState !== 'DEFEATED') {
+                state.shotsHit++;
+                const isCrit = hitZoneObj.zone === 'HEAD';
+                if (isCrit) state.headshots++;
+                damageEnemy(hitZoneObj.enemy, isCrit ? CONFIG.headshotDamage : CONFIG.bodyDamage, firstHit.point, isCrit);
+            } else {
+                spawnImpactBurst(firstHit.point, 0xd97706, 7);
+            }
+        }
+
+        spawnBulletTracer(new THREE.Vector3(), endPoint);
+        updateAmmoHUD();
+    }
+
+    function startReload() {
+        const w = state.weapon;
+        if (state.phase !== 'PLAYING' || w.isReloading || w.mag >= CONFIG.magCapacity || w.reserve <= 0) return;
+        w.isReloading = true;
+        w.reloadTimer = 0;
+        w.reloadStepPlayed = 0;
+        sound.playReloadStep(0);
+        updateAmmoHUD();
+    }
+
+    function updateWeapon(dt) {
+        const w = state.weapon;
+        if (w.fireCooldown > 0) w.fireCooldown = Math.max(0, w.fireCooldown - dt);
+        if (w.isReloading) {
+            w.reloadTimer += dt;
+            const pct = Math.min(100, (w.reloadTimer / CONFIG.reloadDuration) * 100);
+            document.getElementById('reload-progress-wrap').classList.remove('hidden');
+            document.getElementById('reload-progress-bar').style.width = `${pct}%`;
+
+            if (w.reloadTimer >= CONFIG.reloadDuration) {
+                const needed = CONFIG.magCapacity - w.mag;
+                const toLoad = Math.min(needed, w.reserve);
+                w.mag += toLoad;
+                w.reserve -= toLoad;
+                w.isReloading = false;
+                sound.playReloadStep(2);
+                document.getElementById('reload-progress-wrap').classList.add('hidden');
+                updateAmmoHUD();
+            }
+        }
+    }
+
+    function alertEnemy(enemy) {
+        if (enemy.aiState === 'DEFEATED') return;
+        if (!state.stageSpotted) {
+            state.stageSpotted = true;
+            state.points += 150;
+            updatePointsHUD();
+            document.getElementById('tiger-hud-panel').classList.remove('hidden');
+        }
+        if (enemy.aiState === 'ROAMING' || enemy.aiState === 'IDLE') {
+            enemy.aiState = 'ALERTED';
+            enemy.stateTimer = 0.65;
+            sound.playTigerRoar(true);
+            document.getElementById('tiger-exclamation').classList.remove('hidden');
+            setTimeout(() => document.getElementById('tiger-exclamation').classList.add('hidden'), 1200);
+        }
+    }
+
+    function damageEnemy(enemy, amount, hitPoint, isCrit) {
+        if (enemy.aiState === 'DEFEATED') return;
+        enemy.hp = Math.max(0, enemy.hp - amount);
+        enemy.hitFlashTimer = 0.22;
+        state.points += isCrit ? 120 : 60;
+        updatePointsHUD();
+        sound.playHitImpact(isCrit);
+        spawnImpactBurst(hitPoint, isCrit ? 0xfacc15 : 0xef4444, 12);
+        spawnFloatingDamage(hitPoint.clone().add(new THREE.Vector3(0, 0.5, 0)), isCrit ? `CRIT -${amount}!` : `-${amount}`, isCrit);
+
+        state.enemies.forEach(other => {
+            if (other.aiState !== 'DEFEATED' && other.pos.distanceTo(enemy.pos) < 32) alertEnemy(other);
+        });
+        updateStageEnemyHUD();
+
+        if (enemy.hp <= 0) {
+            enemy.aiState = 'DEFEATED';
+            state.points += 200;
+            updatePointsHUD();
+            updateStageEnemyHUD();
+
+            const aliveCount = state.enemies.filter(e => e.aiState !== 'DEFEATED').length;
+            if (aliveCount === 0 && !state.stageTransitionTriggered) {
+                state.stageTransitionTriggered = true;
+                if (state.currentStageIndex < STAGES.length - 1) {
+                    setTimeout(() => { if (state.phase === 'PLAYING') triggerStageCompleteScreen(); }, 1650);
+                } else {
+                    setTimeout(() => { if (state.phase === 'PLAYING') triggerEndScreen(true); }, 2100);
+                }
+            }
+        }
+    }
+
+    function damageKing(amount) {
+        const k = state.king;
+        if (k.invulnTimer > 0 || state.phase !== 'PLAYING') return;
+        k.hp = Math.max(0, k.hp - amount);
+        k.hitFlashTimer = 0.35;
+        k.invulnTimer = 0.95;
+        sound.playKingHurt();
+        updateKingHUD();
+
+        const vig = document.getElementById('damage-vignette');
+        vig.style.opacity = '1';
+        setTimeout(() => { vig.style.opacity = '0'; }, 350);
+
+        if (k.hp <= 0) triggerEndScreen(false);
+    }
+
+    const patrolWaypoints = [
+        new THREE.Vector3(12, 0, -24),
+        new THREE.Vector3(-18, 0, -32),
+        new THREE.Vector3(-22, 0, -10),
+        new THREE.Vector3(15, 0, -8),
+        new THREE.Vector3(24, 0, -36)
+    ];
+
+    function updateAllEnemiesAI(dt) {
+        const k = state.king;
+        state.enemies.forEach(en => {
+            const rig = en.rig;
+            if (en.hitFlashTimer > 0) {
+                en.hitFlashTimer -= dt;
+                rig.torsoMesh.material.emissive.setHex(0x881111);
+            } else {
+                rig.torsoMesh.material.emissive.setHex(0x000000);
+            }
+
+            if (en.aiState === 'DEFEATED') {
+                en.stateTimer += dt;
+                const fallProgress = Math.min(1, en.stateTimer * 2.4);
+                rig.root.rotation.z = THREE.MathUtils.lerp(0, Math.PI / 2, fallProgress);
+                rig.body.position.y = THREE.MathUtils.lerp(rig.baseY, 0.42, fallProgress);
+                return;
+            }
+
+            const toKing = new THREE.Vector3().subVectors(k.pos, en.pos);
+            toKing.y = 0;
+            const distToKing = toKing.length();
+
+            if (distToKing < en.detectRange && (en.aiState === 'ROAMING' || en.aiState === 'IDLE')) {
+                alertEnemy(en);
+            }
+
+            let moveSpeed = 0;
+            let targetDir = null;
+
+            switch (en.aiState) {
+                case 'ROAMING':
+                    const wp = patrolWaypoints[en.waypointIndex];
+                    const toWp = new THREE.Vector3().subVectors(wp, en.pos);
+                    toWp.y = 0;
+                    if (toWp.length() < 2.4) {
+                        en.waypointIndex = (en.waypointIndex + 1) % patrolWaypoints.length;
+                        en.aiState = 'IDLE';
+                        en.stateTimer = 1.4;
+                    } else {
+                        targetDir = toWp.normalize();
+                        moveSpeed = en.walkSpeed;
+                    }
+                    break;
+                case 'IDLE':
+                    en.stateTimer -= dt;
+                    if (en.stateTimer <= 0) en.aiState = 'ROAMING';
+                    break;
+                case 'ALERTED':
+                    targetDir = toKing.clone().normalize();
+                    en.stateTimer -= dt;
+                    if (en.stateTimer <= 0) en.aiState = 'CHARGING';
+                    break;
+                case 'STALKING':
+                case 'CHARGING':
+                    targetDir = toKing.clone().normalize();
+                    moveSpeed = en.chargeSpeed;
+                    if (distToKing <= en.attackRange && !en.attackDealtInCharge) {
+                        en.attackDealtInCharge = true;
+                        damageKing(en.damage);
+                        en.aiState = 'COOLDOWN';
+                        en.stateTimer = 2.0;
+                    }
+                    break;
+                case 'COOLDOWN':
+                    targetDir = toKing.clone().normalize().negate();
+                    moveSpeed = en.walkSpeed;
+                    en.stateTimer -= dt;
+                    if (en.stateTimer <= 0) {
+                        en.aiState = 'CHARGING';
+                        en.attackDealtInCharge = false;
+                    }
+                    break;
+            }
+
+            if (targetDir && targetDir.lengthSq() > 0.001) {
+                const desiredYaw = Math.atan2(targetDir.x, targetDir.z);
+                en.rotY = lerpAngle(en.rotY, desiredYaw, dt * 9.0);
+                if (moveSpeed > 0) {
+                    en.pos.addScaledVector(targetDir, moveSpeed * dt);
+                }
+            }
+
+            rig.root.position.copy(en.pos);
+            rig.root.rotation.y = en.rotY;
+        });
+    }
+
+    function resolveCollisions(pos) {
+        const distFromCenter = Math.hypot(pos.x, pos.z);
+        const maxDist = CONFIG.worldRadius - 2.2;
+        if (distFromCenter > maxDist) {
+            const scale = maxDist / distFromCenter;
+            pos.x *= scale;
+            pos.z *= scale;
+        }
+        for (let i = 0; i < colliders.length; i++) {
+            const c = colliders[i];
+            const dx = pos.x - c.x;
+            const dz = pos.z - c.z;
+            const dSq = dx * dx + dz * dz;
+            if (dSq < (0.65 + c.r) ** 2 && dSq > 0.0001) {
+                const d = Math.sqrt(dSq);
+                const push = ((0.65 + c.r) - d) / d;
+                pos.x += dx * push;
+                pos.z += dz * push;
+            }
+        }
+    }
+
+    function updateKing(dt) {
+        const k = state.king;
+        if (k.invulnTimer > 0) k.invulnTimer = Math.max(0, k.invulnTimer - dt);
+        if (k.recoilTimer > 0) k.recoilTimer = Math.max(0, k.recoilTimer - dt);
+
+        let moveForward = 0;
+        let moveRight = 0;
+        if (keys['KeyW'] || keys['ArrowUp']) moveForward += 1;
+        if (keys['KeyS'] || keys['ArrowDown']) moveForward -= 1;
+        if (keys['KeyD'] || keys['ArrowRight']) moveRight += 1;
+        if (keys['KeyA'] || keys['ArrowLeft']) moveRight -= 1;
+
+        const inputLen = Math.hypot(moveForward, moveRight);
+        k.isMoving = inputLen > 0.01;
+
+        if (k.isMoving) {
+            const forwardDir = new THREE.Vector3(-Math.sin(state.camYaw), 0, -Math.cos(state.camYaw));
+            const rightDir = new THREE.Vector3(Math.cos(state.camYaw), 0, -Math.sin(state.camYaw));
+            const moveVec = new THREE.Vector3().addScaledVector(forwardDir, moveForward).addScaledVector(rightDir, moveRight).normalize();
+            
+            const speed = CONFIG.kingWalkSpeed;
+            const nextPos = k.pos.clone().addScaledVector(moveVec, speed * dt);
+            resolveCollisions(nextPos);
+            k.pos.copy(nextPos);
+
+            k.stepTimer += dt;
+            if (k.stepTimer >= 0.42) {
+                k.stepTimer = 0;
+                sound.playFootstep(false);
+            }
+
+            const moveYaw = Math.atan2(moveVec.x, moveVec.z);
+            k.rotY = lerpAngle(k.rotY, moveYaw, dt * 11);
+        }
+
+        for (let i = 0; i < supplyCrates.length; i++) {
+            const c = supplyCrates[i];
+            if (c.collected) continue;
+            if (Math.hypot(k.pos.x - c.x, k.pos.z - c.z) < 1.85) {
+                c.collected = true;
+                c.mesh.visible = false;
+                sound.playPickup();
+                if (c.type === 'AMMO') {
+                    state.weapon.reserve += 12;
+                    updateAmmoHUD();
+                } else {
+                    k.hp = Math.min(CONFIG.kingMaxHp, k.hp + 40);
+                    updateKingHUD();
+                }
+            }
+        }
+
+        kingRig.root.position.copy(k.pos);
+        kingRig.root.rotation.y = k.rotY;
+    }
+
+    function updateCamera(dt) {
+        const k = state.king;
+        const targetFov = state.isAiming ? 42 : 60;
+        state.currentFov = THREE.MathUtils.lerp(state.currentFov, targetFov, dt * 12);
+        camera.fov = state.currentFov;
+        camera.updateProjectionMatrix();
+
+        const camDist = 5.6;
+        const forward = new THREE.Vector3(-Math.sin(state.camYaw), 0, -Math.cos(state.camYaw));
+        const right = new THREE.Vector3(Math.cos(state.camYaw), 0, -Math.sin(state.camYaw));
+        const pivot = k.pos.clone().add(new THREE.Vector3(0, 1.78, 0)).addScaledVector(right, 0.75);
+
+        const desiredCamPos = pivot.clone()
+            .addScaledVector(forward, -camDist * Math.cos(state.camPitch))
+            .add(new THREE.Vector3(0, camDist * Math.sin(state.camPitch), 0));
+
+        desiredCamPos.y = Math.max(0.75, desiredCamPos.y);
+        camera.position.lerp(desiredCamPos, Math.min(1, dt * 16));
+        camera.lookAt(pivot);
+    }
+
+    function updateKingHUD() {
+        const hp = Math.ceil(state.king.hp);
+        document.getElementById('king-hp-text').textContent = `${hp} / ${CONFIG.kingMaxHp}`;
+        document.getElementById('king-hp-bar').style.width = `${(hp / CONFIG.kingMaxHp) * 100}%`;
+    }
+
+    function updateStageEnemyHUD() {
+        if (!state.enemies.length) return;
+        const totalMaxHp = state.enemies.reduce((acc, e) => acc + e.maxHp, 0);
+        const totalCurHp = state.enemies.reduce((acc, e) => acc + Math.max(0, e.hp), 0);
+        const pct = `${(totalCurHp / totalMaxHp) * 100}%`;
+        document.getElementById('tiger-hp-bar').style.width = pct;
+        document.getElementById('tiger-world-hp-bar').style.width = pct;
+        document.getElementById('tiger-hp-text').textContent = `${Math.ceil(totalCurHp)} / ${totalMaxHp}`;
+    }
+
+    function updatePointsHUD() {
+        document.getElementById('hud-points').textContent = state.points.toLocaleString();
+    }
+
+    function updateAmmoHUD() {
+        const w = state.weapon;
+        document.getElementById('ammo-count-text').innerHTML = `${w.mag} <span class="text-stone-400 text-xs sm:text-sm font-semibold">/ ${w.reserve}</span>`;
+        const pips = document.getElementById('bullet-icons-row').children;
+        for (let i = 0; i < pips.length; i++) {
+            pips[i].className = i < w.mag ? 'bullet-pip bullet-loaded' : 'bullet-pip bullet-spent';
+        }
+    }
+
+    function updateTargetingAndWorldUI() {
+        if (state.phase !== 'PLAYING') return;
+        raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+        const activeMeshes = enemyHitboxes.filter(h => h.enemy.aiState !== 'DEFEATED').map(h => h.mesh);
+        const hits = raycaster.intersectObjects(activeMeshes, false);
+        const ch = document.getElementById('crosshair');
+
+        if (hits.length > 0) {
+            ch.classList.add('ch-targeted');
+            if (!state.stageSpotted) {
+                state.stageSpotted = true;
+                document.getElementById('tiger-hud-panel').classList.remove('hidden');
+            }
+        } else {
+            ch.classList.remove('ch-targeted');
+        }
+
+        const badge = document.getElementById('tiger-alert-badge');
+        const aliveEnemies = state.enemies.filter(e => e.aiState !== 'DEFEATED');
+        if (state.stageSpotted && aliveEnemies.length > 0) {
+            const targetEnemy = aliveEnemies[0];
+            const headWorld = targetEnemy.pos.clone().add(new THREE.Vector3(0, 2.35, 0));
+            const proj = headWorld.project(camera);
+            if (proj.z < 1) {
+                const sx = (proj.x * 0.5 + 0.5) * window.innerWidth;
+                const sy = (-proj.y * 0.5 + 0.5) * window.innerHeight;
+                badge.style.left = `${sx}px`;
+                badge.style.top = `${sy}px`;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+
+    function startGame() {
+        sound.init();
+        resetGameState();
+        state.phase = 'PLAYING';
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('end-screen').classList.add('hidden');
+        document.getElementById('pause-screen').classList.add('hidden');
+        document.getElementById('stage-complete-screen').classList.add('hidden');
+        document.getElementById('hud-layer').classList.remove('hidden');
+        document.getElementById('crosshair').classList.remove('hidden');
+    }
+
+    function triggerStageCompleteScreen() {
+        state.phase = 'STAGE_CLEAR';
+        sound.playVictoryFanfare();
+        const clearedStage = STAGES[state.currentStageIndex];
+        const nextStage = STAGES[state.currentStageIndex + 1];
+        state.points += clearedStage.bonusPoints;
+        updatePointsHUD();
+
+        document.getElementById('stage-clear-icon').textContent = clearedStage.clearIcon;
+        document.getElementById('stage-clear-sub').textContent = `STAGE ${clearedStage.number} OF ${STAGES.length} CLEARED`;
+        document.getElementById('stage-clear-desc').textContent = clearedStage.clearDesc;
+        document.getElementById('stage-bonus-pts').textContent = `+${clearedStage.bonusPoints}`;
+        document.getElementById('next-stage-name').textContent = `Stage ${nextStage.number}: ${nextStage.name}`;
+        document.getElementById('stage-complete-screen').classList.remove('hidden');
+    }
+
+    function advanceToNextStage() {
+        state.currentStageIndex++;
+        state.king.hp = Math.min(CONFIG.kingMaxHp, state.king.hp + 25);
+        state.king.pos.set(0, 0, 32);
+        state.weapon.mag = CONFIG.magCapacity;
+        spawnStageEnemies(state.currentStageIndex);
+        updateKingHUD();
+        updateAmmoHUD();
+        document.getElementById('stage-complete-screen').classList.add('hidden');
+        state.phase = 'PLAYING';
+    }
+
+    function pauseGame() {
+        if (state.phase !== 'PLAYING') return;
+        state.phase = 'PAUSED';
+        document.getElementById('pause-screen').classList.remove('hidden');
+        document.getElementById('crosshair').classList.add('hidden');
+    }
+
+    function resumeGame() {
+        if (state.phase !== 'PAUSED') return;
+        state.phase = 'PLAYING';
+        document.getElementById('pause-screen').classList.add('hidden');
+        document.getElementById('crosshair').classList.remove('hidden');
+    }
+
+    function triggerEndScreen(isVictory) {
+        state.phase = isVictory ? 'VICTORY' : 'DEFEAT';
+        document.getElementById('crosshair').classList.add('hidden');
+        document.getElementById('tiger-alert-badge').classList.add('hidden');
+        document.getElementById('end-screen').classList.remove('hidden');
+
+        if (isVictory) sound.playVictoryFanfare();
+        document.getElementById('score-base').textContent = state.points.toLocaleString();
+        document.getElementById('score-total').textContent = state.points.toLocaleString();
+    }
+
+    function resetGameState() {
+        state.currentStageIndex = 0;
+        state.points = 0;
+        state.shotsFired = 0;
+        state.shotsHit = 0;
+        state.headshots = 0;
+        state.camYaw = 0;
+        state.camPitch = 0.24;
+        state.isAiming = false;
+        state.king.pos.set(0, 0, 32);
+        state.king.hp = CONFIG.kingMaxHp;
+        state.weapon.mag = CONFIG.magCapacity;
+        state.weapon.reserve = CONFIG.reserveStart;
+        spawnStageEnemies(0);
+        updateKingHUD();
+        updateAmmoHUD();
+        updatePointsHUD();
+    }
+
+    function lerpAngle(a, b, t) {
+        let diff = b - a;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        return a + diff * Math.min(1, t);
+    }
+
+    window.addEventListener('keydown', (e) => {
+        keys[e.code] = true;
+        if (e.code === 'KeyR' && state.phase === 'PLAYING') startReload();
+        if (e.code === 'KeyQ' && state.phase === 'PLAYING') state.isAiming = !state.isAiming;
+        if (e.code === 'KeyP' || e.code === 'Escape') {
+            if (state.phase === 'PLAYING') pauseGame();
+            else if (state.phase === 'PAUSED') resumeGame();
+        }
+    });
+
+    window.addEventListener('keyup', (e) => { keys[e.code] = false; });
+
+    window.addEventListener('mousemove', (e) => {
+        if (state.phase !== 'PLAYING') return;
+        const sensitivity = 0.002;
+        state.camYaw -= e.movementX * sensitivity;
+        state.camPitch = THREE.MathUtils.clamp(state.camPitch + e.movementY * sensitivity, -0.18, 0.78);
+    });
+
+    canvas.addEventListener('mousedown', (e) => {
+        if (state.phase !== 'PLAYING') return;
+        sound.init();
+        if (e.button === 0) fireRifle();
+    });
+
+    document.getElementById('btn-start-game').addEventListener('click', startGame);
+    document.getElementById('btn-next-stage').addEventListener('click', advanceToNextStage);
+    document.getElementById('btn-restart-game').addEventListener('click', startGame);
+    document.getElementById('btn-pause-restart').addEventListener('click', startGame);
+    document.getElementById('btn-pause').addEventListener('click', pauseGame);
+    document.getElementById('btn-resume-game').addEventListener('click', resumeGame);
+    document.getElementById('btn-sound-toggle').addEventListener('click', () => sound.toggleMute());
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    const clock = new THREE.Clock();
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const dt = Math.min(clock.getDelta(), 0.05);
+        const elapsed = clock.getElapsedTime();
+
+        birdFlocks.forEach(b => {
+            const angle = elapsed * b.speed + b.phase;
+            b.group.position.set(Math.cos(angle) * b.radius, b.height, Math.sin(angle) * b.radius);
+            b.group.rotation.y = -angle;
+        });
+
+        if (state.phase === 'START') {
+            const orbitAngle = elapsed * 0.25;
+            camera.position.set(state.king.pos.x + Math.sin(orbitAngle) * 6.5, 2.8, state.king.pos.z + Math.cos(orbitAngle) * 6.5);
+            camera.lookAt(state.king.pos.x, 1.6, state.king.pos.z);
+        } else if (state.phase === 'PLAYING') {
+            updateKing(dt);
+            updateWeapon(dt);
+            updateAllEnemiesAI(dt);
+            updateCamera(dt);
+            updateEffects(dt);
+            updateTargetingAndWorldUI();
+        }
+
+        renderer.render(scene, camera);
+    }
+
+    window.onload = function () {
+        buildForestEnvironment();
+        buildKingCharacter();
+        spawnStageEnemies(0);
+        updateKingHUD();
+        updateAmmoHUD();
+        animate();
+    };
+    </script>
+</body>
+</html>

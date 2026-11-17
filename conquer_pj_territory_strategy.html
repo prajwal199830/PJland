@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conquer PJ — Territory Conquest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      background: #081523;
+      color: #f8fafc;
+      user-select: none;
+    }
+    canvas#map {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+    /* Custom scrollbar for bottom state bar on small screens */
+    #states::-webkit-scrollbar { height: 5px; }
+    #states::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 999px; }
+  </style>
+</head>
+<body>
+  <!-- Main Interactive Continent Map Canvas -->
+  <canvas id="map"></canvas>
+
+  <!-- Top HUD Bar -->
+  <header class="fixed top-0 left-0 right-0 z-10 p-3 sm:p-4 flex flex-wrap items-center justify-between gap-2 pointer-events-none bg-gradient-to-b from-slate-950/90 via-slate-950/40 to-transparent">
+    <div class="flex items-center gap-2 sm:gap-3 pointer-events-auto">
+      <div class="bg-slate-900/90 backdrop-blur-md border border-slate-700/70 rounded-xl px-3.5 py-2 shadow-lg">
+        <div class="text-xs sm:text-sm font-extrabold tracking-wide text-amber-300">🌍 PJ LAND</div>
+        <div class="text-[11px] text-slate-400 font-medium">Kingdom 01 • <span id="owned-label" class="text-sky-400 font-bold">1/8</span> Conquered</div>
+      </div>
+
+      <div class="bg-slate-900/90 backdrop-blur-md border border-slate-700/70 rounded-xl px-3.5 py-2 shadow-lg flex items-center gap-4">
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Army</div>
+          <div class="text-sm sm:text-base font-extrabold text-sky-400">⚔️ <span id="army">120</span></div>
+        </div>
+        <div class="h-7 w-px bg-slate-700/70"></div>
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Gold</div>
+          <div class="text-sm sm:text-base font-extrabold text-amber-400">💰 <span id="gold">1000</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Controls (Recruit & Reset) -->
+    <div class="flex items-center gap-2 pointer-events-auto">
+      <button id="sound-btn" title="Toggle Battle Audio" class="bg-slate-800/90 hover:bg-slate-700 active:scale-95 transition-all text-slate-200 text-xs sm:text-sm font-semibold px-3 py-2.5 rounded-xl border border-slate-600/60 shadow-lg cursor-pointer">
+        🔊 Sound
+      </button>
+      <button id="recruit-btn" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 disabled:opacity-40 disabled:pointer-events-none transition-all text-white text-xs sm:text-sm font-bold px-3.5 py-2.5 rounded-xl shadow-lg border border-emerald-400/30 flex items-center gap-1.5 cursor-pointer">
+        <span>➕ Recruit +25</span>
+        <span class="bg-emerald-950/60 text-amber-300 px-1.5 py-0.5 rounded-md text-xs">150g</span>
+      </button>
+      <button id="reset-btn" title="Restart Campaign" class="bg-slate-800/90 hover:bg-slate-700 active:scale-95 transition-all text-slate-200 text-xs sm:text-sm font-semibold px-3 py-2.5 rounded-xl border border-slate-600/60 shadow-lg cursor-pointer">
+        ↺ Reset
+      </button>
+    </div>
+  </header>
+
+  <!-- Toast / Status Notification Banner -->
+  <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-20 pointer-events-none opacity-0 transition-opacity duration-300 bg-slate-900/95 border border-amber-400/50 text-amber-200 text-xs sm:text-sm font-semibold px-4 py-2 rounded-full shadow-xl">
+    Notification
+  </div>
+
+  <!-- Bottom Quick-Select Territory Bar -->
+  <footer class="fixed bottom-0 left-0 right-0 z-10 p-3 sm:p-4 pointer-events-none bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent">
+    <div class="max-w-6xl mx-auto flex flex-col gap-1.5">
+      <div class="text-[11px] sm:text-xs text-slate-300/90 font-medium px-1 flex items-center justify-between">
+        <span>Click a glowing bordered territory on the map or select below to invade</span>
+        <span class="hidden sm:inline text-slate-400">1 dot ≈ 20 soldiers</span>
+      </div>
+      <div id="states" class="pointer-events-auto flex items-center gap-2 overflow-x-auto pb-1"></div>
+    </div>
+  </footer>
+
+  <!-- Animated Battle Modal -->
+  <div id="battle" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-30 p-3">
+    <div class="w-full max-w-3xl bg-slate-900 border border-slate-700/80 rounded-2xl p-4 sm:p-6 shadow-2xl">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs font-bold uppercase tracking-wider text-sky-400 bg-sky-950/70 border border-sky-500/30 px-2.5 py-1 rounded-lg">Invasion Force</span>
+        <h2 id="title" class="text-lg sm:text-2xl font-extrabold text-center text-white">⚔️ Battle</h2>
+        <span class="text-xs font-bold uppercase tracking-wider text-rose-400 bg-rose-950/70 border border-rose-500/30 px-2.5 py-1 rounded-lg">Defenders</span>
+      </div>
+
+      <!-- Health / Troop Strength Bars -->
+      <div class="flex items-center gap-3 mb-3">
+        <div class="flex-1">
+          <div class="flex justify-between text-xs font-bold mb-1">
+            <span class="text-sky-400">🔵 Your Vanguard</span>
+            <span id="p-count" class="text-slate-300">0</span>
+          </div>
+          <div class="h-3.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+            <div id="pb" class="h-full bg-gradient-to-r from-sky-500 to-cyan-400 transition-all duration-75" style="width:100%"></div>
+          </div>
+        </div>
+        <div class="text-xs font-black text-amber-400 px-1">VS</div>
+        <div class="flex-1">
+          <div class="flex justify-between text-xs font-bold mb-1">
+            <span id="e-count" class="text-slate-300">0</span>
+            <span class="text-rose-400">🔴 Garrison</span>
+          </div>
+          <div class="h-3.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+            <div id="eb" class="h-full bg-gradient-to-r from-rose-500 to-orange-500 transition-all duration-75 ml-auto" style="width:100%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Battle Arena Canvas -->
+      <div class="relative rounded-xl overflow-hidden border border-slate-700/80 bg-slate-950">
+        <canvas id="bc" width="860" height="320" class="w-full h-56 sm:h-72 block"></canvas>
+      </div>
+
+      <div id="msg" class="text-center font-bold text-sm sm:text-base my-3 text-amber-300">Battle starting...</div>
+      <div class="text-center">
+        <button id="close" class="hidden bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-extrabold px-6 py-2.5 rounded-xl shadow-lg transition-all cursor-pointer">
+          Continue Campaign
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Victory Celebration Modal -->
+  <div id="victory-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center z-40 p-4">
+    <div class="max-w-md w-full bg-slate-900 border-2 border-amber-400/60 rounded-2xl p-6 text-center shadow-2xl">
+      <div class="text-5xl mb-3">👑</div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-amber-300 mb-2">PJ Land Unified!</h2>
+      <p class="text-slate-300 text-sm mb-5">
+        All 8 territories now fly the banner of Kingdom 01. Your strategic brilliance has conquered the continent!
+      </p>
+      <div class="bg-slate-800/80 rounded-xl p-3 mb-5 flex justify-around border border-slate-700">
+        <div>
+          <div class="text-xs text-slate-400">Surviving Army</div>
+          <div id="final-army" class="text-lg font-extrabold text-sky-400">0</div>
+        </div>
+        <div>
+          <div class="text-xs text-slate-400">Treasury</div>
+          <div id="final-gold" class="text-lg font-extrabold text-amber-400">0</div>
+        </div>
+      </div>
+      <button id="play-again-btn" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg transition-all cursor-pointer">
+        Play Again
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * CONQUER PJ — Cohesive Continent Map Edition
+     * All 8 territories share exact topological borders matching the adjacency graph
+     */
+
+    const mapCanvas = document.getElementById('map');
+    const ctx = mapCanvas.getContext('2d');
+    const battleCanvas = document.getElementById('bc');
+    const bctx = battleCanvas.getContext('2d');
+
+    let W = window.innerWidth;
+    let H = window.innerHeight;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    function resize() {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      mapCanvas.width = W * dpr;
+      mapCanvas.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Shared topological vertices on a normalized [0..1, 0..1] continent grid.
+    const V = {
+      nwCoast:     [0.14, 0.17],
+      nBay1:       [0.24, 0.14],
+      nPoint:      [0.33, 0.16],
+      nBay2:       [0.44, 0.12],
+      neCape:      [0.57, 0.14],
+      neOuter:     [0.72, 0.16],
+      ePeninsula:  [0.83, 0.25],
+      eCove:       [0.79, 0.38],
+      seCape:      [0.86, 0.52],
+      seBay:       [0.77, 0.67],
+      sPoint:      [0.64, 0.84],
+      sCove:       [0.48, 0.81],
+      swCape:      [0.36, 0.86],
+      swOuter:     [0.19, 0.84],
+      wBay:        [0.13, 0.69],
+      wHeadland:   [0.15, 0.56],
+      wCove:       [0.14, 0.42],
+      nwCliff:     [0.11, 0.28],
+
+      b01_a:       [0.32, 0.25],
+      j0134:       [0.33, 0.35],
+      b03_a:       [0.23, 0.40],
+      b12_a:       [0.57, 0.24],
+      j124:        [0.58, 0.33],
+      b14_a:       [0.45, 0.34],
+      b24_a:       [0.62, 0.41],
+      j245:        [0.64, 0.47],
+      b25_a:       [0.72, 0.42],
+      b34_a:       [0.34, 0.48],
+      j3467:       [0.36, 0.61],
+      b36_a:       [0.25, 0.59],
+      b45_a:       [0.62, 0.56],
+      j457:        [0.60, 0.63],
+      b47_a:       [0.48, 0.62],
+      b57_a:       [0.69, 0.65],
+      b67_a:       [0.36, 0.74]
+    };
+
+    const STATES = [
+      { name: 'Northhold', garrison: 80, terrain: 'highland', label: [0.23, 0.28], poly: [V.nwCoast, V.nBay1, V.nPoint, V.b01_a, V.j0134, V.b03_a, V.wCove, V.nwCliff] },
+      { name: 'Frostvale', garrison: 70, terrain: 'tundra', label: [0.45, 0.23], poly: [V.nPoint, V.nBay2, V.neCape, V.b12_a, V.j124, V.b14_a, V.j0134, V.b01_a] },
+      { name: 'Eastreach', garrison: 95, terrain: 'steppe', label: [0.69, 0.29], poly: [V.neCape, V.neOuter, V.ePeninsula, V.eCove, V.b25_a, V.j245, V.b24_a, V.j124, V.b12_a] },
+      { name: 'Ironwood', garrison: 65, terrain: 'forest', label: [0.24, 0.50], poly: [V.wCove, V.b03_a, V.j0134, V.b34_a, V.j3467, V.b36_a, V.wHeadland] },
+      { name: 'Goldmere', garrison: 110, terrain: 'heartland', label: [0.49, 0.48], poly: [V.j0134, V.b14_a, V.j124, V.b24_a, V.j245, V.b45_a, V.j457, V.b47_a, V.j3467, V.b34_a] },
+      { name: 'Suncrest', garrison: 75, terrain: 'savanna', label: [0.73, 0.54], poly: [V.j245, V.b25_a, V.eCove, V.seCape, V.seBay, V.b57_a, V.j457, V.b45_a] },
+      { name: 'Westmarch', garrison: 90, terrain: 'moor', label: [0.25, 0.72], poly: [V.wHeadland, V.b36_a, V.j3467, V.b67_a, V.swCape, V.swOuter, V.wBay] },
+      { name: 'Stormpeak', garrison: 120, terrain: 'mountain', label: [0.51, 0.73], poly: [V.j3467, V.b47_a, V.j457, V.b57_a, V.seBay, V.sPoint, V.sCove, V.swCape, V.b67_a] }
+    ];
+
+    const ADJACENCY = [
+      [0, 1], [0, 3],
+      [1, 2], [1, 4],
+      [2, 4], [2, 5],
+      [3, 4], [3, 6],
+      [4, 5], [4, 7],
+      [5, 7],
+      [6, 7]
+    ];
+
+    const COASTLINE = [
+      V.nwCoast, V.nBay1, V.nPoint, V.nBay2, V.neCape, V.neOuter,
+      V.ePeninsula, V.eCove, V.seCape, V.seBay, V.sPoint, V.sCove,
+      V.swCape, V.swOuter, V.wBay, V.wHeadland, V.wCove, V.nwCliff
+    ];
+
+    let owned = new Set([0]);
+    let army = 120;
+    let gold = 1000;
+    let hoveredState = -1;
+    let animTime = 0;
+    let activeBattle = null;
+
+    // ==================== PROCEDURAL BATTLE AUDIO ====================
+    let audioCtx = null;
+    let soundEnabled = true;
+    let warDrumTimer = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    document.getElementById('sound-btn').onclick = () => {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById('sound-btn');
+      btn.textContent = soundEnabled ? '🔊 Sound' : '🔇 Muted';
+      if (!soundEnabled) {
+        stopWarDrums();
+      } else {
+        initAudio();
+        if (activeBattle && !activeBattle.done) startWarDrums();
+      }
+    };
+
+    function playSwordClash() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+
+      const now = audioCtx.currentTime;
+      const pitchShift = 0.85 + Math.random() * 0.45;
+      const freqs = [1480 * pitchShift, 2320 * pitchShift, 3490 * pitchShift];
+
+      freqs.forEach((f, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = idx === 0 ? 'triangle' : 'sine';
+        osc.frequency.setValueAtTime(f, now);
+        osc.frequency.exponentialRampToValueAtTime(f * 0.72, now + 0.22);
+
+        gain.gain.setValueAtTime(0.06 / (idx + 1), now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.24);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      });
+    }
+
+    function playBattleBoom() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(115, now);
+      osc.frequency.exponentialRampToValueAtTime(32, now + 0.38);
+
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.41);
+    }
+
+    function startWarDrums() {
+      stopWarDrums();
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+
+      let beat = 0;
+      const triggerBeat = () => {
+        if (!soundEnabled || !activeBattle || activeBattle.done) {
+          stopWarDrums();
+          return;
+        }
+        const now = audioCtx.currentTime;
+        const isAccent = beat % 4 === 0 || beat % 4 === 2;
+
+        const drumOsc = audioCtx.createOscillator();
+        const drumGain = audioCtx.createGain();
+        drumOsc.type = 'sine';
+        drumOsc.frequency.setValueAtTime(isAccent ? 92 : 74, now);
+        drumOsc.frequency.exponentialRampToValueAtTime(36, now + 0.24);
+
+        drumGain.gain.setValueAtTime(isAccent ? 0.16 : 0.1, now);
+        drumGain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+
+        drumOsc.connect(drumGain);
+        drumGain.connect(audioCtx.destination);
+        drumOsc.start(now);
+        drumOsc.stop(now + 0.27);
+        beat++;
+      };
+
+      triggerBeat();
+      warDrumTimer = setInterval(triggerBeat, 360);
+    }
+
+    function stopWarDrums() {
+      if (warDrumTimer) {
+        clearInterval(warDrumTimer);
+        warDrumTimer = null;
+      }
+    }
+
+    function playOutcomeFanfare(victory) {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+
+      const now = audioCtx.currentTime;
+      const notes = victory ? [261.63, 329.63, 392.00, 523.25] : [220.00, 196.00, 164.81];
+      notes.forEach((freq, idx) => {
+        const start = now + idx * 0.14;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = victory ? 'triangle' : 'sawtooth';
+        osc.frequency.setValueAtTime(freq, start);
+
+        gain.gain.setValueAtTime(0.09, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.42);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(start);
+        osc.stop(start + 0.45);
+      });
+    }
+
+    function project(pt) {
+      const padTop = 76;
+      const padBottom = 88;
+      const padX = Math.max(16, W * 0.04);
+      const availW = W - padX * 2;
+      const availH = Math.max(260, H - padTop - padBottom);
+      return [
+        padX + pt[0] * availW,
+        padTop + pt[1] * availH
+      ];
+    }
+
+    function isAttackable(i) {
+      if (owned.has(i)) return false;
+      return ADJACENCY.some(([a, b]) => (a === i && owned.has(b)) || (b === i && owned.has(a)));
+    }
+
+    function pointInPoly(px, py, poly) {
+      let inside = false;
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const [xi, yi] = project(poly[i]);
+        const [xj, yj] = project(poly[j]);
+        const intersect = ((yi > py) !== (yj > py)) &&
+          (px < ((xj - xi) * (py - yi)) / (yj - yi + 1e-9) + xi);
+        if (intersect) inside = !inside;
+      }
+      return inside;
+    }
+
+    let toastTimer = null;
+    function showToast(text) {
+      const el = document.getElementById('toast');
+      el.textContent = text;
+      el.style.opacity = '1';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { el.style.opacity = '0'; }, 2400);
+    }
+
+    function updateUI() {
+      document.getElementById('army').textContent = army;
+      document.getElementById('gold').textContent = gold;
+      document.getElementById('owned-label').textContent = `${owned.size}/${STATES.length}`;
+
+      const recruitBtn = document.getElementById('recruit-btn');
+      recruitBtn.disabled = gold < 150 || owned.size === STATES.length;
+
+      const bar = document.getElementById('states');
+      bar.innerHTML = '';
+      STATES.forEach((st, idx) => {
+        const isOwned = owned.has(idx);
+        const canAttack = isAttackable(idx);
+        const btn = document.createElement('button');
+
+        let classes = 'shrink-0 px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ';
+        if (isOwned) {
+          classes += 'bg-sky-900/80 border-sky-500/50 text-sky-200 cursor-default';
+        } else if (canAttack) {
+          classes += 'bg-amber-500/20 hover:bg-amber-500/35 border-amber-400 text-amber-200 shadow-md cursor-pointer active:scale-95';
+        } else {
+          classes += 'bg-slate-900/70 border-slate-700/60 text-slate-400 opacity-55 cursor-not-allowed';
+        }
+        btn.className = classes;
+
+        const badge = isOwned ? '🔵' : (canAttack ? '⚔️' : '🔒');
+        const count = isOwned ? army : st.garrison;
+        btn.innerHTML = `<span>${badge}</span><span>${st.name}</span><span class="opacity-80">(${count})</span>`;
+
+        btn.disabled = !canAttack;
+        btn.onmouseenter = () => { hoveredState = idx; };
+        btn.onmouseleave = () => { if (hoveredState === idx) hoveredState = -1; };
+        btn.onclick = () => startBattle(idx);
+        bar.appendChild(btn);
+      });
+    }
+
+    document.getElementById('recruit-btn').onclick = () => {
+      if (gold < 150) {
+        showToast('Not enough gold to recruit!');
+        return;
+      }
+      gold -= 150;
+      army += 25;
+      showToast('⚔️ +25 Soldiers recruited to your army!');
+      updateUI();
+    };
+
+    function resetCampaign() {
+      stopWarDrums();
+      owned = new Set([0]);
+      army = 120;
+      gold = 1000;
+      activeBattle = null;
+      document.getElementById('battle').style.display = 'none';
+      document.getElementById('victory-modal').style.display = 'none';
+      updateUI();
+      showToast('Campaign restarted. Conquer all 8 territories!');
+    }
+    document.getElementById('reset-btn').onclick = resetCampaign;
+    document.getElementById('play-again-btn').onclick = resetCampaign;
+
+    function getPointerPos(e) {
+      const rect = mapCanvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return [clientX - rect.left, clientY - rect.top];
+    }
+
+    mapCanvas.addEventListener('mousemove', (e) => {
+      if (activeBattle) return;
+      const [mx, my] = getPointerPos(e);
+      let found = -1;
+      for (let i = 0; i < STATES.length; i++) {
+        if (pointInPoly(mx, my, STATES[i].poly)) {
+          found = i;
+          break;
+        }
+      }
+      hoveredState = found;
+      mapCanvas.style.cursor = (found !== -1 && isAttackable(found)) ? 'pointer' : 'default';
+    });
+
+    mapCanvas.addEventListener('click', (e) => {
+      if (activeBattle) return;
+      const [mx, my] = getPointerPos(e);
+      for (let i = 0; i < STATES.length; i++) {
+        if (pointInPoly(mx, my, STATES[i].poly)) {
+          if (owned.has(i)) {
+            showToast(`🔵 ${STATES[i].name} is under your control.`);
+          } else if (isAttackable(i)) {
+            startBattle(i);
+          } else {
+            showToast(`🔒 ${STATES[i].name} does not border your territory yet.`);
+          }
+          break;
+        }
+      }
+    });
+
+    function tracePoly(poly) {
+      ctx.beginPath();
+      poly.forEach((pt, idx) => {
+        const [sx, sy] = project(pt);
+        if (idx === 0) ctx.moveTo(sx, sy);
+        else ctx.lineTo(sx, sy);
+      });
+      ctx.closePath();
+    }
+
+    function drawTerrainDetail(st, cx, cy) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 1.5;
+
+      if (st.terrain === 'mountain' || st.terrain === 'highland') {
+        const peaks = [[-16, -24], [0, -29], [15, -23]];
+        peaks.forEach(([ox, oy]) => {
+          ctx.beginPath();
+          ctx.moveTo(cx + ox - 8, cy + oy + 8);
+          ctx.lineTo(cx + ox, cy + oy);
+          ctx.lineTo(cx + ox + 8, cy + oy + 8);
+          ctx.stroke();
+        });
+      } else if (st.terrain === 'forest') {
+        [-14, 0, 14].forEach((ox) => {
+          ctx.beginPath();
+          ctx.moveTo(cx + ox, cy - 30);
+          ctx.lineTo(cx + ox - 5, cy - 20);
+          ctx.lineTo(cx + ox + 5, cy - 20);
+          ctx.closePath();
+          ctx.fill();
+        });
+      }
+      ctx.restore();
+    }
+
+    function drawMap() {
+      animTime += 0.03;
+      ctx.clearRect(0, 0, W, H);
+
+      const oceanGrad = ctx.createRadialGradient(W * 0.5, H * 0.5, 40, W * 0.5, H * 0.5, Math.max(W, H) * 0.75);
+      oceanGrad.addColorStop(0, '#13314d');
+      oceanGrad.addColorStop(0.65, '#0b1e32');
+      oceanGrad.addColorStop(1, '#06101c');
+      ctx.fillStyle = oceanGrad;
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.save();
+      tracePoly(COASTLINE);
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 26;
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.12)';
+      ctx.stroke();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.65)';
+      ctx.shadowBlur = 28;
+      ctx.shadowOffsetY = 12;
+      ctx.fillStyle = '#0f172a';
+      ctx.fill();
+      ctx.restore();
+
+      STATES.forEach((st, i) => {
+        const isOwned = owned.has(i);
+        const canAttack = isAttackable(i);
+        const isHovered = hoveredState === i;
+        const [cx, cy] = project(st.label);
+
+        tracePoly(st.poly);
+        const polyGrad = ctx.createRadialGradient(cx, cy - 15, 8, cx, cy, 150);
+
+        if (isOwned) {
+          polyGrad.addColorStop(0, '#2b8cbe');
+          polyGrad.addColorStop(1, '#164e78');
+        } else if (canAttack) {
+          polyGrad.addColorStop(0, isHovered ? '#c93b4b' : '#a82c3a');
+          polyGrad.addColorStop(1, isHovered ? '#881d2b' : '#6e1723');
+        } else {
+          polyGrad.addColorStop(0, '#6b232e');
+          polyGrad.addColorStop(1, '#47151d');
+        }
+
+        ctx.fillStyle = polyGrad;
+        ctx.fill();
+
+        ctx.save();
+        ctx.clip();
+        drawTerrainDetail(st, cx, cy);
+        ctx.restore();
+      });
+
+      ctx.save();
+      ctx.lineJoin = 'round';
+      STATES.forEach((st) => {
+        tracePoly(st.poly);
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.stroke();
+      });
+
+      tracePoly(COASTLINE);
+      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.stroke();
+      ctx.restore();
+
+      const pulse = 0.65 + 0.35 * Math.sin(animTime * 2.2);
+      STATES.forEach((st, i) => {
+        if (!isAttackable(i)) return;
+        ctx.save();
+        tracePoly(st.poly);
+        ctx.lineJoin = 'round';
+        ctx.shadowColor = '#fbbf24';
+        ctx.shadowBlur = 12 * pulse;
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = `rgba(251, 191, 36, ${0.65 + 0.35 * pulse})`;
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      STATES.forEach((st, i) => {
+        const isOwned = owned.has(i);
+        const canAttack = isAttackable(i);
+        const [cx, cy] = project(st.label);
+        const count = isOwned ? army : st.garrison;
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = '800 13px Inter, sans-serif';
+        ctx.lineWidth = 3.5;
+        ctx.strokeStyle = 'rgba(9, 14, 26, 0.85)';
+        ctx.strokeText(st.name, cx, cy - 4);
+        ctx.fillStyle = canAttack ? '#fef3c7' : '#ffffff';
+        ctx.fillText(st.name, cx, cy - 4);
+
+        ctx.font = '600 11px Inter, sans-serif';
+        const subText = `${count} soldiers`;
+        ctx.strokeText(subText, cx, cy + 10);
+        ctx.fillStyle = isOwned ? '#7dd3fc' : '#fda4af';
+        ctx.fillText(subText, cx, cy + 10);
+      });
+    }
+
+    function mainLoop() {
+      drawMap();
+      requestAnimationFrame(mainLoop);
+    }
+
+    // ==================== BATTLE SYSTEM ====================
+    const battleOverlay = document.getElementById('battle');
+    const battleTitle = document.getElementById('title');
+    const battleMsg = document.getElementById('msg');
+    const pb = document.getElementById('pb');
+    const eb = document.getElementById('eb');
+    const pCountEl = document.getElementById('p-count');
+    const eCountEl = document.getElementById('e-count');
+    const closeBattleBtn = document.getElementById('close');
+
+    function startBattle(stateIdx) {
+      if (!isAttackable(stateIdx)) return;
+      if (army < 15) {
+        showToast('⚠️ Need at least 15 soldiers to invade! Recruit more troops.');
+        return;
+      }
+
+      const vanguard = Math.max(10, Math.floor(army * 0.7));
+      const enemyGarrison = STATES[stateIdx].garrison;
+
+      activeBattle = {
+        idx: stateIdx,
+        p: vanguard,
+        e: enemyGarrison,
+        pm: vanguard,
+        em: enemyGarrison,
+        t: 0,
+        done: false,
+        particles: []
+      };
+
+      battleOverlay.style.display = 'flex';
+      closeBattleBtn.style.display = 'none';
+      battleTitle.textContent = `⚔️ Battle for ${STATES[stateIdx].name}`;
+      battleMsg.textContent = 'Forces clashing on the border...';
+      battleMsg.className = 'text-center font-bold text-sm sm:text-base my-3 text-amber-300';
+      startWarDrums();
+      playSwordClash();
+      requestAnimationFrame(battleLoop);
+    }
+
+    function spawnExplosion(x, y) {
+      playBattleBoom();
+      if (!activeBattle) return;
+      for (let k = 0; k < 20; k++) {
+        activeBattle.particles.push({
+          x,
+          y,
+          vx: (Math.random() - 0.5) * 220,
+          vy: (Math.random() - 0.5) * 200 - 30,
+          life: 0.65,
+          color: Math.random() < 0.5 ? '#fbbf24' : '#f97316'
+        });
+      }
+    }
+
+    function drawStickSoldier(x, y, dir, time) {
+      const bob = Math.sin(time * 9 + x * 0.1) * 3;
+      bctx.strokeStyle = dir > 0 ? '#38bdf8' : '#fb7185';
+      bctx.lineWidth = 4;
+      bctx.lineCap = 'round';
+
+      bctx.beginPath();
+      bctx.arc(x, y - 30 + bob, 7, 0, Math.PI * 2);
+      bctx.moveTo(x, y - 22 + bob);
+      bctx.lineTo(x, y + 12 + bob);
+      bctx.moveTo(x, y - 12 + bob);
+      bctx.lineTo(x + dir * 20, y - 2 + bob);
+      bctx.moveTo(x, y + 12 + bob);
+      bctx.lineTo(x - dir * 8, y + 32);
+      bctx.moveTo(x, y + 12 + bob);
+      bctx.lineTo(x + dir * 8, y + 32);
+      bctx.stroke();
+    }
+
+    function battleLoop() {
+      if (!activeBattle) return;
+      const B = activeBattle;
+      B.t += 0.016;
+
+      if (!B.done) {
+        if (B.t > 0.5 && Math.random() < 0.09) {
+          const ratio = B.p / Math.max(1, B.e);
+          const hitEnemyChance = Math.min(0.75, Math.max(0.35, 0.52 * Math.sqrt(ratio)));
+
+          if (Math.random() < hitEnemyChance) {
+            B.e = Math.max(0, B.e - (4 + Math.random() * 8));
+          } else {
+            B.p = Math.max(0, B.p - (3 + Math.random() * 7));
+          }
+          playSwordClash();
+        } else if (B.t > 0.3 && Math.random() < 0.045) {
+          playSwordClash();
+        }
+
+        if (Math.random() < 0.04) {
+          spawnExplosion(430 + (Math.random() - 0.5) * 240, 150 + Math.random() * 80);
+        }
+
+        if (B.p <= 0 || B.e <= 0 || B.t > 7.5) {
+          B.done = true;
+          stopWarDrums();
+          const victory = B.p > 0 && B.p >= B.e;
+          const reserve = army - B.pm;
+
+          if (victory) {
+            owned.add(B.idx);
+            army = Math.max(10, reserve + Math.floor(B.p));
+            gold += 250;
+            spawnExplosion(560, 170);
+            playOutcomeFanfare(true);
+            battleMsg.textContent = `🏆 Victory! ${STATES[B.idx].name} conquered (+250 Gold).`;
+            battleMsg.className = 'text-center font-extrabold text-sm sm:text-base my-3 text-emerald-400';
+          } else {
+            army = Math.max(10, reserve + Math.floor(B.p * 0.5));
+            playOutcomeFanfare(false);
+            battleMsg.textContent = `💀 Defeat! Your vanguard retreated to regroup.`;
+            battleMsg.className = 'text-center font-extrabold text-sm sm:text-base my-3 text-rose-400';
+          }
+
+          updateUI();
+          closeBattleBtn.style.display = 'inline-block';
+        }
+      }
+
+      pb.style.width = `${Math.max(0, (B.p / B.pm) * 100)}%`;
+      eb.style.width = `${Math.max(0, (B.e / B.em) * 100)}%`;
+      pCountEl.textContent = Math.ceil(B.p);
+      eCountEl.textContent = Math.ceil(B.e);
+
+      bctx.clearRect(0, 0, 860, 320);
+      const skyGrad = bctx.createLinearGradient(0, 0, 0, 240);
+      skyGrad.addColorStop(0, '#0f172a');
+      skyGrad.addColorStop(1, '#1e293b');
+      bctx.fillStyle = skyGrad;
+      bctx.fillRect(0, 0, 860, 320);
+
+      bctx.fillStyle = '#143326';
+      bctx.fillRect(0, 240, 860, 80);
+
+      const pSoldiers = Math.max(B.p > 0 ? 1 : 0, Math.ceil((B.p / B.pm) * 12));
+      const eSoldiers = Math.max(B.e > 0 ? 1 : 0, Math.ceil((B.e / B.em) * 12));
+
+      for (let k = 0; k < pSoldiers; k++) {
+        drawStickSoldier(120 + (k % 4) * 52, 200 + Math.floor(k / 4) * 24, 1, B.t);
+      }
+      for (let k = 0; k < eSoldiers; k++) {
+        drawStickSoldier(740 - (k % 4) * 52, 200 + Math.floor(k / 4) * 24, -1, B.t);
+      }
+
+      B.particles = B.particles.filter(pt => pt.life > 0);
+      B.particles.forEach(pt => {
+        pt.x += pt.vx * 0.016;
+        pt.y += pt.vy * 0.016;
+        pt.vy += 220 * 0.016;
+        pt.life -= 0.016;
+        bctx.globalAlpha = Math.max(0, pt.life);
+        bctx.fillStyle = pt.color;
+        bctx.beginPath();
+        bctx.arc(pt.x, pt.y, 3 + Math.random() * 4, 0, Math.PI * 2);
+        bctx.fill();
+      });
+      bctx.globalAlpha = 1;
+
+      if (!B.done || B.particles.length > 0) {
+        requestAnimationFrame(battleLoop);
+      }
+    }
+
+    closeBattleBtn.onclick = () => {
+      battleOverlay.style.display = 'none';
+      activeBattle = null;
+
+      if (owned.size === STATES.length) {
+        document.getElementById('final-army').textContent = army;
+        document.getElementById('final-gold').textContent = `${gold}g`;
+        document.getElementById('victory-modal').style.display = 'flex';
+      }
+    };
+
+    updateUI();
+    mainLoop();
+  </script>
+</body>
+</html>
