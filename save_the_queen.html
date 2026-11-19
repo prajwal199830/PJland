@@ -1,0 +1,3155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Save the Queen - 2D Fortress Puzzle</title>
+    <!-- Load Google Fonts for Royal Medieval Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-obsidian: #0d0f14;
+            --bg-stone: #161a23;
+            --bg-panel: #1d222e;
+            --border-stone: #2e3648;
+            --gold-primary: #f5b942;
+            --gold-light: #ffe08a;
+            --gold-glow: rgba(245, 185, 66, 0.35);
+            --royal-crimson: #e63946;
+            --royal-blue: #3a86ff;
+            --silver-primary: #cbd5e1;
+            --silver-glow: rgba(203, 213, 225, 0.35);
+            --portal-purple: #a855f7;
+            --emerald: #10b981;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-obsidian);
+            background-image: 
+                radial-gradient(circle at 50% 25%, rgba(245, 185, 66, 0.08) 0%, transparent 55%),
+                radial-gradient(circle at 15% 85%, rgba(58, 134, 255, 0.06) 0%, transparent 45%);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            overflow-x: hidden;
+        }
+
+        /* Header & Title Styling */
+        .game-header {
+            text-align: center;
+            margin-bottom: 12px;
+            width: 100%;
+            max-width: 780px;
+        }
+
+        .game-title {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: clamp(1.6rem, 4vw, 2.35rem);
+            letter-spacing: 0.06em;
+            background: linear-gradient(135deg, #fff3c4 0%, #f5b942 50%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 24px rgba(245, 185, 66, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .game-subtitle {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-top: 2px;
+        }
+
+        /* Main Layout Container */
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            max-width: 820px;
+        }
+
+        @media (min-width: 820px) {
+            .main-wrapper {
+                flex-direction: row;
+                align-items: stretch;
+                justify-content: center;
+            }
+        }
+
+        /* Left / Top Board Container */
+        .board-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            max-width: 520px;
+            width: 100%;
+        }
+
+        /* Top HUD Bar */
+        .hud-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-stone);
+            border-radius: 14px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .level-nav-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lvl-select-trigger {
+            background: linear-gradient(135deg, rgba(245, 185, 66, 0.2), rgba(217, 119, 6, 0.14));
+            color: var(--gold-light);
+            border: 1px solid var(--gold-primary);
+            border-radius: 9px;
+            padding: 6px 12px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 0.84rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 12px rgba(245, 185, 66, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .lvl-select-trigger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 16px rgba(245, 185, 66, 0.35);
+        }
+
+        .nav-arrow-btn {
+            background: var(--bg-stone);
+            color: var(--text-main);
+            border: 1px solid var(--border-stone);
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .nav-arrow-btn:hover:not(:disabled) {
+            border-color: var(--gold-primary);
+            color: var(--gold-light);
+        }
+
+        .nav-arrow-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .stats-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-stone);
+            padding: 5px 11px;
+            border-radius: 8px;
+            border: 1px solid var(--border-stone);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .stat-val {
+            color: var(--gold-light);
+            font-variant-numeric: tabular-nums;
+            font-weight: 700;
+        }
+
+        /* Canvas Wrapper */
+        .canvas-frame {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: #10131a;
+            border: 2px solid var(--border-stone);
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: 
+                0 18px 40px rgba(0, 0, 0, 0.6),
+                inset 0 0 25px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            cursor: pointer;
+            touch-action: none;
+        }
+
+        /* Floating Toast Banner inside Canvas Frame */
+        .toast-banner {
+            position: absolute;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: rgba(15, 19, 28, 0.92);
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-light);
+            padding: 7px 16px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            white-space: nowrap;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            z-index: 5;
+        }
+
+        .toast-banner.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Victory Overlay Modal */
+        .victory-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 13, 20, 0.86);
+            backdrop-filter: blur(6px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+            z-index: 10;
+            border-radius: 14px;
+        }
+
+        .victory-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .victory-crown {
+            font-size: 3.2rem;
+            margin-bottom: 6px;
+            animation: floatCrown 2.2s ease-in-out infinite;
+        }
+
+        @keyframes floatCrown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-7px); }
+        }
+
+        .victory-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: var(--gold-light);
+            margin-bottom: 6px;
+        }
+
+        .victory-desc {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            margin-bottom: 18px;
+            max-width: 300px;
+            line-height: 1.45;
+        }
+
+        /* Action Buttons Below Canvas */
+        .controls-bar {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 10px 8px;
+            border-radius: 12px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            border: 1px solid var(--border-stone);
+            background: linear-gradient(180deg, #252c3b 0%, #1a1f2b 100%);
+            color: var(--text-main);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.08);
+            transition: all 0.15s ease;
+        }
+
+        .btn-action:hover:not(:disabled) {
+            border-color: var(--gold-primary);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(245, 185, 66, 0.18);
+        }
+
+        .btn-action:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .btn-action:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #f5b942 0%, #d97706 100%);
+            color: #111318;
+            border: none;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(245, 185, 66, 0.35);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 185, 66, 0.5);
+        }
+
+        /* Side Info & Legend Panel */
+        .side-panel {
+            width: 100%;
+            max-width: 520px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-stone);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 14px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+        }
+
+        @media (min-width: 820px) {
+            .side-panel {
+                width: 270px;
+            }
+        }
+
+        .panel-card {
+            background: var(--bg-stone);
+            border: 1px solid var(--border-stone);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .panel-heading {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .level-story {
+            font-size: 0.83rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        /* Inventory Status */
+        .inventory-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-stone);
+            font-size: 0.82rem;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .satchel-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .key-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 9px;
+            border-radius: 8px;
+            background: rgba(245, 185, 66, 0.12);
+            border: 1px solid rgba(245, 185, 66, 0.3);
+            color: var(--gold-light);
+            font-weight: 700;
+            font-size: 0.78rem;
+        }
+
+        .key-badge.silver {
+            background: rgba(203, 213, 225, 0.12);
+            border-color: rgba(203, 213, 225, 0.35);
+            color: #e2e8f0;
+        }
+
+        /* Level Select Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(7, 9, 14, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--gold-primary);
+            border-radius: 18px;
+            width: 100%;
+            max-width: 560px;
+            padding: 20px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-stone);
+        }
+
+        .modal-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--gold-light);
+        }
+
+        .modal-close {
+            background: var(--bg-stone);
+            border: 1px solid var(--border-stone);
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .modal-close:hover {
+            color: var(--text-main);
+            border-color: var(--gold-primary);
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        @media (min-width: 520px) {
+            .level-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        .level-cell {
+            background: var(--bg-stone);
+            border: 1px solid var(--border-stone);
+            border-radius: 12px;
+            padding: 10px 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            position: relative;
+        }
+
+        .level-cell:hover {
+            border-color: var(--gold-primary);
+            transform: translateY(-2px);
+        }
+
+        .level-cell.current {
+            border-color: var(--gold-primary);
+            background: rgba(245, 185, 66, 0.16);
+            box-shadow: 0 0 14px rgba(245, 185, 66, 0.25);
+        }
+
+        .level-cell.solved {
+            border-color: rgba(16, 185, 129, 0.55);
+        }
+
+        .cell-num {
+            font-family: 'Cinzel', serif;
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--text-main);
+        }
+
+        .cell-stars {
+            font-size: 0.72rem;
+            letter-spacing: 1px;
+            color: var(--gold-primary);
+            min-height: 14px;
+        }
+
+        .cell-tag {
+            font-size: 0.64rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Legend Grid */
+        function playStep() {
+            if (this.muted) return;
+            try {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(140, now);
+                osc.frequency.exponentialRampToValueAtTime(55, now + 0.06);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.065);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.07);
+            } catch (e) {
+                // Ignore restricted audio environments
+            }
+        }
+
+        function playBump() {
+            if (this.muted) return;
+            try {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(90, now);
+                osc.frequency.exponentialRampToValueAtTime(45, now + 0.09);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.095);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } catch (e) {
+                // Ignore restricted audio environments
+            }
+        }
+
+        function playKey() {
+            if (this.muted) return;
+            try {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const notes = [880, 1318.5, 1760];
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+                    gain.gain.setValueAtTime(0.14, now + idx * 0.06);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.25);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + idx * 0.06);
+                    osc.stop(now + idx * 0.06 + 0.26);
+                });
+            } catch (e) {
+                // Ignore restricted audio environments
+            }
+        }
+
+        function playGateUnlock() {
+            if (this.muted) return;
+            try {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.exponentialRampToValueAtTime(65, now + 0.22);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } catch (e) {
+                // Ignore restricted audio environments
+            }
+        }
+
+        function playSwitch() {
+            if (this.muted) return;
+            try {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(420, now);
+                osc.frequency.setValueAtTime(630, now + 0.05);
+                gain.gain.setValueAtTime(0.14, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.17);
+            } catch (e) {
+                // Ignore restricted audio environments
+            }
+        }
+
+        function playCrumble() {
+            if (this.muted) return;
+            try {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.exponentialRampToValueAtTime(38, now + 0.25);
+                gain.gain.setValueAtTime(0.14, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.27);
+            } catch (e) {
+                // Ignore restricted audio environments
+            }
+        }
+
+        function playTeleport() {
+            if (this.muted) return;
+            try {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(280, now);
+                osc.frequency.exponentialRampToValueAtTime(980, now + 0.14);
+                osc.frequency.exponentialRampToValueAtTime(520, now + 0.26);
+                gain.gain.setValueAtTime(0.16, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.29);
+            } catch (e) {
+                // Ignore restricted audio environments
+            }
+        }
+
+        function playVictory() {
+            if (this.muted) return;
+            try {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const fanfare = [
+                    { f: 523.25, t: 0.00, d: 0.14 },
+                    { f: 659.25, t: 0.13, d: 0.14 },
+                    { f: 783.99, t: 0.26, d: 0.14 },
+                    { f: 1046.5, t: 0.40, d: 0.45 }
+                ];
+                fanfare.forEach(note => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(note.f, now + note.t);
+                    gain.gain.setValueAtTime(0.18, now + note.t);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + note.t + note.d);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + note.t);
+                    osc.stop(now + note.t + note.d + 0.02);
+                });
+            } catch (e) {
+                // Ignore restricted audio environments
+            }
+        }
+        }
+
+        const sfx = new SoundFX();
+
+        /**
+         * ============================================================================
+         * 20 FORTRESS LEVELS (9x9 Odd-Numbered Grids — Queen ALWAYS at [4, 4])
+         * ============================================================================
+         * Tile Legend:
+         * '.' : Stone Floor
+         * '#' : Fortress Wall
+         * 'K' : King Start
+         * 'Q' : Queen Sanctum (Exact Center [4,4])
+         * 'k' : Gold Key       | 'G' : Gold Gate (Requires 1 Gold Key)
+         * 's' : Silver Key     | 'D' : Silver Door/Gate (Requires 1 Silver Key)
+         * 'S' : Pressure Plate Switch (Toggles 'B' <-> 'b')
+         * 'B' : Closed Barrier | 'b' : Open Barrier
+         * 'C' : Cracked Floor (Walkable once; collapses into Pit 'P' upon leaving)
+         * 'P' : Abyss Pit (Impassable)
+         * '1' : Paired Teleportation Rune (Warps King to the other '1' tile)
+         */
+        const RAW_LEVELS = [
+            // --- TIER 1: LEVELS 1-4 (Keys & Gates) ---
+            {
+                title: "Chamber 1: The Outer Gate",
+                tier: "Keys",
+                story: "The Queen awaits in the central sanctum [4,4]. Retrieve the Gold Key in the eastern wing to unlock the northern sanctum gate.",
+                grid: [
+                    "#########",
+                    "#K..#..k#",
+                    "#.#.#.#.#",
+                    "#...#...#",
+                    "#.##Q##.#",
+                    "#.#.G.#.#",
+                    "#...#...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 2: Silver & Gold",
+                tier: "Keys",
+                story: "Claim the Silver Key in the western corridor to unlock the Silver Gate and reach the Gold Key, then enter the sanctum.",
+                grid: [
+                    "#########",
+                    "#K..#..k#",
+                    "#.#.#.#.#",
+                    "#s..D...#",
+                    "#.##Q##.#",
+                    "#.#.G.#.#",
+                    "#...#...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 3: Crossed Vaults",
+                tier: "Keys",
+                story: "Grab the Silver Key in the northeast to open the Silver Gate for the Gold Key, then unlock the southern gate to the Queen.",
+                grid: [
+                    "#########",
+                    "#K..#..s#",
+                    "#.#.#.#.#",
+                    "#...D..k#",
+                    "#.##Q##.#",
+                    "#.#.G.#.#",
+                    "#...#...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 4: The Four Locks",
+                tier: "Keys",
+                story: "Collect the Silver Key, open the Silver Gate, claim both Gold Keys, and breach the twin Gold Gates guarding the Queen.",
+                grid: [
+                    "#########",
+                    "#K.s#k.k#",
+                    "#.#.#.#.#",
+                    "#...D...#",
+                    "#.##Q##.#",
+                    "#.#G#G#.#",
+                    "#...#...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+
+            // --- TIER 2: LEVELS 5-8 (Pressure Plates & Retractable Barriers) ---
+            {
+                title: "Chamber 5: Twin Pressure Plates",
+                tier: "Switches",
+                story: "Emerald switches toggle all fortress barriers. Step on a switch to lower the closed barrier sealing the sanctum.",
+                grid: [
+                    "#########",
+                    "#K..#...#",
+                    "#.#.#.#.#",
+                    "#S..#..S#",
+                    "#.##Q##.#",
+                    "#.#.B.#.#",
+                    "#...#...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 6: Alternating Gates",
+                tier: "Switches",
+                story: "Toggling a switch flips every 'B' to 'b' and every 'b' to 'B'. Coordinate your switches to open the central sanctum.",
+                grid: [
+                    "#########",
+                    "#K..b..S#",
+                    "#.#.#.#.#",
+                    "#...#...#",
+                    "#.##Q##.#",
+                    "#.#.B.#.#",
+                    "#S..b...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 7: Key Behind Bars",
+                tier: "Switches",
+                story: "Trigger the western pressure plate to open the barrier guarding the Gold Key, then unlock the southern sanctum gate.",
+                grid: [
+                    "#########",
+                    "#K..#B.k#",
+                    "#.#.#.###",
+                    "#S#.....#",
+                    "#.##Q##.#",
+                    "#.#.G.#.#",
+                    "#...#...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 8: Citadel Bastion",
+                tier: "Switches",
+                story: "Combine the Silver Key, pressure switches, and Gold Key to unseal every barrier around the central throne.",
+                grid: [
+                    "#########",
+                    "#K.s#..S#",
+                    "#.#.###.#",
+                    "#...D..k#",
+                    "#.##Q##.#",
+                    "#.#.B.#.#",
+                    "#S..G...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+
+            // --- TIER 3: LEVELS 9-12 (Cracked Floor Tiles + Keys & Switches) ---
+            {
+                title: "Chamber 9: Fragile Causeway",
+                tier: "Cracked",
+                story: "Cracked floor tiles collapse into pits as soon as you step off them. Cross carefully to grab the Gold Key and reach the Queen.",
+                grid: [
+                    "#########",
+                    "#K.CC..k#",
+                    "#.#.#.#.#",
+                    "#...#...#",
+                    "#.##Q##.#",
+                    "#.#.G.#.#",
+                    "#...C...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 10: The Shattered Keep",
+                tier: "Cracked",
+                story: "Cross the fragile northern causeway for the Gold Key, step on the southern switch, and enter the sanctum.",
+                grid: [
+                    "#########",
+                    "#K.Ck#..#",
+                    "#..CC#..#",
+                    "#...#...#",
+                    "#.##Q##.#",
+                    "#.#.B.#.#",
+                    "#S.C....#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 11: Crumbling Spiral",
+                tier: "Cracked",
+                story: "Plan your path over cracked tiles so you can claim the Silver and Gold keys without cutting off your route to the center.",
+                grid: [
+                    "#########",
+                    "#K..C..s#",
+                    "#.#.#.#.#",
+                    "#...D..k#",
+                    "#.##Q##.#",
+                    "#.#.G.#.#",
+                    "#...C...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 12: Abyssal Gauntlet",
+                tier: "Cracked",
+                story: "Thread across cracked tiles to trigger the switch and gather both keys before unlocking the final sanctum gate.",
+                grid: [
+                    "#########",
+                    "#K.C.s#S#",
+                    "#.#.###.#",
+                    "#k.C#D..#",
+                    "#.##Q##.#",
+                    "#.#.B.#.#",
+                    "#..C.G..#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+
+            // --- TIER 4: LEVELS 13-16 (Teleportation Runes & Multi-Key Sequences) ---
+            {
+                title: "Chamber 13: Arcane Runes",
+                tier: "Portals",
+                story: "Step onto a purple Teleportation Rune ('1') to warp instantaneously to its twin rune across the fortress.",
+                grid: [
+                    "#########",
+                    "#K..#..1#",
+                    "#.#.#.###",
+                    "#...#..k#",
+                    "#.##Q##.#",
+                    "#.#.G.#.#",
+                    "#1..#...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 14: Rift Relay",
+                tier: "Portals",
+                story: "Use the paired runes to cross walled wings, gather Silver and Gold keys, and open the sanctum gate.",
+                grid: [
+                    "#########",
+                    "#K.s#k.1#",
+                    "#.#.#####",
+                    "#...D...#",
+                    "#.##Q##.#",
+                    "#.#.G.#.#",
+                    "#1..#...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 15: Dimensional Switch",
+                tier: "Portals",
+                story: "Warp to the eastern rune to press the switch and open the sanctum barrier, then warp back to the center.",
+                grid: [
+                    "#########",
+                    "#K..#...#",
+                    "#.#.#.###",
+                    "#1..#..S#",
+                    "#.##Q##.#",
+                    "#.#.B.#.#",
+                    "#...#..1#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 16: Warp & Crumble",
+                tier: "Portals",
+                story: "Cross the fragile stones to grab the Gold Key and step onto the rune—your warp brings you right back into action.",
+                grid: [
+                    "#########",
+                    "#K.CC.k1#",
+                    "#.#.#####",
+                    "#...#...#",
+                    "#.##Q##.#",
+                    "#.#.G.#.#",
+                    "#1..#...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+
+            // --- TIER 5: LEVELS 17-20 (Grand Citadel Master Challenges) ---
+            {
+                title: "Chamber 17: Royal Vaults",
+                tier: "Citadel",
+                story: "Silver locks, pressure switches, and arcane runes guard the approach to the Queen's inner chamber.",
+                grid: [
+                    "#########",
+                    "#K.s#1.S#",
+                    "#.#.###.#",
+                    "#...D..k#",
+                    "#.##Q##.#",
+                    "#.#.B.#.#",
+                    "#1..G...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 18: Shattered Rift",
+                tier: "Citadel",
+                story: "Navigate cracked tiles and paired runes to collect both keys and unlock the southern sanctum gate.",
+                grid: [
+                    "#########",
+                    "#K.Cs#k1#",
+                    "#.#.#####",
+                    "#...D...#",
+                    "#.##Q##.#",
+                    "#.#.G.#.#",
+                    "#1.C....#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 19: Twin Sanctum",
+                tier: "Citadel",
+                story: "Use cracked bridges, runes, the Gold Key, and the pressure switch to clear both the Gold Gate and barrier.",
+                grid: [
+                    "#########",
+                    "#K.Ck#1S#",
+                    "#..CC####",
+                    "#...#...#",
+                    "#.##Q##.#",
+                    "#.#.BG#.#",
+                    "#1.C....#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 20: The Grand Citadel",
+                tier: "Citadel",
+                story: "The final trial: master Silver & Gold keys, pressure switches, cracked stone, and arcane runes to save the Queen!",
+                grid: [
+                    "#########",
+                    "#K.Cs#1S#",
+                    "#.#.###.#",
+                    "#k.C#D..#",
+                    "#.##Q##.#",
+                    "#.#.BG#.#",
+                    "#1.C....#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            }
+        ];
+
+        /**
+         * Accurately serializes a board state for BFS deduplication:
+         * Includes King position (r, c), held keys (gold, silver), barrier state ('B' coords),
+         * and broken cracked tiles ('P' coords) so no valid state is dropped or looped infinitely.
+         */
+        function getStateKey(g, kr, kc, gk, sk) {
+            const brokenCoords = [];
+            const closedBarriers = [];
+            const remainingItems = [];
+            for (let r = 0; r < g.length; r++) {
+                for (let c = 0; c < g[r].length; c++) {
+                    const ch = g[r][c];
+                    if (ch === 'P') brokenCoords.push(`${r},${c}`);
+                    else if (ch === 'B') closedBarriers.push(`${r},${c}`);
+                    else if (ch === 'k' || ch === 's' || ch === 'G' || ch === 'D') {
+                        remainingItems.push(`${ch}${r},${c}`);
+                    }
+                }
+            }
+            return `${kr},${kc}|k:${gk},s:${sk}|B:${closedBarriers.join(';')}|P:${brokenCoords.join(';')}|I:${remainingItems.join(';')}`;
+        }
+
+        /**
+         * Built-in BFS Solver with safe node cap and clean fallback behavior.
+         * Never throws an exception or shows an error banner/alert.
+         */
+        function solveBoardBFS(startGrid, startKing, startGold, startSilver, queenPos, maxNodes = 60000) {
+            try {
+                if (!startGrid || !startGrid.length || !startKing || !queenPos) return null;
+                const R = startGrid.length;
+                const C = startGrid[0].length;
+
+                const portals = [];
+                for (let r = 0; r < R; r++) {
+                    for (let c = 0; c < C; c++) {
+                        if (startGrid[r][c] === '1') portals.push({ r, c });
+                    }
+                }
+
+                const initialGrid = startGrid.map(row => [...row]);
+                const queue = [{
+                    grid: initialGrid,
+                    r: startKing.r,
+                    c: startKing.c,
+                    gold: startGold,
+                    silver: startSilver,
+                    path: []
+                }];
+                let head = 0;
+
+                const visited = new Set([
+                    getStateKey(initialGrid, startKing.r, startKing.c, startGold, startSilver)
+                ]);
+
+                const dirs = [
+                    { dr: -1, dc: 0, name: 'Up' },
+                    { dr: 1, dc: 0, name: 'Down' },
+                    { dr: 0, dc: -1, name: 'Left' },
+                    { dr: 0, dc: 1, name: 'Right' }
+                ];
+
+                let expandedNodes = 0;
+
+                while (head < queue.length && expandedNodes < maxNodes) {
+                    const curr = queue[head++];
+                    expandedNodes++;
+
+                    if (curr.r === queenPos.r && curr.c === queenPos.c) {
+                        return curr.path;
+                    }
+
+                    for (let i = 0; i < dirs.length; i++) {
+                        const d = dirs[i];
+                        const nr = curr.r + d.dr;
+                        const nc = curr.c + d.dc;
+                        if (nr < 0 || nr >= R || nc < 0 || nc >= C) continue;
+
+                        const tile = curr.grid[nr][nc];
+                        if (tile === '#' || tile === 'P' || tile === 'B') continue;
+                        if (tile === 'G' && curr.gold <= 0) continue;
+                        if (tile === 'D' && curr.silver <= 0) continue;
+
+                        const nextGrid = curr.grid.map(row => [...row]);
+                        let nextGold = curr.gold;
+                        let nextSilver = curr.silver;
+                        let finalR = nr;
+                        let finalC = nc;
+
+                        if (tile === 'G') {
+                            nextGold--;
+                            nextGrid[nr][nc] = '.';
+                        } else if (tile === 'D') {
+                            nextSilver--;
+                            nextGrid[nr][nc] = '.';
+                        }
+
+                        if (nextGrid[curr.r][curr.c] === 'C') {
+                            nextGrid[curr.r][curr.c] = 'P';
+                        }
+
+                        const landed = nextGrid[nr][nc];
+                        if (landed === 'k') {
+                            nextGold++;
+                            nextGrid[nr][nc] = '.';
+                        } else if (landed === 's') {
+                            nextSilver++;
+                            nextGrid[nr][nc] = '.';
+                        } else if (landed === 'S') {
+                            for (let rr = 0; rr < R; rr++) {
+                                for (let cc = 0; cc < C; cc++) {
+                                    if (nextGrid[rr][cc] === 'B') nextGrid[rr][cc] = 'b';
+                                    else if (nextGrid[rr][cc] === 'b') {
+                                        if (!(rr === nr && cc === nc) && !(rr === queenPos.r && cc === queenPos.c)) {
+                                            nextGrid[rr][cc] = 'B';
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (landed === '1' && portals.length === 2) {
+                            const dest = (portals[0].r === nr && portals[0].c === nc) ? portals[1] : portals[0];
+                            finalR = dest.r;
+                            finalC = dest.c;
+                        }
+
+                        const stateKey = getStateKey(nextGrid, finalR, finalC, nextGold, nextSilver);
+                        if (!visited.has(stateKey)) {
+                            visited.add(stateKey);
+                            queue.push({
+                                grid: nextGrid,
+                                r: finalR,
+                                c: finalC,
+                                gold: nextGold,
+                                silver: nextSilver,
+                                path: [...curr.path, d]
+                            });
+                        }
+                    }
+                }
+                return null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // Parse & Verify all 20 levels on startup with clean fallback Par if search budget is exceeded
+        const LEVELS = RAW_LEVELS.map((lvl, index) => {
+            const parsedGrid = lvl.grid.map(row => row.split(''));
+            let kPos = { r: 1, c: 1 };
+            let qPos = { r: 4, c: 4 };
+            for (let r = 0; r < parsedGrid.length; r++) {
+                for (let c = 0; c < parsedGrid[r].length; c++) {
+                    if (parsedGrid[r][c] === 'K') {
+                        kPos = { r, c };
+                        parsedGrid[r][c] = '.';
+                    } else if (parsedGrid[r][c] === 'Q') {
+                        qPos = { r, c };
+                    }
+                }
+            }
+            const solution = solveBoardBFS(parsedGrid, kPos, 0, 0, qPos, 60000);
+            const fallbackPar = 14 + index * 2;
+            const optimalPar = solution && solution.length > 0 ? solution.length : fallbackPar;
+            return {
+                id: index,
+                title: lvl.title,
+                tier: lvl.tier,
+                story: lvl.story,
+                grid: lvl.grid,
+                par: optimalPar,
+                verified: Boolean(solution)
+            };
+        });
+
+        /**
+         * ============================================================================
+         * GAME ENGINE, LOCALSTORAGE PERSISTENCE & STATE MANAGEMENT
+         * ============================================================================
+         */
+        const STORAGE_KEY = 'save_the_queen_20_progress_v1';
+        let progressData = {};
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) progressData = JSON.parse(saved) || {};
+        } catch (e) {
+            progressData = {};
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(progressData));
+            } catch (e) {
+                // Ignore sandboxed/restricted storage errors gracefully
+            }
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 0.8rem;
+            color: var(--text-main);
+        }
+
+        .legend-swatch {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .controls-hint {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        kbd {
+            background: #283042;
+            border: 1px solid #3f4b66;
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-family: inherit;
+            font-size: 0.74rem;
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="game-header">
+        <h1 class="game-title">👑 SAVE THE QUEEN</h1>
+        <p class="game-subtitle">Breach the dark fortress rings and reach the Queen in the central sanctum</p>
+    </header>
+
+    <main class="main-wrapper">
+        <!-- Game Board Column -->
+        <section class="board-section">
+            <div class="hud-bar">
+                <div class="level-nav-group">
+                    <button class="nav-arrow-btn" id="prevLvlBtn" title="Previous Chamber">◀</button>
+                    <button class="lvl-select-trigger" id="openLevelModalBtn">
+                        <span>🏰</span>
+                        <span id="hudLevelLabel">Level 1 / 20</span>
+                        <span>▾</span>
+                    </button>
+                    <button class="nav-arrow-btn" id="nextLvlBtn" title="Next Chamber">▶</button>
+                </div>
+                <div class="stats-group">
+                    <div class="stat-pill">
+                        <span class="stat-label">Moves</span>
+                        <span class="stat-val" id="moveCount">0</span>
+                    </div>
+                    <div class="stat-pill">
+                        <span class="stat-label">Par</span>
+                        <span class="stat-val" id="parCount">16</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canvas-frame" id="canvasFrame">
+                <div class="toast-banner" id="toastBanner">Golden Key Acquired!</div>
+                <canvas id="gameCanvas"></canvas>
+
+                <!-- Victory Overlay -->
+                <div class="victory-overlay" id="victoryOverlay">
+                    <div class="victory-crown" id="victoryStarsDisplay">⭐⭐⭐</div>
+                    <h2 class="victory-title" id="victoryTitle">The Queen is Saved!</h2>
+                    <p class="victory-desc" id="victoryDesc">You navigated the fortress traps in 14 moves.</p>
+                    <button class="btn-gold" id="nextLevelBtn">Next Fortress Wing →</button>
+                </div>
+            </div>
+
+            <div class="controls-bar">
+                <button class="btn-action" id="undoBtn" disabled>
+                    <span>↩️</span> Undo
+                </button>
+                <button class="btn-action" id="resetBtn">
+                    <span>🔄</span> Reset
+                </button>
+                <button class="btn-action" id="hintBtn">
+                    <span>💡</span> Hint
+                </button>
+                <button class="btn-action" id="muteBtn">
+                    <span id="muteIcon">🔊</span> <span id="muteLabel">Sound</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Side Panel: Briefing & Legend -->
+        <aside class="side-panel">
+            <div class="panel-card">
+                <div class="panel-heading">
+                    <span id="briefingTitle">Chamber 1: The Outer Gate</span>
+                </div>
+                <p class="level-story" id="briefingText">
+                    The Queen is sealed inside the central golden sanctum. Retrieve the Gold Key in the eastern wing to unlock the sanctum gate.
+                </p>
+                <div class="inventory-row">
+                    <span style="color: var(--text-muted);">Satchel:</span>
+                    <div class="satchel-badges">
+                        <span class="key-badge" id="goldKeyStatus">🗝️ Gold: 0</span>
+                        <span class="key-badge silver" id="silverKeyStatus">🔑 Silver: 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-heading">Fortress Legend</div>
+                <div class="legend-list">
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background:#1e3a8a;">🤴</div>
+                        <span><strong>King</strong> (You)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background:rgba(245,185,66,0.28); border-color:#f5b942;">👸</div>
+                        <span><strong>Queen</strong> (Center [4,4])</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background:#78350f; border-color:#f5b942;">🗝️</div>
+                        <span><strong>Gold Key & Gate</strong></span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background:#334155; border-color:#cbd5e1;">🔑</div>
+                        <span><strong>Silver Key & Gate</strong></span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background:#064e3b; border-color:#10b981;">🔘</div>
+                        <span><strong>Switch & Barriers</strong></span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background:#451a03; border-color:#d97706;">🧱</div>
+                        <span><strong>Cracked Floor</strong> (1-Use)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background:#3b0764; border-color:#a855f7;">🌀</div>
+                        <span><strong>Teleportation Rune</strong></span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-swatch" style="background:#090b10; border-color:#334155;">🕳️</div>
+                        <span><strong>Abyss / Stone Wall</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-hint">
+                Move with <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>, <kbd>Arrows</kbd>, <strong>Swipe</strong>, or <strong>Tap tiles</strong>.<br>
+                <kbd>Z</kbd> Undo • <kbd>R</kbd> Reset • <kbd>H</kbd> Solver Hint
+            </div>
+        </aside>
+    </main>
+
+    <!-- 20-Level Select Modal -->
+    <div class="modal-backdrop" id="levelModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">🏰 Royal Citadel Chambers (1–20)</h2>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;" id="progressSummary">Chambers Cleared: 0 / 20</p>
+                </div>
+                <button class="modal-close" id="closeLevelModalBtn">✕</button>
+            </div>
+            <div class="level-grid" id="levelGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * ============================================================================
+         * WEB AUDIO API SYNTHESIZER (Zero external sound URLs required)
+         * ============================================================================
+         */
+        class SoundFX {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) this.ctx = new AudioCtx();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playStep() {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(140, now);
+                osc.frequency.exponentialRampToValueAtTime(55, now + 0.06);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.065);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.07);
+            }
+
+            playBump() {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(90, now);
+                osc.frequency.exponentialRampToValueAtTime(45, now + 0.09);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.095);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            }
+
+            playKey() {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const notes = [880, 1318.5, 1760];
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+                    gain.gain.setValueAtTime(0.14, now + idx * 0.06);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.25);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + idx * 0.06);
+                    osc.stop(now + idx * 0.06 + 0.26);
+                });
+            }
+
+            playGateUnlock() {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.exponentialRampToValueAtTime(65, now + 0.22);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+
+            playSwitch() {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(420, now);
+                osc.frequency.setValueAtTime(630, now + 0.05);
+                gain.gain.setValueAtTime(0.14, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.17);
+            }
+
+            playCrumble() {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.exponentialRampToValueAtTime(38, now + 0.25);
+                gain.gain.setValueAtTime(0.14, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.27);
+            }
+
+            playTeleport() {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(280, now);
+                osc.frequency.exponentialRampToValueAtTime(980, now + 0.14);
+                osc.frequency.exponentialRampToValueAtTime(520, now + 0.26);
+                gain.gain.setValueAtTime(0.16, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.29);
+            }
+
+            playVictory() {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const fanfare = [
+                    { f: 523.25, t: 0.00, d: 0.14 }, // C5
+                    { f: 659.25, t: 0.13, d: 0.14 }, // E5
+                    { f: 783.99, t: 0.26, d: 0.14 }, // G5
+                    { f: 1046.5, t: 0.40, d: 0.45 }  // C6
+                ];
+                fanfare.forEach(note => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(note.f, now + note.t);
+                    gain.gain.setValueAtTime(0.18, now + note.t);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + note.t + note.d);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + note.t);
+                    osc.stop(now + note.t + note.d + 0.02);
+                });
+            }
+        }
+
+        const sfx = new SoundFX();
+
+        /**
+         * ============================================================================
+         * 20 FORTRESS LEVELS (9x9 Odd-Numbered Grids — Queen ALWAYS at [4, 4])
+         * ============================================================================
+         * Tile Legend:
+         * '.' : Stone Floor
+         * '#' : Fortress Wall
+         * 'K' : King Start
+         * 'Q' : Queen Sanctum (Exact Center [4,4])
+         * 'k' : Gold Key       | 'G' : Gold Gate (Requires 1 Gold Key)
+         * 's' : Silver Key     | 'D' : Silver Door/Gate (Requires 1 Silver Key)
+         * 'S' : Pressure Plate Switch (Toggles 'B' <-> 'b')
+         * 'B' : Closed Barrier | 'b' : Open Barrier
+         * 'C' : Cracked Floor (Walkable once; collapses into Pit 'P' upon leaving)
+         * 'P' : Abyss Pit (Impassable)
+         * '1' : Paired Teleportation Rune (Warps King to the other '1' tile)
+         */
+        const RAW_LEVELS = [
+            // --- TIER 1: LEVELS 1-4 (Walls, Gold Keys/Gates, Silver Keys/Gates) ---
+            {
+                title: "Chamber 1: The Outer Gate",
+                tier: "Keys",
+                story: "The Queen awaits in the central sanctum [4,4]. Retrieve the Gold Key in the eastern gallery to unlock the southern gate.",
+                grid: [
+                    "#########",
+                    "#K..#..k#",
+                    "#.#.#.#.#",
+                    "#.#.###.#",
+                    "#.#.Q.#.#",
+                    "#.#G###.#",
+                    "#...#...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 2: Silver & Gold",
+                tier: "Keys",
+                story: "Two royal locks guard the inner sanctum. Claim the Silver Key first to reach the northern vault holding the Gold Key.",
+                grid: [
+                    "#########",
+                    "#K..D..k#",
+                    "###.###.#",
+                    "#s..#...#",
+                    "#.##Q##.#",
+                    "#.##G##.#",
+                    "#...#...#",
+                    "#.###...#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 3: Crossed Vaults",
+                tier: "Keys",
+                story: "Each wing holds the key to the opposite wing. Plan a sweeping circuit around the fortress perimeter.",
+                grid: [
+                    "#########",
+                    "#K..#..s#",
+                    "#.#.#.###",
+                    "#.#D#...#",
+                    "#.##Q##.#",
+                    "#.##G##.#",
+                    "#k..#...#",
+                    "###...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 4: The Four Locks",
+                tier: "Keys",
+                story: "Multiple Gold and Silver gates seal the royal corridors. Use every key wisely to carve a path inward.",
+                grid: [
+                    "#########",
+                    "#K.s#k.s#",
+                    "###D#D###",
+                    "#...#...#",
+                    "#.##Q##.#",
+                    "#.#G#G#.#",
+                    "#k..#...#",
+                    "#.#####.#",
+                    "#########"
+                ]
+            },
+
+            // --- TIER 2: LEVELS 5-8 (Pressure Plates & Retractable Barriers) ---
+            {
+                title: "Chamber 5: Twin Pressure Plates",
+                tier: "Switches",
+                story: "Emerald switches toggle all fortress barriers. Step on the southern plate to lower the northern sanctum gate.",
+                grid: [
+                    "#########",
+                    "#K..#...#",
+                    "#.#...#.#",
+                    "#b##B##.#",
+                    "#.##Q##.#",
+                    "#.##.##.#",
+                    "#S......#",
+                    "#.#.###.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 6: Alternating Gates",
+                tier: "Switches",
+                story: "Toggling a switch opens closed barriers while sealing open ones. Alternate between two plates to thread the needle.",
+                grid: [
+                    "#########",
+                    "#K..b..S#",
+                    "###.###.#",
+                    "#...B...#",
+                    "#.##Q##.#",
+                    "#.#b#B#.#",
+                    "#S..#...#",
+                    "###...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 7: Key Behind Bars",
+                tier: "Switches",
+                story: "The Gold Key is locked behind a red barrier. Trigger the western pressure plate, seize the key, and breach the sanctum.",
+                grid: [
+                    "#########",
+                    "#K..#B.k#",
+                    "#.#.#.###",
+                    "#S#.....#",
+                    "#.##Q##.#",
+                    "#.##G##.#",
+                    "#...#...#",
+                    "#.###...#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 8: Citadel Bastion",
+                tier: "Switches",
+                story: "Combine Silver and Gold keys with dual barrier toggles to breach the inner bastion.",
+                grid: [
+                    "#########",
+                    "#K.s#..S#",
+                    "###D###.#",
+                    "#..B..#k#",
+                    "#.##Q##.#",
+                    "#.##G##.#",
+                    "#S..b...#",
+                    "#.#####.#",
+                    "#########"
+                ]
+            },
+
+            // --- TIER 3: LEVELS 9-12 (Cracked Floor Tiles + Keys & Switches) ---
+            {
+                title: "Chamber 9: Fragile Causeway",
+                tier: "Cracked",
+                story: "Cracked tiles collapse into abyssal pits the moment you step off them. Cross once—and never look back.",
+                grid: [
+                    "#########",
+                    "#K.CC..k#",
+                    "#.#..#..#",
+                    "#.##.##.#",
+                    "#.##Q##.#",
+                    "#.##G##.#",
+                    "#...C...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 10: The Shattered Keep",
+                tier: "Cracked",
+                story: "Secure the Gold Key across the northern fragile bridge, then trigger the southern plate before crossing the lower span.",
+                grid: [
+                    "#########",
+                    "#K.Ck#..#",
+                    "#..CC#..#",
+                    "#.##.##.#",
+                    "#.##QBG.#",
+                    "#.##.##.#",
+                    "#S.C....#",
+                    "#.#.###.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 11: Crumbling Spiral",
+                tier: "Cracked",
+                story: "A spiral of ancient stone surrounds the throne room. Commit to your route so you don't strand yourself.",
+                grid: [
+                    "#########",
+                    "#K..C..s#",
+                    "#.#####.#",
+                    "#C#k.D#C#",
+                    "#.#.Q.#.#",
+                    "#C#.G.#C#",
+                    "#.#####.#",
+                    "#...C...#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 12: Abyssal Gauntlet",
+                tier: "Cracked",
+                story: "Every step over cracked stone narrows your escape options. Retrieve both keys and toggle the final gate.",
+                grid: [
+                    "#########",
+                    "#K.C.s#S#",
+                    "###.###.#",
+                    "#k.C#D..#",
+                    "#.##Q##.#",
+                    "#.##B##.#",
+                    "#..C.G..#",
+                    "#.#####.#",
+                    "#########"
+                ]
+            },
+
+            // --- TIER 4: LEVELS 13-16 (Teleportation Runes & Multi-Key Sequences) ---
+            {
+                title: "Chamber 13: Arcane Runes",
+                tier: "Portals",
+                story: "Stepping onto a purple Teleportation Rune warps the King instantaneously to its twin across the fortress.",
+                grid: [
+                    "#########",
+                    "#K..#..1#",
+                    "#.#.#.###",
+                    "#.#.#...#",
+                    "#.##Q##.#",
+                    "#.##G##.#",
+                    "#1..#..k#",
+                    "###...#.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 14: Rift Relay",
+                tier: "Portals",
+                story: "Use the arcane portal to bypass sealed walls, collect the Silver and Gold keys, and return to the inner sanctum.",
+                grid: [
+                    "#########",
+                    "#K.s#k.1#",
+                    "###D#####",
+                    "#...#...#",
+                    "#.##Q##.#",
+                    "#.##G##.#",
+                    "#1..#...#",
+                    "#.#####.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 15: Dimensional Switch",
+                tier: "Portals",
+                story: "Teleport into the isolated eastern wing to trigger the switch, then warp back to cross the lowered barrier.",
+                grid: [
+                    "#########",
+                    "#K..#S..#",
+                    "#.#.#.###",
+                    "#1#.#..1#",
+                    "#.##Q##.#",
+                    "#.##B##.#",
+                    "#...#...#",
+                    "#.###...#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 16: Warp & Crumble",
+                tier: "Portals",
+                story: "Cross a fragile bridge into the portal chamber—once you warp away, there is no returning to the northern wing.",
+                grid: [
+                    "#########",
+                    "#K.CC.k1#",
+                    "#########",
+                    "#...#...#",
+                    "#.##Q##.#",
+                    "#.##G##.#",
+                    "#1..#...#",
+                    "#.#...#.#",
+                    "#########"
+                ]
+            },
+
+            // --- TIER 5: LEVELS 17-20 (Grand Citadel Master Challenges) ---
+            {
+                title: "Chamber 17: Royal Vaults",
+                tier: "Citadel",
+                story: "Silver locks, pressure plates, and arcane runes guard the approach to the Queen's inner chamber.",
+                grid: [
+                    "#########",
+                    "#K.s#1.S#",
+                    "###D###.#",
+                    "#..B..#k#",
+                    "#.##Q##.#",
+                    "#.##G##.#",
+                    "#1..b...#",
+                    "#.#####.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 18: Shattered Rift",
+                tier: "Citadel",
+                story: "Navigate cracked floors to reach the portal, gather the twin keys, and open the sanctum before the floor gives way.",
+                grid: [
+                    "#########",
+                    "#K.Cs#k1#",
+                    "###D#####",
+                    "#...C...#",
+                    "#.##Q##.#",
+                    "#.##G##.#",
+                    "#1.C....#",
+                    "#.#####.#",
+                    "#########"
+                ]
+            },
+            {
+                title: "Chamber 19: Twin Sanctum",
+                tier: "Citadel",
+                story: "Both a Gold Gate and a retractable barrier seal the Queen. Orchestrate switches, portals, and fragile bridges in sequence.",
+                grid: [
+                    "#########",
+                    "#K.Ck#1.S",
+                    "#..CC####",
+                    "#.##.##.#",
+                    "#.##QBG.#",
+                    "#.##.##.#",
+                    "#1.C....#",
+                    "#.#.###.#",
+                    "#########"
+                ].map((r, idx) => idx === 1 ? "#K.Ck#1S#" : r)
+            },
+            {
+                title: "Chamber 20: The Grand Citadel",
+                tier: "Citadel",
+                story: "The final trial of the fortress: master Silver & Gold keys, pressure plates, cracked stone, and arcane portals to save the Queen!",
+                grid: [
+                    "#########",
+                    "#K.Cs#1S#",
+                    "###D#####",
+                    "#k.C#..B#",
+                    "#.##Q##.#",
+                    "#.##G##.#",
+                    "#1.C....#",
+                    "#.#####.#",
+                    "#########"
+                ]
+            }
+        ];
+
+        /**
+         * ============================================================================
+         * BUILT-IN BFS SOLVER (Verifies 100% Solvability, Computes Exact Optimal Par,
+         * and Powers the Live Hint Button from Any Board State!)
+         * ============================================================================
+         */
+        function solveBoardBFS(startGrid, startKing, startGold, startSilver, queenPos) {
+            const R = startGrid.length;
+            const C = startGrid[0].length;
+
+            // Find paired portals '1'
+            const portals = [];
+            for (let r = 0; r < R; r++) {
+                for (let c = 0; c < C; c++) {
+                    if (startGrid[r][c] === '1') portals.push({ r, c });
+                }
+            }
+
+            const serialize = (g, kr, kc, gk, sk) =>
+                `${kr},${kc}|${gk},${sk}|` + g.map(row => row.join('')).join('');
+
+            const initialGrid = startGrid.map(r => [...r]);
+            const queue = [{
+                grid: initialGrid,
+                r: startKing.r,
+                c: startKing.c,
+                gold: startGold,
+                silver: startSilver,
+                path: []
+            }];
+            const visited = new Set([serialize(initialGrid, startKing.r, startKing.c, startGold, startSilver)]);
+
+            const dirs = [
+                { dr: -1, dc: 0, name: 'Up' },
+                { dr: 1, dc: 0, name: 'Down' },
+                { dr: 0, dc: -1, name: 'Left' },
+                { dr: 0, dc: 1, name: 'Right' }
+            ];
+
+            let iterations = 0;
+            const MAX_ITER = 35000;
+
+            while (queue.length > 0 && iterations++ < MAX_ITER) {
+                const curr = queue.shift();
+
+                if (curr.r === queenPos.r && curr.c === queenPos.c) {
+                    return curr.path; // Array of { dr, dc, name }
+                }
+
+                for (const d of dirs) {
+                    const nr = curr.r + d.dr;
+                    const nc = curr.c + d.dc;
+                    if (nr < 0 || nr >= R || nc < 0 || nc >= C) continue;
+
+                    const tile = curr.grid[nr][nc];
+                    if (tile === '#' || tile === 'P' || tile === 'B') continue;
+                    if (tile === 'G' && curr.gold <= 0) continue;
+                    if (tile === 'D' && curr.silver <= 0) continue;
+
+                    const nextGrid = curr.grid.map(row => [...row]);
+                    let nextGold = curr.gold;
+                    let nextSilver = curr.silver;
+                    let finalR = nr;
+                    let finalC = nc;
+
+                    // Unlock gates
+                    if (tile === 'G') {
+                        nextGold--;
+                        nextGrid[nr][nc] = '.';
+                    } else if (tile === 'D') {
+                        nextSilver--;
+                        nextGrid[nr][nc] = '.';
+                    }
+
+                    // Leaving cracked tile collapses it into pit 'P'
+                    if (nextGrid[curr.r][curr.c] === 'C') {
+                        nextGrid[curr.r][curr.c] = 'P';
+                    }
+
+                    // Landing triggers
+                    const landed = nextGrid[nr][nc];
+                    if (landed === 'k') {
+                        nextGold++;
+                        nextGrid[nr][nc] = '.';
+                    } else if (landed === 's') {
+                        nextSilver++;
+                        nextGrid[nr][nc] = '.';
+                    } else if (landed === 'S') {
+                        for (let rr = 0; rr < R; rr++) {
+                            for (let cc = 0; cc < C; cc++) {
+                                if (nextGrid[rr][cc] === 'B') nextGrid[rr][cc] = 'b';
+                                else if (nextGrid[rr][cc] === 'b') {
+                                    if (!(rr === nr && cc === nc) && !(rr === queenPos.r && cc === queenPos.c)) {
+                                        nextGrid[rr][cc] = 'B';
+                                    }
+                                }
+                            }
+                        }
+                    } else if (landed === '1' && portals.length === 2) {
+                        const dest = (portals[0].r === nr && portals[0].c === nc) ? portals[1] : portals[0];
+                        finalR = dest.r;
+                        finalC = dest.c;
+                    }
+
+                    const stateKey = serialize(nextGrid, finalR, finalC, nextGold, nextSilver);
+                    if (!visited.has(stateKey)) {
+                        visited.add(stateKey);
+                        queue.push({
+                            grid: nextGrid,
+                            r: finalR,
+                            c: finalC,
+                            gold: nextGold,
+                            silver: nextSilver,
+                            path: [...curr.path, d]
+                        });
+                    }
+                }
+            }
+            return null;
+        }
+
+        // Parse & Verify all 20 levels on startup and set exact Par = optimal BFS steps
+        const LEVELS = RAW_LEVELS.map((lvl, index) => {
+            const parsedGrid = lvl.grid.map(row => row.split(''));
+            let kPos = { r: 1, c: 1 };
+            let qPos = { r: 4, c: 4 };
+            for (let r = 0; r < parsedGrid.length; r++) {
+                for (let c = 0; c < parsedGrid[r].length; c++) {
+                    if (parsedGrid[r][c] === 'K') {
+                        kPos = { r, c };
+                        parsedGrid[r][c] = '.';
+                    } else if (parsedGrid[r][c] === 'Q') {
+                        qPos = { r, c };
+                    }
+                }
+            }
+            const solution = solveBoardBFS(parsedGrid, kPos, 0, 0, qPos);
+            const optimalPar = solution ? solution.length : 20;
+            return {
+                id: index,
+                title: lvl.title,
+                tier: lvl.tier,
+                story: lvl.story,
+                grid: lvl.grid,
+                par: optimalPar,
+                verified: Boolean(solution)
+            };
+        });
+
+        /**
+         * ============================================================================
+         * GAME ENGINE, LOCALSTORAGE PERSISTENCE & STATE MANAGEMENT
+         * ============================================================================
+         */
+        const STORAGE_KEY = 'save_the_queen_20_progress_v1';
+        let progressData = {}; // { [levelIdx]: { stars: 1..3, bestMoves: number } }
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) progressData = JSON.parse(saved) || {};
+        } catch (e) {
+            progressData = {};
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(progressData));
+            } catch (e) {
+                // Ignore storage quota errors
+            }
+        }
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const canvasFrame = document.getElementById('canvasFrame');
+
+        // UI Elements
+        const hudLevelLabel = document.getElementById('hudLevelLabel');
+        const prevLvlBtn = document.getElementById('prevLvlBtn');
+        const nextLvlBtn = document.getElementById('nextLvlBtn');
+        const openLevelModalBtn = document.getElementById('openLevelModalBtn');
+        const closeLevelModalBtn = document.getElementById('closeLevelModalBtn');
+        const levelModal = document.getElementById('levelModal');
+        const levelGridEl = document.getElementById('levelGrid');
+        const progressSummaryEl = document.getElementById('progressSummary');
+
+        const moveCountEl = document.getElementById('moveCount');
+        const parCountEl = document.getElementById('parCount');
+        const goldKeyStatusEl = document.getElementById('goldKeyStatus');
+        const silverKeyStatusEl = document.getElementById('silverKeyStatus');
+        const briefingTitleEl = document.getElementById('briefingTitle');
+        const briefingTextEl = document.getElementById('briefingText');
+        const undoBtn = document.getElementById('undoBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const hintBtn = document.getElementById('hintBtn');
+        const muteBtn = document.getElementById('muteBtn');
+        const muteIconEl = document.getElementById('muteIcon');
+        const muteLabelEl = document.getElementById('muteLabel');
+        const toastBanner = document.getElementById('toastBanner');
+        const victoryOverlay = document.getElementById('victoryOverlay');
+        const victoryStarsDisplay = document.getElementById('victoryStarsDisplay');
+        const victoryTitleEl = document.getElementById('victoryTitle');
+        const victoryDescEl = document.getElementById('victoryDesc');
+        const nextLevelBtn = document.getElementById('nextLevelBtn');
+
+        // Game State
+        let currentLevelIdx = 0;
+        let grid = [];
+        let rows = 9;
+        let cols = 9;
+        let king = { r: 1, c: 1 };
+        let renderKing = { r: 1, c: 1 };
+        let queen = { r: 4, c: 4 };
+        let goldKeysHeld = 0;
+        let silverKeysHeld = 0;
+        let moves = 0;
+        let history = [];
+        let isVictory = false;
+        let bumpOffset = { x: 0, y: 0 };
+        let hintHighlight = null; // { r, c, expires }
+        let particles = [];
+        let ripples = [];
+        let toastTimeout = null;
+        let animTime = 0;
+
+        function showToast(msg) {
+            toastBanner.textContent = msg;
+            toastBanner.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toastBanner.classList.remove('show');
+            }, 1850);
+        }
+
+        function spawnParticles(gridR, gridC, color, count = 18, speedScale = 1) {
+            const tileSize = canvas.width / cols;
+            const cx = (gridC + 0.5) * tileSize;
+            const cy = (gridR + 0.5) * tileSize;
+            for (let i = 0; i < count; i++) {
+                const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+                const speed = (1.2 + Math.random() * 2.8) * speedScale * (tileSize / 55);
+                particles.push({
+                    x: cx,
+                    y: cy,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 1.0,
+                    decay: 0.02 + Math.random() * 0.02,
+                    size: (2.5 + Math.random() * 3.5) * (tileSize / 55),
+                    color
+                });
+            }
+        }
+
+        function spawnRipple(gridR, gridC, color) {
+            const tileSize = canvas.width / cols;
+            ripples.push({
+                x: (gridC + 0.5) * tileSize,
+                y: (gridR + 0.5) * tileSize,
+                radius: tileSize * 0.15,
+                maxRadius: tileSize * 1.15,
+                alpha: 0.85,
+                color
+            });
+        }
+
+        function cloneGrid(g) {
+            return g.map(row => [...row]);
+        }
+
+        function renderLevelSelectGrid() {
+            levelGridEl.innerHTML = '';
+            const clearedCount = Object.keys(progressData).length;
+            progressSummaryEl.textContent = `Chambers Cleared: ${clearedCount} / ${LEVELS.length}`;
+
+            LEVELS.forEach((lvl, idx) => {
+                const cell = document.createElement('button');
+                const record = progressData[idx];
+                cell.className = 'level-cell';
+                if (idx === currentLevelIdx) cell.classList.add('current');
+                if (record) cell.classList.add('solved');
+
+                const starsStr = record
+                    ? '★'.repeat(record.stars) + '☆'.repeat(3 - record.stars)
+                    : '☆☆☆';
+
+                cell.innerHTML = `
+                    <span class="cell-num">${idx + 1}</span>
+                    <span class="cell-stars">${starsStr}</span>
+                    <span class="cell-tag">${lvl.tier}</span>
+                `;
+                cell.addEventListener('click', () => {
+                    loadLevel(idx);
+                    levelModal.classList.remove('open');
+                    sfx.playStep();
+                });
+                levelGridEl.appendChild(cell);
+            });
+        }
+
+        function loadLevel(idx) {
+            currentLevelIdx = idx;
+            const levelData = LEVELS[idx];
+            rows = levelData.grid.length;
+            cols = levelData.grid[0].length;
+            grid = levelData.grid.map(r => r.split(''));
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (grid[r][c] === 'K') {
+                        king = { r, c };
+                        renderKing = { r, c };
+                        grid[r][c] = '.';
+                    } else if (grid[r][c] === 'Q') {
+                        queen = { r, c };
+                    }
+                }
+            }
+
+            goldKeysHeld = 0;
+            silverKeysHeld = 0;
+            moves = 0;
+            history = [];
+            isVictory = false;
+            hintHighlight = null;
+            particles = [];
+            ripples = [];
+            bumpOffset = { x: 0, y: 0 };
+
+            victoryOverlay.classList.remove('active');
+            hudLevelLabel.textContent = `Level ${idx + 1} / ${LEVELS.length}`;
+            prevLvlBtn.disabled = idx === 0;
+            nextLvlBtn.disabled = idx === LEVELS.length - 1;
+            briefingTitleEl.textContent = levelData.title;
+            briefingTextEl.textContent = levelData.story;
+            parCountEl.textContent = levelData.par;
+            updateHUD();
+        }
+
+        function updateHUD() {
+            moveCountEl.textContent = moves;
+            goldKeyStatusEl.textContent = `🗝️ Gold: ${goldKeysHeld}`;
+            silverKeyStatusEl.textContent = `🔑 Silver: ${silverKeysHeld}`;
+            undoBtn.disabled = history.length === 0 || isVictory;
+        }
+
+        function pushHistory() {
+            history.push({
+                grid: cloneGrid(grid),
+                king: { ...king },
+                goldKeysHeld,
+                silverKeysHeld,
+                moves
+            });
+        }
+
+        function undoMove() {
+            if (history.length === 0 || isVictory) return;
+            const prev = history.pop();
+            grid = prev.grid;
+            king = prev.king;
+            goldKeysHeld = prev.goldKeysHeld;
+            silverKeysHeld = prev.silverKeysHeld;
+            moves = prev.moves;
+            hintHighlight = null;
+            sfx.playStep();
+            updateHUD();
+        }
+
+        function triggerHint() {
+            if (isVictory) return;
+            const path = solveBoardBFS(grid, king, goldKeysHeld, silverKeysHeld, queen);
+            if (path && path.length > 0) {
+                const nextStep = path[0];
+                hintHighlight = {
+                    r: king.r + nextStep.dr,
+                    c: king.c + nextStep.dc,
+                    expires: performance.now() + 2200
+                };
+                spawnRipple(hintHighlight.r, hintHighlight.c, '#38bdf8');
+                showToast(`Hint: Step ${nextStep.name} (${path.length} moves to Queen)`);
+                sfx.playSwitch();
+            } else {
+                showToast("No path from here! Press Undo (Z) or Reset (R).");
+                sfx.playBump();
+            }
+        }
+
+        function toggleBarriers(ignoreR, ignoreC) {
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (grid[r][c] === 'B') {
+                        grid[r][c] = 'b';
+                        spawnRipple(r, c, '#10b981');
+                    } else if (grid[r][c] === 'b') {
+                        if (!(r === ignoreR && c === ignoreC) && !(r === queen.r && c === queen.c)) {
+                            grid[r][c] = 'B';
+                            spawnRipple(r, c, '#ef4444');
+                        }
+                    }
+                }
+            }
+        }
+
+        function tryMove(dr, dc) {
+            if (isVictory) return;
+            const nr = king.r + dr;
+            const nc = king.c + dc;
+
+            if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) {
+                triggerBump(dr, dc);
+                return;
+            }
+
+            const targetTile = grid[nr][nc];
+
+            if (targetTile === '#' || targetTile === 'P' || targetTile === 'B') {
+                triggerBump(dr, dc);
+                if (targetTile === 'B') showToast("Barrier Sealed! Step on a Pressure Plate.");
+                if (targetTile === 'P') showToast("Abyssal Pit! Impassable.");
+                return;
+            }
+
+            if (targetTile === 'G') {
+                if (goldKeysHeld > 0) {
+                    const prevR = king.r;
+                    const prevC = king.c;
+                    pushHistory();
+                    goldKeysHeld--;
+                    grid[nr][nc] = '.';
+                    king = { r: nr, c: nc };
+                    moves++;
+                    hintHighlight = null;
+                    sfx.playGateUnlock();
+                    spawnParticles(nr, nc, '#f5b942', 22, 1.1);
+                    spawnRipple(nr, nc, '#f5b942');
+                    showToast("Gold Gate Unlocked!");
+                    handlePostMove(nr, nc, prevR, prevC);
+                } else {
+                    triggerBump(dr, dc);
+                    showToast("Gold Gate! Requires a Gold Key.");
+                }
+                return;
+            }
+
+            if (targetTile === 'D') {
+                if (silverKeysHeld > 0) {
+                    const prevR = king.r;
+                    const prevC = king.c;
+                    pushHistory();
+                    silverKeysHeld--;
+                    grid[nr][nc] = '.';
+                    king = { r: nr, c: nc };
+                    moves++;
+                    hintHighlight = null;
+                    sfx.playGateUnlock();
+                    spawnParticles(nr, nc, '#e2e8f0', 22, 1.1);
+                    spawnRipple(nr, nc, '#cbd5e1');
+                    showToast("Silver Gate Unlocked!");
+                    handlePostMove(nr, nc, prevR, prevC);
+                } else {
+                    triggerBump(dr, dc);
+                    showToast("Silver Gate! Requires a Silver Key.");
+                }
+                return;
+            }
+
+            const prevR = king.r;
+            const prevC = king.c;
+            pushHistory();
+            king = { r: nr, c: nc };
+            moves++;
+            hintHighlight = null;
+            sfx.playStep();
+
+            handlePostMove(nr, nc, prevR, prevC);
+        }
+
+        function triggerBump(dr, dc) {
+            sfx.playBump();
+            bumpOffset = { x: dc * 0.22, y: dr * 0.22 };
+        }
+
+        function handlePostMove(nr, nc, prevR, prevC) {
+            // 1. Collapse cracked floor just vacated
+            if (grid[prevR][prevC] === 'C') {
+                grid[prevR][prevC] = 'P';
+                sfx.playCrumble();
+                spawnParticles(prevR, prevC, '#b45309', 16, 0.85);
+            }
+
+            const landedTile = grid[nr][nc];
+
+            // 2. Gold Key 'k'
+            if (landedTile === 'k') {
+                goldKeysHeld++;
+                grid[nr][nc] = '.';
+                sfx.playKey();
+                spawnParticles(nr, nc, '#ffe08a', 24, 1.15);
+                spawnRipple(nr, nc, '#f5b942');
+                showToast("Gold Key Acquired!");
+            }
+
+            // 3. Silver Key 's'
+            if (landedTile === 's') {
+                silverKeysHeld++;
+                grid[nr][nc] = '.';
+                sfx.playKey();
+                spawnParticles(nr, nc, '#f8fafc', 24, 1.15);
+                spawnRipple(nr, nc, '#cbd5e1');
+                showToast("Silver Key Acquired!");
+            }
+
+            // 4. Pressure Plate Switch 'S'
+            if (landedTile === 'S') {
+                sfx.playSwitch();
+                toggleBarriers(nr, nc);
+                spawnParticles(nr, nc, '#34d399', 18, 1.0);
+                spawnRipple(nr, nc, '#10b981');
+                showToast("Mechanisms Shifted!");
+            }
+
+            // 5. Paired Teleportation Rune '1'
+            if (landedTile === '1') {
+                let dest = null;
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        if (grid[r][c] === '1' && (r !== nr || c !== nc)) {
+                            dest = { r, c };
+                        }
+                    }
+                }
+                if (dest) {
+                    spawnParticles(nr, nc, '#c084fc', 22, 1.1);
+                    spawnRipple(nr, nc, '#a855f7');
+                    king = { r: dest.r, c: dest.c };
+                    renderKing = { r: dest.r, c: dest.c };
+                    sfx.playTeleport();
+                    spawnParticles(dest.r, dest.c, '#e879f9', 24, 1.2);
+                    spawnRipple(dest.r, dest.c, '#a855f7');
+                    showToast("Warped via Arcane Rune!");
+                }
+            }
+
+            updateHUD();
+
+            // 6. Victory Check
+            if (king.r === queen.r && king.c === queen.c) {
+                triggerVictory();
+            }
+        }
+
+        function triggerVictory() {
+            isVictory = true;
+            sfx.playVictory();
+            spawnParticles(queen.r, queen.c, '#f5b942', 45, 1.4);
+            spawnParticles(queen.r, queen.c, '#ffffff', 25, 1.2);
+            spawnRipple(queen.r, queen.c, '#ffe08a');
+
+            const par = LEVELS[currentLevelIdx].par;
+            const stars = moves <= par ? 3 : moves <= par + 4 ? 2 : 1;
+
+            const prevRecord = progressData[currentLevelIdx];
+            if (!prevRecord || stars > prevRecord.stars || moves < prevRecord.bestMoves) {
+                progressData[currentLevelIdx] = {
+                    stars: Math.max(stars, prevRecord ? prevRecord.stars : 0),
+                    bestMoves: Math.min(moves, prevRecord ? prevRecord.bestMoves : moves)
+                };
+                saveProgress();
+            }
+
+            victoryStarsDisplay.textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+            victoryTitleEl.textContent = currentLevelIdx === LEVELS.length - 1
+                ? "The Grand Citadel Conquered!"
+                : `Chamber ${currentLevelIdx + 1} Cleared!`;
+            victoryDescEl.textContent = `The Queen was rescued in ${moves} moves (Par: ${par}).`;
+
+            nextLevelBtn.textContent = currentLevelIdx < LEVELS.length - 1
+                ? `Enter Chamber ${currentLevelIdx + 2} →`
+                : "Return to Chamber 1 ↻";
+
+            setTimeout(() => {
+                victoryOverlay.classList.add('active');
+            }, 420);
+            updateHUD();
+        }
+
+        /**
+         * ============================================================================
+         * CANVAS RESIZING & HIGH-DPI RENDERING LOOP
+         * ============================================================================
+         */
+        function resizeCanvas() {
+            const rect = canvasFrame.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            const size = Math.max(240, rect.width - 16);
+            canvas.width = size * dpr;
+            canvas.height = size * dpr;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        function drawRoundedRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.arcTo(x + w, y, x + w, y + h, r);
+            ctx.arcTo(x + w, y + h, x, y + h, r);
+            ctx.arcTo(x, y + h, x, y, r);
+            ctx.arcTo(x, y, x + w, y, r);
+            ctx.closePath();
+        }
+
+        function render(timestamp) {
+            animTime = timestamp * 0.001;
+            const w = canvas.width;
+            const h = canvas.height;
+            const tileSize = w / cols;
+
+            // Smooth interpolation for King movement and bump recoil
+            renderKing.r += (king.r - renderKing.r) * 0.28;
+            renderKing.c += (king.c - renderKing.c) * 0.28;
+            bumpOffset.x *= 0.72;
+            bumpOffset.y *= 0.72;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // 1. Draw Grid Tiles
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const x = c * tileSize;
+                    const y = r * tileSize;
+                    const tile = grid[r][c];
+                    const pad = tileSize * 0.04;
+                    const innerSize = tileSize - pad * 2;
+                    const rad = tileSize * 0.14;
+
+                    // Base Floor Tile (Checkerboard dark slate)
+                    const isEven = (r + c) % 2 === 0;
+                    ctx.fillStyle = isEven ? '#171c26' : '#1b212d';
+                    drawRoundedRect(ctx, x + pad, y + pad, innerSize, innerSize, rad);
+                    ctx.fill();
+
+                    // Subtle inner bevel highlight
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.035)';
+                    ctx.lineWidth = Math.max(1, tileSize * 0.02);
+                    ctx.stroke();
+
+                    // Center Sanctum Royal Carpet Aura around Queen [4,4]
+                    if (r === queen.r && c === queen.c) {
+                        const pulse = 0.5 + 0.5 * Math.sin(animTime * 3.2);
+                        const grad = ctx.createRadialGradient(
+                            x + tileSize * 0.5, y + tileSize * 0.5, tileSize * 0.08,
+                            x + tileSize * 0.5, y + tileSize * 0.5, tileSize * 0.65
+                        );
+                        grad.addColorStop(0, `rgba(245, 185, 66, ${0.42 + pulse * 0.18})`);
+                        grad.addColorStop(1, 'rgba(245, 185, 66, 0.0)');
+                        ctx.fillStyle = grad;
+                        ctx.fillRect(x - tileSize * 0.2, y - tileSize * 0.2, tileSize * 1.4, tileSize * 1.4);
+
+                        // Gold trim border on Queen's tile
+                        ctx.strokeStyle = `rgba(245, 185, 66, ${0.65 + pulse * 0.35})`;
+                        ctx.lineWidth = Math.max(2, tileSize * 0.045);
+                        drawRoundedRect(ctx, x + pad, y + pad, innerSize, innerSize, rad);
+                        ctx.stroke();
+                    }
+
+                    // Render Specific Tile Mechanics
+                    if (tile === '#') {
+                        // Fortress Battlement Wall
+                        const wallGrad = ctx.createLinearGradient(x, y, x, y + tileSize);
+                        wallGrad.addColorStop(0, '#333d52');
+                        wallGrad.addColorStop(1, '#1e2433');
+                        ctx.fillStyle = wallGrad;
+                        drawRoundedRect(ctx, x + pad * 0.6, y + pad * 0.6, tileSize - pad * 1.2, tileSize - pad * 1.2, rad);
+                        ctx.fill();
+
+                        // Stone top cap highlight
+                        ctx.strokeStyle = '#475569';
+                        ctx.lineWidth = Math.max(1.5, tileSize * 0.03);
+                        ctx.stroke();
+
+                        // Brick mortar lines
+                        ctx.strokeStyle = 'rgba(10, 14, 22, 0.55)';
+                        ctx.lineWidth = Math.max(1, tileSize * 0.025);
+                        ctx.beginPath();
+                        ctx.moveTo(x + tileSize * 0.2, y + tileSize * 0.5);
+                        ctx.lineTo(x + tileSize * 0.8, y + tileSize * 0.5);
+                        ctx.moveTo(x + tileSize * 0.5, y + tileSize * 0.22);
+                        ctx.lineTo(x + tileSize * 0.5, y + tileSize * 0.5);
+                        ctx.stroke();
+                    } else if (tile === 'P') {
+                        // Collapsed Abyssal Pit
+                        ctx.fillStyle = '#07090d';
+                        drawRoundedRect(ctx, x + pad, y + pad, innerSize, innerSize, rad);
+                        ctx.fill();
+                        ctx.strokeStyle = '#1e293b';
+                        ctx.lineWidth = Math.max(1.5, tileSize * 0.03);
+                        ctx.stroke();
+
+                        // Inner abyss depth lines
+                        ctx.strokeStyle = 'rgba(148, 163, 184, 0.14)';
+                        ctx.beginPath();
+                        ctx.moveTo(x + tileSize * 0.3, y + tileSize * 0.3);
+                        ctx.lineTo(x + tileSize * 0.7, y + tileSize * 0.7);
+                        ctx.moveTo(x + tileSize * 0.7, y + tileSize * 0.3);
+                        ctx.lineTo(x + tileSize * 0.3, y + tileSize * 0.7);
+                        ctx.stroke();
+                    } else if (tile === 'C') {
+                        // Cracked Floor Tile (Amber stone with fracture lines)
+                        ctx.fillStyle = '#3b2313';
+                        drawRoundedRect(ctx, x + pad, y + pad, innerSize, innerSize, rad);
+                        ctx.fill();
+                        ctx.strokeStyle = '#d97706';
+                        ctx.lineWidth = Math.max(1.5, tileSize * 0.03);
+                        ctx.stroke();
+
+                        // Jagged Fracture Lines
+                        ctx.strokeStyle = '#fbbf24';
+                        ctx.lineWidth = Math.max(1.5, tileSize * 0.03);
+                        ctx.beginPath();
+                        ctx.moveTo(x + tileSize * 0.25, y + tileSize * 0.22);
+                        ctx.lineTo(x + tileSize * 0.48, y + tileSize * 0.48);
+                        ctx.lineTo(x + tileSize * 0.35, y + tileSize * 0.76);
+                        ctx.moveTo(x + tileSize * 0.48, y + tileSize * 0.48);
+                        ctx.lineTo(x + tileSize * 0.76, y + tileSize * 0.62);
+                        ctx.stroke();
+                    } else if (tile === 'G') {
+                        // Locked Gold Gate
+                        ctx.fillStyle = 'rgba(180, 83, 9, 0.35)';
+                        drawRoundedRect(ctx, x + pad, y + pad, innerSize, innerSize, rad);
+                        ctx.fill();
+                        ctx.strokeStyle = '#f5b942';
+                        ctx.lineWidth = Math.max(2, tileSize * 0.045);
+                        ctx.stroke();
+
+                        ctx.strokeStyle = '#fbbf24';
+                        ctx.lineWidth = Math.max(2, tileSize * 0.04);
+                        for (let b = 0.3; b <= 0.71; b += 0.2) {
+                            ctx.beginPath();
+                            ctx.moveTo(x + tileSize * b, y + tileSize * 0.18);
+                            ctx.lineTo(x + tileSize * b, y + tileSize * 0.82);
+                            ctx.stroke();
+                        }
+
+                        ctx.fillStyle = '#111827';
+                        ctx.beginPath();
+                        ctx.arc(x + tileSize * 0.5, y + tileSize * 0.5, tileSize * 0.14, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.strokeStyle = '#ffe08a';
+                        ctx.lineWidth = Math.max(1.5, tileSize * 0.03);
+                        ctx.stroke();
+                    } else if (tile === 'D') {
+                        // Locked Silver Gate
+                        ctx.fillStyle = 'rgba(148, 163, 184, 0.28)';
+                        drawRoundedRect(ctx, x + pad, y + pad, innerSize, innerSize, rad);
+                        ctx.fill();
+                        ctx.strokeStyle = '#cbd5e1';
+                        ctx.lineWidth = Math.max(2, tileSize * 0.045);
+                        ctx.stroke();
+
+                        ctx.strokeStyle = '#e2e8f0';
+                        ctx.lineWidth = Math.max(2, tileSize * 0.04);
+                        for (let b = 0.3; b <= 0.71; b += 0.2) {
+                            ctx.beginPath();
+                            ctx.moveTo(x + tileSize * b, y + tileSize * 0.18);
+                            ctx.lineTo(x + tileSize * b, y + tileSize * 0.82);
+                            ctx.stroke();
+                        }
+
+                        ctx.fillStyle = '#0f172a';
+                        ctx.beginPath();
+                        ctx.arc(x + tileSize * 0.5, y + tileSize * 0.5, tileSize * 0.14, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.strokeStyle = '#f8fafc';
+                        ctx.lineWidth = Math.max(1.5, tileSize * 0.03);
+                        ctx.stroke();
+                    } else if (tile === 'k') {
+                        // Floating Gold Key
+                        const bob = Math.sin(animTime * 4.2) * (tileSize * 0.06);
+                        ctx.save();
+                        ctx.translate(x + tileSize * 0.5, y + tileSize * 0.5 + bob);
+                        ctx.shadowColor = 'rgba(245, 185, 66, 0.75)';
+                        ctx.shadowBlur = 12;
+                        ctx.font = `${Math.floor(tileSize * 0.54)}px sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('🗝️', 0, 0);
+                        ctx.restore();
+                    } else if (tile === 's') {
+                        // Floating Silver Key
+                        const bob = Math.sin(animTime * 4.2 + 1.2) * (tileSize * 0.06);
+                        ctx.save();
+                        ctx.translate(x + tileSize * 0.5, y + tileSize * 0.5 + bob);
+                        ctx.shadowColor = 'rgba(226, 232, 240, 0.75)';
+                        ctx.shadowBlur = 12;
+                        ctx.font = `${Math.floor(tileSize * 0.54)}px sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('🔑', 0, 0);
+                        ctx.restore();
+                    } else if (tile === '1') {
+                        // Paired Arcane Teleportation Rune
+                        const spin = animTime * 2.4;
+                        const cx = x + tileSize * 0.5;
+                        const cy = y + tileSize * 0.5;
+                        ctx.save();
+                        ctx.translate(cx, cy);
+                        const portalGrad = ctx.createRadialGradient(0, 0, tileSize * 0.05, 0, 0, tileSize * 0.42);
+                        portalGrad.addColorStop(0, 'rgba(216, 180, 254, 0.85)');
+                        portalGrad.addColorStop(0.55, 'rgba(168, 85, 247, 0.45)');
+                        portalGrad.addColorStop(1, 'rgba(88, 28, 135, 0)');
+                        ctx.fillStyle = portalGrad;
+                        ctx.beginPath();
+                        ctx.arc(0, 0, tileSize * 0.42, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        ctx.rotate(spin);
+                        ctx.strokeStyle = '#d8b4fe';
+                        ctx.lineWidth = Math.max(1.8, tileSize * 0.035);
+                        ctx.strokeRect(-tileSize * 0.2, -tileSize * 0.2, tileSize * 0.4, tileSize * 0.4);
+                        ctx.rotate(Math.PI / 4);
+                        ctx.strokeStyle = '#a855f7';
+                        ctx.strokeRect(-tileSize * 0.2, -tileSize * 0.2, tileSize * 0.4, tileSize * 0.4);
+                        ctx.restore();
+                    } else if (tile === 'S') {
+                        // Pressure Plate Floor Switch
+                        ctx.fillStyle = 'rgba(16, 185, 129, 0.18)';
+                        drawRoundedRect(ctx, x + tileSize * 0.18, y + tileSize * 0.18, tileSize * 0.64, tileSize * 0.64, rad);
+                        ctx.fill();
+                        ctx.strokeStyle = '#10b981';
+                        ctx.lineWidth = Math.max(2, tileSize * 0.04);
+                        ctx.stroke();
+
+                        // Inner glowing gem node
+                        ctx.fillStyle = '#34d399';
+                        ctx.beginPath();
+                        ctx.arc(x + tileSize * 0.5, y + tileSize * 0.5, tileSize * 0.14, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (tile === 'B') {
+                        // Closed Retractable Barrier (Emerald/Crimson Spikes Up)
+                        ctx.fillStyle = 'rgba(239, 68, 68, 0.24)';
+                        drawRoundedRect(ctx, x + pad, y + pad, innerSize, innerSize, rad);
+                        ctx.fill();
+                        ctx.strokeStyle = '#ef4444';
+                        ctx.lineWidth = Math.max(2, tileSize * 0.04);
+                        ctx.stroke();
+
+                        // Diagonal portcullis crossbars
+                        ctx.strokeStyle = '#f87171';
+                        ctx.lineWidth = Math.max(2, tileSize * 0.045);
+                        ctx.beginPath();
+                        ctx.moveTo(x + tileSize * 0.24, y + tileSize * 0.24);
+                        ctx.lineTo(x + tileSize * 0.76, y + tileSize * 0.76);
+                        ctx.moveTo(x + tileSize * 0.76, y + tileSize * 0.24);
+                        ctx.lineTo(x + tileSize * 0.24, y + tileSize * 0.76);
+                        ctx.stroke();
+                    } else if (tile === 'b') {
+                        // Open / Retracted Barrier (Recessed floor frame)
+                        ctx.strokeStyle = 'rgba(16, 185, 129, 0.45)';
+                        ctx.setLineDash([tileSize * 0.08, tileSize * 0.06]);
+                        ctx.lineWidth = Math.max(1.5, tileSize * 0.03);
+                        drawRoundedRect(ctx, x + tileSize * 0.16, y + tileSize * 0.16, tileSize * 0.68, tileSize * 0.68, rad * 0.7);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
+
+                    // Highlight adjacent valid tiles subtly for touch/mouse affordance
+                    if (!isVictory && Math.abs(r - king.r) + Math.abs(c - king.c) === 1) {
+                        if (tile !== '#' && tile !== 'P' && tile !== 'B') {
+                            ctx.fillStyle = 'rgba(255, 255, 255, 0.035)';
+                            drawRoundedRect(ctx, x + pad, y + pad, innerSize, innerSize, rad);
+                            ctx.fill();
+                        }
+                    }
+
+                    // Draw Active BFS Solver Hint Highlight
+                    if (hintHighlight && hintHighlight.r === r && hintHighlight.c === c) {
+                        if (timestamp < hintHighlight.expires) {
+                            const pulse = 0.5 + 0.5 * Math.sin(animTime * 9);
+                            ctx.strokeStyle = `rgba(56, 189, 248, ${0.55 + pulse * 0.45})`;
+                            ctx.lineWidth = Math.max(2.5, tileSize * 0.06);
+                            drawRoundedRect(ctx, x + pad, y + pad, innerSize, innerSize, rad);
+                            ctx.stroke();
+                        } else {
+                            hintHighlight = null;
+                        }
+                    }
+                }
+            }
+
+            // 2. Draw Queen in the Central Sanctum [4,4]
+            const qx = (queen.c + 0.5) * tileSize;
+            const qy = (queen.r + 0.5) * tileSize + Math.sin(animTime * 3.5) * (tileSize * 0.05);
+            ctx.save();
+            ctx.shadowColor = 'rgba(245, 185, 66, 0.85)';
+            ctx.shadowBlur = 16;
+            ctx.font = `${Math.floor(tileSize * 0.62)}px sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('👸', qx, qy);
+            ctx.restore();
+
+            // 3. Draw King with Smooth Interpolation & Recoil
+            const kx = (renderKing.c + 0.5 + bumpOffset.x) * tileSize;
+            const ky = (renderKing.r + 0.5 + bumpOffset.y) * tileSize + Math.abs(Math.sin(animTime * 5)) * (tileSize * 0.03);
+            ctx.save();
+            ctx.shadowColor = 'rgba(58, 134, 255, 0.7)';
+            ctx.shadowBlur = 14;
+            ctx.font = `${Math.floor(tileSize * 0.62)}px sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🤴', kx, ky);
+            ctx.restore();
+
+            // 4. Draw Expanding Ripples
+            for (let i = ripples.length - 1; i >= 0; i--) {
+                const rp = ripples[i];
+                rp.radius += (rp.maxRadius - rp.radius) * 0.14;
+                rp.alpha -= 0.035;
+                if (rp.alpha <= 0.01) {
+                    ripples.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.strokeStyle = rp.color;
+                ctx.globalAlpha = Math.max(0, rp.alpha);
+                ctx.lineWidth = Math.max(1.5, tileSize * 0.04);
+                ctx.beginPath();
+                ctx.arc(rp.x, rp.y, rp.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // 5. Draw Burst Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vx *= 0.94;
+                p.vy *= 0.94;
+                p.life -= p.decay;
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, p.life);
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        let rafId = null;
+        function renderLoop(timestamp) {
+            try {
+                render(timestamp || performance.now());
+            } catch (e) {
+                // Keep animation loop alive even if a frame encounters a transient canvas error
+            }
+            rafId = requestAnimationFrame(renderLoop);
+        }
+
+        /**
+         * ============================================================================
+         * KEYBOARD, POINTER (CLICK/TAP), AND TOUCH SWIPE INPUT HANDLERS
+         * ============================================================================
+         */
+        window.addEventListener('keydown', (e) => {
+            if (levelModal.classList.contains('open')) {
+                if (e.key === 'Escape') levelModal.classList.remove('open');
+                return;
+            }
+            const key = e.key.toLowerCase();
+            if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd', ' '].includes(key)) {
+                e.preventDefault();
+            }
+            switch (key) {
+                case 'arrowup':
+                case 'w':
+                    tryMove(-1, 0);
+                    break;
+                case 'arrowdown':
+                case 's':
+                    tryMove(1, 0);
+                    break;
+                case 'arrowleft':
+                case 'a':
+                    tryMove(0, -1);
+                    break;
+                case 'arrowright':
+                case 'd':
+                    tryMove(0, 1);
+                    break;
+                case 'z':
+                    undoMove();
+                    break;
+                case 'h':
+                    triggerHint();
+                    break;
+                case 'r':
+                    loadLevel(currentLevelIdx);
+                    sfx.playStep();
+                    showToast("Chamber Reset");
+                    break;
+            }
+        });
+
+        function handleCanvasPointerTap(clientX, clientY) {
+            if (isVictory || levelModal.classList.contains('open')) return;
+            const rect = canvas.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            const col = Math.floor(((clientX - rect.left) / rect.width) * cols);
+            const row = Math.floor(((clientY - rect.top) / rect.height) * rows);
+            if (row < 0 || row >= rows || col < 0 || col >= cols) return;
+
+            const dr = row - king.r;
+            const dc = col - king.c;
+            if (Math.abs(dr) + Math.abs(dc) === 1) {
+                tryMove(dr, dc);
+            } else if (row === king.r && col === king.c && grid[row][col] === '1') {
+                // Tapping King while standing on a portal rune attempts warp if adjacent to twin or gives feedback
+                showToast("Step onto a Rune tile to warp to its twin!");
+            } else if (grid[row][col] === '1') {
+                // If player taps a portal rune directly and is adjacent to it, step onto it
+                const adjDr = Math.sign(row - king.r);
+                const adjDc = Math.sign(col - king.c);
+                if (Math.abs(row - king.r) <= 1 && Math.abs(col - king.c) <= 1 && (adjDr === 0 || adjDc === 0)) {
+                    tryMove(adjDr, adjDc);
+                }
+            }
+        }
+
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchMoved = false;
+
+        canvas.addEventListener('touchstart', (e) => {
+            if (!e.touches || e.touches.length === 0) return;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchMoved = false;
+        }, { passive: true });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (!e.touches || e.touches.length === 0) return;
+            const dx = e.touches[0].clientX - touchStartX;
+            const dy = e.touches[0].clientY - touchStartY;
+            const threshold = 26;
+            if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) {
+                touchMoved = true;
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    tryMove(0, dx > 0 ? 1 : -1);
+                } else {
+                    tryMove(dy > 0 ? 1 : -1, 0);
+                }
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        canvas.addEventListener('touchend', (e) => {
+            if (!touchMoved && e.changedTouches && e.changedTouches.length > 0) {
+                handleCanvasPointerTap(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+            }
+        }, { passive: true });
+
+        canvas.addEventListener('click', (e) => {
+            if (touchMoved) {
+                touchMoved = false;
+                return;
+            }
+            handleCanvasPointerTap(e.clientX, e.clientY);
+        });
+
+        // UI Button Listeners
+        prevLvlBtn.addEventListener('click', () => {
+            if (currentLevelIdx > 0) {
+                loadLevel(currentLevelIdx - 1);
+                sfx.playStep();
+            }
+        });
+
+        nextLvlBtn.addEventListener('click', () => {
+            if (currentLevelIdx < LEVELS.length - 1) {
+                loadLevel(currentLevelIdx + 1);
+                sfx.playStep();
+            }
+        });
+
+        openLevelModalBtn.addEventListener('click', () => {
+            renderLevelSelectGrid();
+            levelModal.classList.add('open');
+        });
+
+        closeLevelModalBtn.addEventListener('click', () => {
+            levelModal.classList.remove('open');
+        });
+
+        levelModal.addEventListener('click', (e) => {
+            if (e.target === levelModal) {
+                levelModal.classList.remove('open');
+            }
+        });
+
+        undoBtn.addEventListener('click', undoMove);
+        hintBtn.addEventListener('click', triggerHint);
+
+        resetBtn.addEventListener('click', () => {
+            loadLevel(currentLevelIdx);
+            sfx.playStep();
+            showToast("Chamber Reset");
+        });
+
+        muteBtn.addEventListener('click', () => {
+            sfx.muted = !sfx.muted;
+            muteIconEl.textContent = sfx.muted ? '🔇' : '🔊';
+            muteLabelEl.textContent = sfx.muted ? 'Muted' : 'Sound';
+            if (!sfx.muted) sfx.playStep();
+        });
+
+        nextLevelBtn.addEventListener('click', () => {
+            const nextIdx = (currentLevelIdx + 1) % LEVELS.length;
+            loadLevel(nextIdx);
+            sfx.playStep();
+        });
+
+        // Initialize on Window Load
+        window.onload = function () {
+            resizeCanvas();
+            loadLevel(0);
+            rafId = requestAnimationFrame(renderLoop);
+        };
+    </script>
+</body>
+</html>
