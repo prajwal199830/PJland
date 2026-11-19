@@ -1,0 +1,2762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Royal Pond Fishing - 3D Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold-light: #ffe08a;
+            --gold-primary: #f5b942;
+            --gold-dark: #b45309;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0b1926;
+            color: #f8fafc;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            user-select: none;
+        }
+
+        .font-royal {
+            font-family: 'Cinzel', serif;
+        }
+
+        #canvas-container {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        #canvas-container canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .glass-panel {
+            background: rgba(12, 22, 34, 0.76);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(245, 185, 66, 0.28);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42);
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fff3c4 0%, #f5b942 52%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-royal {
+            background: linear-gradient(180deg, rgba(30, 46, 68, 0.92) 0%, rgba(15, 24, 38, 0.95) 100%);
+            border: 1px solid rgba(245, 185, 66, 0.35);
+            color: #f8fafc;
+            transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease, opacity 0.14s ease;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-royal:hover:not(:disabled) {
+            border-color: rgba(255, 224, 138, 0.75);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(245, 185, 66, 0.2);
+        }
+
+        .btn-royal:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .btn-royal:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #ffe08a 0%, #f5b942 48%, #d97706 100%);
+            color: #111827;
+            font-weight: 800;
+            border: 1px solid rgba(255, 243, 196, 0.7);
+            box-shadow: 0 8px 24px rgba(245, 185, 66, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            transition: transform 0.14s ease, box-shadow 0.14s ease, opacity 0.14s ease;
+        }
+
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(245, 185, 66, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+        }
+
+        .btn-gold:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .btn-gold:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        @keyframes bitePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        .bite-pulse {
+            animation: bitePulse 0.45s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Full-Viewport 3D Pond Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <!-- Top HUD Bar -->
+    <header class="fixed top-0 inset-x-0 z-20 p-3 sm:p-4 pointer-events-none">
+        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2.5">
+            <!-- Title, Level & Catch Stats -->
+            <div class="glass-panel rounded-2xl px-3.5 py-2 pointer-events-auto flex items-center gap-3 sm:gap-4">
+                <div>
+                    <h1 class="font-royal font-black text-base sm:text-xl tracking-wide gold-gradient-text leading-tight">
+                        👑 ROYAL POND FISHING
+                    </h1>
+                    <p id="status-subtext" class="text-[11px] sm:text-xs text-sky-200/80 font-medium">
+                        Aim over the pond &amp; click or press Space to cast
+                    </p>
+                </div>
+                <div class="hidden sm:block h-7 w-px bg-amber-400/20"></div>
+                <div class="flex items-center gap-3 text-xs sm:text-sm">
+                    <button id="level-modal-btn" class="btn-royal rounded-xl px-2.5 py-1.5 text-xs font-bold flex items-center gap-1.5 cursor-pointer" title="Select Level (1–20)">
+                        <span>🏰</span>
+                        <span id="hud-level-label" class="text-amber-300 tabular-nums">Lvl 1/20</span>
+                    </button>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400">Catches</span>
+                        <span id="hud-catches" class="font-bold text-amber-300 tabular-nums">0</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400">Score</span>
+                        <span id="hud-score" class="font-bold text-emerald-300 tabular-nums">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Utility Controls -->
+            <div class="flex items-center gap-2 pointer-events-auto">
+                <button id="camera-toggle-btn" class="btn-royal rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold flex items-center gap-1.5 cursor-pointer" title="Switch Camera View (1/2/3 or C)">
+                    <span>📷</span>
+                    <span id="camera-label">Pier View</span>
+                </button>
+                <button id="log-toggle-btn" class="btn-royal rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold flex items-center gap-1.5 cursor-pointer" title="Open Royal Catch Log (L)">
+                    <span>📖</span>
+                    <span>Catch Log</span>
+                    <span id="log-count-pill" class="ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full bg-amber-400/20 text-amber-300 font-bold">0/10</span>
+                </button>
+                <button id="mute-toggle-btn" class="btn-royal rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold flex items-center gap-1.5 cursor-pointer" title="Toggle Sound Effects (M)">
+                    <span id="mute-icon">🔊</span>
+                    <span class="hidden md:inline" id="mute-label">Sound</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Level Goal & Progress Strip -->
+        <div class="max-w-6xl mx-auto mt-2 flex justify-center sm:justify-start">
+            <div class="glass-panel rounded-xl px-3.5 py-1.5 pointer-events-auto flex items-center gap-3 text-[11px] sm:text-xs w-full sm:w-auto max-w-md">
+                <span id="level-name-badge" class="font-royal font-bold text-amber-200 truncate">1. Morning Lily Shallows</span>
+                <div class="flex-1 min-w-[84px] h-2 rounded-full bg-slate-900/90 border border-slate-700 overflow-hidden">
+                    <div id="level-progress-bar" class="h-full w-0 rounded-full bg-gradient-to-r from-amber-400 via-yellow-300 to-emerald-400 transition-[width] duration-200"></div>
+                </div>
+                <span id="level-goal-text" class="text-emerald-300 font-bold tabular-nums shrink-0">0 / 160 pts</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Stats Strip -->
+    <div class="sm:hidden fixed top-28 left-3 right-3 z-20 pointer-events-none flex justify-center">
+        <div class="glass-panel rounded-xl px-3 py-1 flex items-center gap-3 text-xs">
+            <span>Lvl: <strong id="hud-level-mobile" class="text-amber-300">1/20</strong></span>
+            <span class="text-slate-600">|</span>
+            <span>Catches: <strong id="hud-catches-mobile" class="text-amber-300">0</strong></span>
+            <span class="text-slate-600">|</span>
+            <span>Score: <strong id="hud-score-mobile" class="text-emerald-300">0</strong></span>
+        </div>
+    </div>
+
+    <!-- Bite Alert Banner (Appears during BITE window) -->
+    <div id="bite-banner" class="fixed top-36 sm:top-28 left-1/2 -translate-x-1/2 z-20 pointer-events-none hidden">
+        <div class="bite-pulse rounded-2xl px-5 py-2.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-royal font-black text-sm sm:text-lg tracking-wider shadow-2xl border-2 border-yellow-100 flex items-center gap-2">
+            <span>⚡</span>
+            <span>BITE! CLICK OR SPACE TO HOOK!</span>
+            <span>⚡</span>
+        </div>
+    </div>
+
+    <!-- Reel-In Progress & Tension HUD (Appears during REELING) -->
+    <div id="reel-hud" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-20 w-[92%] max-w-md pointer-events-none hidden">
+        <div class="glass-panel rounded-2xl p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between text-xs font-bold">
+                <span id="reel-fish-label" class="text-amber-200">Reeling Catch...</span>
+                <span id="reel-progress-pct" class="text-emerald-300 tabular-nums">0%</span>
+            </div>
+            <div class="w-full h-3 rounded-full bg-slate-900/90 border border-slate-700 overflow-hidden">
+                <div id="reel-progress-fill" class="h-full w-0 rounded-full bg-gradient-to-r from-sky-400 via-emerald-400 to-amber-300 transition-[width] duration-75"></div>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] font-semibold pt-0.5">
+                <span class="text-slate-300">Line Tension</span>
+                <span id="tension-status-label" class="text-emerald-300">SAFE ZONE</span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-900/90 border border-slate-700 overflow-hidden">
+                <div id="tension-fill" class="h-full w-[35%] rounded-full bg-gradient-to-r from-emerald-400 via-amber-400 to-rose-500 transition-[width] duration-75"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Action Bar -->
+    <footer class="fixed bottom-0 inset-x-0 z-20 p-3 sm:p-4 pointer-events-none">
+        <div class="max-w-4xl mx-auto flex flex-col items-center gap-2">
+            <div id="action-prompt-pill" class="glass-panel rounded-full px-4 py-1.5 text-xs text-sky-100/90 pointer-events-none text-center">
+                Move cursor or tap water to aim • Right-drag to orbit • Keys 1/2/3 or C for camera
+            </div>
+            <div class="flex items-center gap-2.5 pointer-events-auto">
+                <button id="primary-action-btn" class="btn-gold rounded-2xl px-6 py-2.5 font-royal text-sm sm:text-base tracking-wide cursor-pointer">
+                    🎣 Cast Line
+                </button>
+                <button id="cancel-line-btn" class="btn-royal rounded-2xl px-4 py-2.5 text-xs sm:text-sm font-semibold hidden cursor-pointer">
+                    Reel Back
+                </button>
+                <button id="reset-level-btn" class="btn-royal rounded-2xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold cursor-pointer" title="Reset Current Level">
+                    ↺ Reset
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Catch Celebration Card (Leaves upper/center view open so the 3D catch held aloft is visible) -->
+    <div id="catch-modal" class="fixed inset-x-0 bottom-16 sm:bottom-20 z-30 hidden items-end sm:items-center justify-center p-4 pointer-events-none">
+        <div class="glass-panel rounded-3xl max-w-sm w-full p-5 text-center border-2 border-amber-400/60 pointer-events-auto">
+            <div class="flex items-center justify-center gap-2 mb-1">
+                <span id="catch-emoji" class="text-3xl">🐠</span>
+                <span id="catch-rarity-badge" class="inline-block px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/40">
+                    Royal Rare
+                </span>
+            </div>
+            <h2 id="catch-name" class="font-royal text-xl sm:text-2xl font-black text-white mb-0.5">Golden Koi</h2>
+            <p id="catch-meta" class="text-xs sm:text-sm text-sky-200 font-semibold mb-1.5">Weight: 4.8 kg • +260 pts</p>
+            <p id="catch-level-banner" class="text-[11px] text-emerald-300 font-bold mb-2 hidden">
+                ✨ Level Goal Reached! Next level unlocked!
+            </p>
+            <p id="catch-desc" class="text-xs text-slate-300 leading-relaxed mb-4">
+                A shimmering royal koi with scales like hammered gold that glides beneath ancient lily pads.
+            </p>
+            <button id="continue-fishing-btn" class="btn-gold w-full rounded-2xl py-2.5 font-royal text-sm sm:text-base cursor-pointer">
+                Cast Again 🎣
+            </button>
+        </div>
+    </div>
+
+    <!-- Level Select Modal (20 Levels) -->
+    <div id="level-select-modal" class="fixed inset-0 z-40 bg-slate-950/75 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-panel rounded-3xl max-w-2xl w-full p-5 sm:p-6 border border-amber-400/40 max-h-[88vh] flex flex-col">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-700/80">
+                <div>
+                    <h2 class="font-royal text-lg sm:text-xl font-bold gold-gradient-text">🏰 Royal Pond Levels (1–20)</h2>
+                    <p id="level-modal-subtitle" class="text-xs text-slate-400">Select a pond stage • Higher levels bring rare catches &amp; tighter bites</p>
+                </div>
+                <button id="close-level-modal-btn" class="btn-royal rounded-xl w-9 h-9 flex items-center justify-center text-sm font-bold cursor-pointer">
+                    ✕
+                </button>
+            </div>
+            <div id="level-select-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 overflow-y-auto pr-1 flex-1"></div>
+        </div>
+    </div>
+
+    <!-- Royal Catch Log Modal -->
+    <div id="catch-log-modal" class="fixed inset-0 z-40 bg-slate-950/75 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-panel rounded-3xl max-w-lg w-full p-5 sm:p-6 border border-amber-400/40 max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-700/80">
+                <div>
+                    <h2 class="font-royal text-lg sm:text-xl font-bold gold-gradient-text">📖 Royal Catch Log</h2>
+                    <p class="text-xs text-slate-400">Records of fish &amp; relics landed by His Majesty</p>
+                </div>
+                <button id="close-log-btn" class="btn-royal rounded-xl w-9 h-9 flex items-center justify-center text-sm font-bold cursor-pointer">
+                    ✕
+                </button>
+            </div>
+            <div id="catch-log-list" class="space-y-2.5 overflow-y-auto pr-1 flex-1"></div>
+        </div>
+    </div>
+
+    <!-- WebGL / Three.js Fallback Message -->
+    <div id="error-fallback" class="fixed inset-0 z-50 bg-slate-950/95 hidden items-center justify-center p-6 text-center">
+        <div class="glass-panel rounded-3xl max-w-md w-full p-6 border border-rose-500/40">
+            <div class="text-4xl mb-3">🌊</div>
+            <h2 class="font-royal text-xl font-bold text-amber-300 mb-2">3D Pond Unavailable</h2>
+            <p id="error-fallback-msg" class="text-sm text-slate-300 mb-4">
+                WebGL or Three.js could not be initialized in this browser view.
+            </p>
+            <button onclick="location.reload()" class="btn-gold rounded-xl px-5 py-2 text-sm cursor-pointer">
+                Reload Page
+            </button>
+        </div>
+    </div>
+
+    <!-- Three.js r128 Global Script from cdnjs -->
+    <script>
+        /**
+         * ============================================================================
+         * SYNTHESIZED WEB AUDIO SOUND ENGINE (No external audio files required)
+         * ============================================================================
+         */
+        class PondAudioEngine {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+
+            ensureContext() {
+                if (this.muted) return null;
+                try {
+                    if (!this.ctx) {
+                        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                        if (AudioCtx) {
+                            this.ctx = new AudioCtx();
+                        }
+                    }
+                    if (this.ctx && this.ctx.state === 'suspended') {
+                        this.ctx.resume().catch(() => {});
+                    }
+                    return this.ctx;
+                } catch (_) {
+                    return null;
+                }
+            }
+
+            playCastSplash() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                try {
+                    const now = ctx.currentTime;
+                    const whooshOsc = ctx.createOscillator();
+                    const whooshGain = ctx.createGain();
+                    whooshOsc.type = 'sine';
+                    whooshOsc.frequency.setValueAtTime(240, now);
+                    whooshOsc.frequency.exponentialRampToValueAtTime(520, now + 0.14);
+                    whooshOsc.frequency.exponentialRampToValueAtTime(130, now + 0.28);
+                    whooshGain.gain.setValueAtTime(0.09, now);
+                    whooshGain.gain.exponentialRampToValueAtTime(0.001, now + 0.29);
+                    whooshOsc.connect(whooshGain);
+                    whooshGain.connect(ctx.destination);
+                    whooshOsc.start(now);
+                    whooshOsc.stop(now + 0.3);
+
+                    const splashStart = now + 0.24;
+                    const bufferSize = Math.floor(ctx.sampleRate * 0.22);
+                    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                    const data = noiseBuffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.45));
+                    }
+                    const noise = ctx.createBufferSource();
+                    noise.buffer = noiseBuffer;
+
+                    const filter = ctx.createBiquadFilter();
+                    filter.type = 'bandpass';
+                    filter.frequency.setValueAtTime(950, splashStart);
+                    filter.Q.setValueAtTime(1.4, splashStart);
+
+                    const splashGain = ctx.createGain();
+                    splashGain.gain.setValueAtTime(0.22, splashStart);
+                    splashGain.gain.exponentialRampToValueAtTime(0.001, splashStart + 0.22);
+
+                    noise.connect(filter);
+                    filter.connect(splashGain);
+                    splashGain.connect(ctx.destination);
+                    noise.start(splashStart);
+                } catch (_) {}
+            }
+
+            playNibbleTick() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                try {
+                    const now = ctx.currentTime;
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(580, now);
+                    osc.frequency.exponentialRampToValueAtTime(340, now + 0.055);
+                    gain.gain.setValueAtTime(0.09, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.065);
+                } catch (_) {}
+            }
+
+            playBiteAlert() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                try {
+                    const now = ctx.currentTime;
+                    const freqs = [740, 987.77];
+                    freqs.forEach((f, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(f, now + idx * 0.07);
+                        gain.gain.setValueAtTime(0.09, now + idx * 0.07);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.12);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + idx * 0.07);
+                        osc.stop(now + idx * 0.07 + 0.13);
+                    });
+                } catch (_) {}
+            }
+
+            playReelTick(tensionRatio = 0.4) {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                try {
+                    const now = ctx.currentTime;
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    const baseFreq = 260 + tensionRatio * 340;
+                    osc.frequency.setValueAtTime(baseFreq, now);
+                    osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.75, now + 0.045);
+                    gain.gain.setValueAtTime(0.07, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.055);
+                } catch (_) {}
+            }
+
+            playCatchFanfare() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                try {
+                    const now = ctx.currentTime;
+                    const notes = [
+                        { freq: 523.25, delay: 0.00, dur: 0.14 },
+                        { freq: 659.25, delay: 0.12, dur: 0.14 },
+                        { freq: 783.99, delay: 0.24, dur: 0.14 },
+                        { freq: 1046.5, delay: 0.36, dur: 0.42 }
+                    ];
+                    notes.forEach(n => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(n.freq, now + n.delay);
+                        gain.gain.setValueAtTime(0.16, now + n.delay);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + n.delay + n.dur);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + n.delay);
+                        osc.stop(now + n.delay + n.dur + 0.02);
+                    });
+                } catch (_) {}
+            }
+
+            playLevelUpFanfare() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                try {
+                    const now = ctx.currentTime;
+                    const chord = [587.33, 739.99, 880.0, 1174.66];
+                    chord.forEach((f, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(f, now + idx * 0.08);
+                        gain.gain.setValueAtTime(0.14, now + idx * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.45);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + idx * 0.08);
+                        osc.stop(now + idx * 0.08 + 0.46);
+                    });
+                } catch (_) {}
+            }
+
+            playSnapOrMiss() {
+                const ctx = this.ensureContext();
+                if (!ctx) return;
+                try {
+                    const now = ctx.currentTime;
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(210, now);
+                    osc.frequency.exponentialRampToValueAtTime(62, now + 0.26);
+                    gain.gain.setValueAtTime(0.13, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.27);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.28);
+                } catch (_) {}
+            }
+        }
+
+        const audio = new PondAudioEngine();
+
+        /**
+         * ============================================================================
+         * ROYAL CATCH ROSTER (10 DISTINCT 3D MODELS) & 20 PROGRESSION LEVELS
+         * ============================================================================
+         */
+        const CATCH_SPECIES = [
+            {
+                id: 'silver_carp',
+                name: 'Silver Carp',
+                emoji: '🐟',
+                rarity: 'Common',
+                minLevel: 1,
+                badgeClass: 'bg-sky-400/20 text-sky-200 border-sky-400/40',
+                minWeight: 1.1,
+                maxWeight: 2.8,
+                points: 85,
+                pullDifficulty: 0.9,
+                scale: 1.0,
+                desc: 'A brisk silver-blue carp with gleaming scales, forked tail, and lively fins.'
+            },
+            {
+                id: 'river_perch',
+                name: 'River Perch',
+                emoji: '🐠',
+                rarity: 'Common',
+                minLevel: 1,
+                badgeClass: 'bg-sky-400/20 text-sky-200 border-sky-400/40',
+                minWeight: 0.8,
+                maxWeight: 2.2,
+                points: 95,
+                pullDifficulty: 0.98,
+                scale: 0.96,
+                desc: 'Olive-and-gold striped perch with a tall spiny dorsal fin patrolling sunlit shallows.'
+            },
+            {
+                id: 'ancient_pond_boot',
+                name: 'Ancient Pond Boot',
+                emoji: '🥾',
+                rarity: 'Pond Relic',
+                minLevel: 1,
+                badgeClass: 'bg-amber-700/30 text-amber-200 border-amber-500/40',
+                minWeight: 1.6,
+                maxWeight: 2.5,
+                points: 65,
+                pullDifficulty: 1.02,
+                scale: 1.05,
+                desc: 'A sturdy worn leather boot with stitched sole and turned cuff fished from the pond bed.'
+            },
+            {
+                id: 'emerald_pike',
+                name: 'Emerald Pike',
+                emoji: '🐡',
+                rarity: 'Uncommon',
+                minLevel: 2,
+                badgeClass: 'bg-emerald-400/20 text-emerald-200 border-emerald-400/40',
+                minWeight: 2.5,
+                maxWeight: 5.4,
+                points: 165,
+                pullDifficulty: 1.14,
+                scale: 1.16,
+                desc: 'Sleek jade-emerald predator with a long pointed snout and swift tail thrust.'
+            },
+            {
+                id: 'golden_koi',
+                name: 'Golden Koi',
+                emoji: '🎏',
+                rarity: 'Royal Rare',
+                minLevel: 3,
+                badgeClass: 'bg-amber-400/25 text-amber-200 border-amber-400/50',
+                minWeight: 3.2,
+                maxWeight: 6.9,
+                points: 250,
+                pullDifficulty: 1.22,
+                scale: 1.15,
+                desc: 'Vibrant orange-gold and pearl-white koi with flowing fins and delicate barbels.'
+            },
+            {
+                id: 'royal_catfish',
+                name: 'Royal Catfish',
+                emoji: '🐳',
+                rarity: 'Rare',
+                minLevel: 5,
+                badgeClass: 'bg-indigo-400/25 text-indigo-200 border-indigo-400/50',
+                minWeight: 6.5,
+                maxWeight: 14.0,
+                points: 340,
+                pullDifficulty: 1.32,
+                scale: 1.32,
+                desc: 'Broad slate-bronze pond giant sporting long sensory whiskers and a wide paddle tail.'
+            },
+            {
+                id: 'crowned_pearl_carp',
+                name: 'Crowned Pearl Carp',
+                emoji: '👑',
+                rarity: 'Royal Rare',
+                minLevel: 7,
+                badgeClass: 'bg-amber-300/25 text-amber-100 border-amber-300/60',
+                minWeight: 4.5,
+                maxWeight: 8.8,
+                points: 430,
+                pullDifficulty: 1.38,
+                scale: 1.22,
+                desc: 'Lustrous mother-of-pearl carp wearing a miniature golden crown crest.'
+            },
+            {
+                id: 'jade_dragon_eel',
+                name: 'Jade Dragon Eel',
+                emoji: '🐉',
+                rarity: 'Mythic',
+                minLevel: 10,
+                badgeClass: 'bg-teal-400/25 text-teal-200 border-teal-400/50',
+                minWeight: 5.0,
+                maxWeight: 11.2,
+                points: 540,
+                pullDifficulty: 1.46,
+                scale: 1.28,
+                desc: 'Sinister yet graceful serpentine jade eel with horned crest fins that coils in mid-air.'
+            },
+            {
+                id: 'sunken_royal_chalice',
+                name: 'Sunken Royal Chalice',
+                emoji: '🏆',
+                rarity: 'Royal Treasure',
+                minLevel: 13,
+                badgeClass: 'bg-yellow-400/25 text-yellow-200 border-yellow-300/60',
+                minWeight: 2.2,
+                maxWeight: 4.1,
+                points: 650,
+                pullDifficulty: 1.5,
+                scale: 1.15,
+                desc: 'An ornate golden goblet with crimson gem inlays lost from a royal banquet barge.'
+            },
+            {
+                id: 'sunburst_koi',
+                name: 'Sunburst Koi',
+                emoji: '☀️',
+                rarity: 'Legendary',
+                minLevel: 16,
+                badgeClass: 'bg-rose-400/25 text-rose-200 border-rose-400/50',
+                minWeight: 7.0,
+                maxWeight: 15.5,
+                points: 820,
+                pullDifficulty: 1.58,
+                scale: 1.35,
+                desc: 'Radiant blazing-gold and coral koi said to carry the warmth of the royal sun.'
+            }
+        ];
+
+        const ATMOSPHERE_THEMES = {
+            morning: {
+                sky: 0x9ad7ec,
+                fog: 0xb4e4f2,
+                water: 0x2298b8,
+                waterEmissive: 0x093545,
+                sunColor: 0xfff4d6,
+                sunIntensity: 1.7,
+                hemiSky: 0xe8f8ff,
+                hemiGround: 0x3b6e32
+            },
+            sunlit: {
+                sky: 0x7ec8eb,
+                fog: 0x9ad4ee,
+                water: 0x1b88ad,
+                waterEmissive: 0x072c3a,
+                sunColor: 0xfff1c9,
+                sunIntensity: 1.95,
+                hemiSky: 0xdff4ff,
+                hemiGround: 0x2d5a27
+            },
+            golden: {
+                sky: 0xf4b97e,
+                fog: 0xf2c597,
+                water: 0x1b6f8c,
+                waterEmissive: 0x2a1808,
+                sunColor: 0xffc978,
+                sunIntensity: 2.1,
+                hemiSky: 0xffe4c4,
+                hemiGround: 0x3d4e24
+            },
+            twilight: {
+                sky: 0x3b4d7a,
+                fog: 0x4a5e8c,
+                water: 0x114963,
+                waterEmissive: 0x122244,
+                sunColor: 0xffb38a,
+                sunIntensity: 1.35,
+                hemiSky: 0x93a9d6,
+                hemiGround: 0x1b3324
+            }
+        };
+
+        const HOTSPOT_ZONES = {
+            reeds: { label: 'Reed Edge', x: -4.6, z: -1.5, color: 0x6ee7b7 },
+            lilies: { label: 'Lily Pad Cove', x: 4.4, z: -2.2, color: 0xf9a8d4 },
+            center: { label: 'Deep Royal Center', x: -0.4, z: 1.2, color: 0xffe08a }
+        };
+
+        const LEVELS = [
+            { level: 1,  title: 'Morning Lily Shallows',  targetScore: 160,   biteWindow: 2.35, pullScale: 0.86, mood: 'morning',  hotspot: 'lilies' },
+            { level: 2,  title: 'King’s Reed Bend',        targetScore: 340,   biteWindow: 2.25, pullScale: 0.90, mood: 'morning',  hotspot: 'reeds' },
+            { level: 3,  title: 'Sunlit Pier Waters',      targetScore: 560,   biteWindow: 2.15, pullScale: 0.94, mood: 'sunlit',   hotspot: 'center' },
+            { level: 4,  title: 'Lotus Bloom Basin',       targetScore: 820,   biteWindow: 2.08, pullScale: 0.98, mood: 'sunlit',   hotspot: 'lilies' },
+            { level: 5,  title: 'Whisker Trench',          targetScore: 1150,  biteWindow: 2.00, pullScale: 1.03, mood: 'sunlit',   hotspot: 'center' },
+            { level: 6,  title: 'Whispering Reeds',        targetScore: 1520,  biteWindow: 1.94, pullScale: 1.07, mood: 'morning',  hotspot: 'reeds' },
+            { level: 7,  title: 'Pearl Crest Pool',        targetScore: 1960,  biteWindow: 1.88, pullScale: 1.11, mood: 'sunlit',   hotspot: 'lilies' },
+            { level: 8,  title: 'Amber Current',           targetScore: 2460,  biteWindow: 1.82, pullScale: 1.15, mood: 'golden',   hotspot: 'center' },
+            { level: 9,  title: 'Golden Afternoon Reach',  targetScore: 3020,  biteWindow: 1.76, pullScale: 1.19, mood: 'golden',   hotspot: 'lilies' },
+            { level: 10, title: 'Jade Serpent Hollow',     targetScore: 3650,  biteWindow: 1.70, pullScale: 1.24, mood: 'golden',   hotspot: 'reeds' },
+            { level: 11, title: 'Sunken Abbey Eddy',       targetScore: 4350,  biteWindow: 1.65, pullScale: 1.28, mood: 'golden',   hotspot: 'center' },
+            { level: 12, title: 'Sunset Marsh Bank',       targetScore: 5120,  biteWindow: 1.60, pullScale: 1.32, mood: 'golden',   hotspot: 'reeds' },
+            { level: 13, title: 'Chalice Deep',            targetScore: 5980,  biteWindow: 1.55, pullScale: 1.36, mood: 'twilight', hotspot: 'center' },
+            { level: 14, title: 'Lantern Lily Lagoon',     targetScore: 6920,  biteWindow: 1.50, pullScale: 1.40, mood: 'twilight', hotspot: 'lilies' },
+            { level: 15, title: 'Dusk Reed Shallows',      targetScore: 7950,  biteWindow: 1.45, pullScale: 1.44, mood: 'twilight', hotspot: 'reeds' },
+            { level: 16, title: 'Sunburst Koi Sanctuary',  targetScore: 9080,  biteWindow: 1.40, pullScale: 1.48, mood: 'golden',   hotspot: 'lilies' },
+            { level: 17, title: 'Royal Banquet Trench',    targetScore: 10320, biteWindow: 1.36, pullScale: 1.52, mood: 'twilight', hotspot: 'center' },
+            { level: 18, title: 'Moonlit Dragon Pool',     targetScore: 11680, biteWindow: 1.32, pullScale: 1.56, mood: 'twilight', hotspot: 'reeds' },
+            { level: 19, title: 'Crown Jewel Basin',       targetScore: 13160, biteWindow: 1.28, pullScale: 1.60, mood: 'twilight', hotspot: 'lilies' },
+            { level: 20, title: 'Sovereign’s Grand Pond',  targetScore: 14800, biteWindow: 1.24, pullScale: 1.65, mood: 'golden',   hotspot: 'center' }
+        ];
+
+        const STORAGE_KEY = 'royal_pond_fishing_save_v1';
+
+        const catchLogState = {};
+        CATCH_SPECIES.forEach(s => {
+            catchLogState[s.id] = { caughtCount: 0, bestWeight: 0 };
+        });
+
+        let currentLevelIdx = 0;
+        let unlockedLevelIdx = 0;
+        let totalCatches = 0;
+        let totalScore = 0;
+        let highScore = 0;
+        const levelBestScores = new Array(LEVELS.length).fill(0);
+
+        function loadSaveData() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                if (!parsed || typeof parsed !== 'object') return;
+
+                if (typeof parsed.unlockedLevelIdx === 'number') {
+                    unlockedLevelIdx = Math.max(0, Math.min(LEVELS.length - 1, Math.floor(parsed.unlockedLevelIdx)));
+                }
+                if (typeof parsed.currentLevelIdx === 'number') {
+                    currentLevelIdx = Math.max(0, Math.min(unlockedLevelIdx, Math.floor(parsed.currentLevelIdx)));
+                }
+                if (typeof parsed.totalCatches === 'number' && parsed.totalCatches >= 0) {
+                    totalCatches = Math.floor(parsed.totalCatches);
+                }
+                if (typeof parsed.totalScore === 'number' && parsed.totalScore >= 0) {
+                    totalScore = Math.floor(parsed.totalScore);
+                }
+                if (typeof parsed.highScore === 'number' && parsed.highScore >= 0) {
+                    highScore = Math.max(totalScore, Math.floor(parsed.highScore));
+                }
+                if (Array.isArray(parsed.levelBestScores)) {
+                    for (let i = 0; i < LEVELS.length; i++) {
+                        if (typeof parsed.levelBestScores[i] === 'number' && parsed.levelBestScores[i] >= 0) {
+                            levelBestScores[i] = Math.floor(parsed.levelBestScores[i]);
+                        }
+                    }
+                }
+                if (parsed.catchLog && typeof parsed.catchLog === 'object') {
+                    CATCH_SPECIES.forEach(s => {
+                        const entry = parsed.catchLog[s.id];
+                        if (entry && typeof entry === 'object') {
+                            catchLogState[s.id] = {
+                                caughtCount: Math.max(0, Math.floor(entry.caughtCount || 0)),
+                                bestWeight: Math.max(0, Number(entry.bestWeight || 0))
+                            };
+                        }
+                    });
+                }
+            } catch (_) {}
+        }
+
+        function saveGameData() {
+            try {
+                highScore = Math.max(highScore, totalScore);
+                levelBestScores[currentLevelIdx] = Math.max(levelBestScores[currentLevelIdx] || 0, totalScore);
+                const payload = {
+                    currentLevelIdx,
+                    unlockedLevelIdx,
+                    totalCatches,
+                    totalScore,
+                    highScore,
+                    levelBestScores,
+                    catchLog: catchLogState
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+            } catch (_) {}
+        }
+
+        loadSaveData();
+
+        /**
+         * ============================================================================
+         * GAME STATE MACHINE & UI REFERENCES
+         * ============================================================================
+         */
+        const GamePhase = {
+            AIMING: 'AIMING',
+            CASTING: 'CASTING',
+            WAITING: 'WAITING',
+            BITING: 'BITING',
+            REELING: 'REELING',
+            CELEBRATING: 'CELEBRATING'
+        };
+
+        let phase = GamePhase.AIMING;
+        let kingAnimState = 'IDLE';
+
+        let castElapsed = 0;
+        const castDuration = 0.45;
+        let castStartPos = new THREE.Vector3();
+        let castTargetPos = new THREE.Vector3();
+
+        let waitTimer = 0;
+        let nextNibbleAt = 1.1;
+        let biteTimer = 0;
+
+        let activeFish = null;
+        let activeFishWeight = 1.5;
+        let reelProgress = 0;
+        let reelTension = 32;
+        let isHoldingReel = false;
+        let reelTickAccum = 0;
+
+        let celebrateTimer = 0;
+        let autoContinueEnabled = false;
+        let missRecoilTimer = 0;
+
+        const aimPoint = new THREE.Vector3(0, 0.04, 2.2);
+        const bobberPos = new THREE.Vector3(0, 0.04, 2.2);
+        const pointerNDC = new THREE.Vector2(0, -0.15);
+        const raycaster = new THREE.Raycaster();
+        const waterPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+
+        const cameraPresets = [
+            { name: 'Pier View', pos: new THREE.Vector3(9.2, 5.9, 11.2), target: new THREE.Vector3(-0.8, 1.35, 1.6) },
+            { name: 'Pond Overview', pos: new THREE.Vector3(0.4, 11.5, 13.5), target: new THREE.Vector3(0, 0.7, 1.2) },
+            { name: 'Catch Showcase', pos: new THREE.Vector3(4.6, 3.15, 7.6), target: new THREE.Vector3(1.1, 2.15, 5.2) }
+        ];
+        let cameraPresetIdx = 0;
+        let orbitYawOffset = 0;
+        let orbitPitchOffset = 0;
+        let orbitZoomScale = 1.0;
+        let isRightDragging = false;
+        let lastPointerX = 0;
+        let lastPointerY = 0;
+
+        // DOM Elements
+        const container = document.getElementById('canvas-container');
+        const statusSubtextEl = document.getElementById('status-subtext');
+        const hudLevelLabelEl = document.getElementById('hud-level-label');
+        const hudLevelMobileEl = document.getElementById('hud-level-mobile');
+        const hudCatchesEl = document.getElementById('hud-catches');
+        const hudScoreEl = document.getElementById('hud-score');
+        const hudCatchesMobileEl = document.getElementById('hud-catches-mobile');
+        const hudScoreMobileEl = document.getElementById('hud-score-mobile');
+        const levelNameBadgeEl = document.getElementById('level-name-badge');
+        const levelProgressBarEl = document.getElementById('level-progress-bar');
+        const levelGoalTextEl = document.getElementById('level-goal-text');
+        const logCountPillEl = document.getElementById('log-count-pill');
+
+        const biteBannerEl = document.getElementById('bite-banner');
+        const reelHudEl = document.getElementById('reel-hud');
+        const reelFishLabelEl = document.getElementById('reel-fish-label');
+        const reelProgressPctEl = document.getElementById('reel-progress-pct');
+        const reelProgressFillEl = document.getElementById('reel-progress-fill');
+        const tensionStatusLabelEl = document.getElementById('tension-status-label');
+        const tensionFillEl = document.getElementById('tension-fill');
+
+        const actionPromptPillEl = document.getElementById('action-prompt-pill');
+        const primaryActionBtn = document.getElementById('primary-action-btn');
+        const cancelLineBtn = document.getElementById('cancel-line-btn');
+        const resetLevelBtn = document.getElementById('reset-level-btn');
+
+        const catchModalEl = document.getElementById('catch-modal');
+        const catchEmojiEl = document.getElementById('catch-emoji');
+        const catchRarityBadgeEl = document.getElementById('catch-rarity-badge');
+        const catchNameEl = document.getElementById('catch-name');
+        const catchMetaEl = document.getElementById('catch-meta');
+        const catchLevelBannerEl = document.getElementById('catch-level-banner');
+        const catchDescEl = document.getElementById('catch-desc');
+        const continueFishingBtn = document.getElementById('continue-fishing-btn');
+
+        const levelModalBtn = document.getElementById('level-modal-btn');
+        const levelSelectModalEl = document.getElementById('level-select-modal');
+        const closeLevelModalBtn = document.getElementById('close-level-modal-btn');
+        const levelSelectGridEl = document.getElementById('level-select-grid');
+        const levelModalSubtitleEl = document.getElementById('level-modal-subtitle');
+
+        const catchLogModalEl = document.getElementById('catch-log-modal');
+        const catchLogListEl = document.getElementById('catch-log-list');
+        const logToggleBtn = document.getElementById('log-toggle-btn');
+        const closeLogBtn = document.getElementById('close-log-btn');
+
+        const cameraToggleBtn = document.getElementById('camera-toggle-btn');
+        const cameraLabelEl = document.getElementById('camera-label');
+        const muteToggleBtn = document.getElementById('mute-toggle-btn');
+        const muteIconEl = document.getElementById('mute-icon');
+        const muteLabelEl = document.getElementById('mute-label');
+
+        const errorFallbackEl = document.getElementById('error-fallback');
+        const errorFallbackMsgEl = document.getElementById('error-fallback-msg');
+
+        function showFatalError(message) {
+            if (errorFallbackMsgEl) errorFallbackMsgEl.textContent = message;
+            if (errorFallbackEl) {
+                errorFallbackEl.classList.remove('hidden');
+                errorFallbackEl.classList.add('flex');
+            }
+        }
+
+        /**
+         * ============================================================================
+         * THREE.JS SCENE, PROCEDURAL 3D CATCH MODELS & CELEBRATION PARTICLES
+         * ============================================================================
+         */
+        let scene, camera, renderer, hemiLight, sunLight;
+        let waterMesh, waterBasePositions;
+        let aimRingGroup, aimOuterRing, aimInnerDot, hotspotRingMesh;
+        let bobberGroup;
+        let fishingLine;
+
+        // Articulated King Rig & Dedicated 3D Catch Showcase Assembly
+        let kingGroup, kingBodyGroup, kingHeadGroup, rightArmPivot, leftArmPivot, rodPivot, rodTipMarker;
+        let catchDisplayGroup;
+        const catchModelsMap = {};
+        const celebrationParticles = [];
+
+        // Animated Environmental Arrays
+        const ripples = [];
+        const lilyPads = [];
+        const reeds = [];
+        const treeCrowns = [];
+        const ambientFish = [];
+
+        function getCurrentLevel() {
+            return LEVELS[currentLevelIdx] || LEVELS[0];
+        }
+
+        function applyLevelAtmosphere(lvl) {
+            if (!scene || !waterMesh || !sunLight || !hemiLight) return;
+            const mood = ATMOSPHERE_THEMES[lvl.mood] || ATMOSPHERE_THEMES.sunlit;
+            scene.background.setHex(mood.sky);
+            if (scene.fog) scene.fog.color.setHex(mood.fog);
+            waterMesh.material.color.setHex(mood.water);
+            waterMesh.material.emissive.setHex(mood.waterEmissive);
+            sunLight.color.setHex(mood.sunColor);
+            sunLight.intensity = mood.sunIntensity;
+            hemiLight.color.setHex(mood.hemiSky);
+            hemiLight.groundColor.setHex(mood.hemiGround);
+
+            const zone = HOTSPOT_ZONES[lvl.hotspot] || HOTSPOT_ZONES.center;
+            if (hotspotRingMesh) {
+                hotspotRingMesh.position.set(zone.x, 0.03, zone.z);
+                hotspotRingMesh.material.color.setHex(zone.color);
+            }
+        }
+
+        /**
+         * Builds a stylized multi-part fish mesh with body, forked tail, dorsal fin,
+         * side pectoral fins, and eyes so every fish species has a distinct silhouette.
+         */
+        function createFishAssembly({
+            bodyColor,
+            finColor,
+            bellyColor = 0xf8fafc,
+            bodyLength = 0.95,
+            bodyRadius = 0.16,
+            elongated = false,
+            spinyDorsal = false,
+            whiskers = false,
+            crownCrest = false,
+            spotsColor = null
+        }) {
+            const group = new THREE.Group();
+
+            const bodyMat = new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.34, metalness: 0.18 });
+            const finMat = new THREE.MeshStandardMaterial({
+                color: finColor,
+                roughness: 0.45,
+                transparent: true,
+                opacity: 0.88,
+                side: THREE.DoubleSide
+            });
+            const bellyMat = new THREE.MeshStandardMaterial({ color: bellyColor, roughness: 0.45 });
+
+            const torsoGeo = new THREE.SphereGeometry(bodyRadius, 16, 12);
+            torsoGeo.scale(elongated ? bodyLength * 1.45 : bodyLength, 1.05, 0.68);
+            const torso = new THREE.Mesh(torsoGeo, bodyMat);
+            torso.castShadow = true;
+            group.add(torso);
+
+            const bellyGeo = new THREE.SphereGeometry(bodyRadius * 0.84, 14, 10);
+            bellyGeo.scale(elongated ? bodyLength * 1.3 : bodyLength * 0.9, 0.55, 0.58);
+            const belly = new THREE.Mesh(bellyGeo, bellyMat);
+            belly.position.y = -bodyRadius * 0.32;
+            group.add(belly);
+
+            if (spotsColor) {
+                const spotMat = new THREE.MeshStandardMaterial({ color: spotsColor, roughness: 0.36 });
+                const s1 = new THREE.Mesh(new THREE.SphereGeometry(bodyRadius * 0.48, 10, 10), spotMat);
+                s1.scale.set(1.2, 0.7, 0.8);
+                s1.position.set(bodyLength * 0.22, bodyRadius * 0.24, bodyRadius * 0.42);
+                group.add(s1);
+
+                const s2 = new THREE.Mesh(new THREE.SphereGeometry(bodyRadius * 0.42, 10, 10), spotMat);
+                s2.scale.set(1.1, 0.7, 0.8);
+                s2.position.set(-bodyLength * 0.25, bodyRadius * 0.22, -bodyRadius * 0.42);
+                group.add(s2);
+            }
+
+            const tailX = -(elongated ? bodyLength * 1.32 : bodyLength * 0.92);
+            const tailUpper = new THREE.Mesh(new THREE.ConeGeometry(bodyRadius * 0.65, bodyRadius * 1.45, 5), finMat);
+            tailUpper.position.set(tailX - bodyRadius * 0.25, bodyRadius * 0.35, 0);
+            tailUpper.rotation.z = Math.PI * 0.36;
+            tailUpper.castShadow = true;
+            group.add(tailUpper);
+
+            const tailLower = new THREE.Mesh(new THREE.ConeGeometry(bodyRadius * 0.58, bodyRadius * 1.3, 5), finMat);
+            tailLower.position.set(tailX - bodyRadius * 0.25, -bodyRadius * 0.35, 0);
+            tailLower.rotation.z = Math.PI * 0.64;
+            tailLower.castShadow = true;
+            group.add(tailLower);
+
+            const dorsalGeo = new THREE.ConeGeometry(bodyRadius * 0.55, bodyRadius * (spinyDorsal ? 1.25 : 0.88), 4);
+            const dorsal = new THREE.Mesh(dorsalGeo, finMat);
+            dorsal.position.set(-bodyLength * 0.08, bodyRadius * 1.08, 0);
+            dorsal.rotation.z = -0.15;
+            group.add(dorsal);
+
+            const pecGeo = new THREE.ConeGeometry(bodyRadius * 0.38, bodyRadius * 0.95, 4);
+            const pecLeft = new THREE.Mesh(pecGeo, finMat);
+            pecLeft.position.set(bodyLength * 0.18, -bodyRadius * 0.15, bodyRadius * 0.68);
+            pecLeft.rotation.x = Math.PI * 0.42;
+            pecLeft.rotation.z = -0.35;
+            group.add(pecLeft);
+
+            const pecRight = new THREE.Mesh(pecGeo, finMat);
+            pecRight.position.set(bodyLength * 0.18, -bodyRadius * 0.15, -bodyRadius * 0.68);
+            pecRight.rotation.x = -Math.PI * 0.42;
+            pecRight.rotation.z = -0.35;
+            group.add(pecRight);
+
+            const eyeMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.15 });
+            const eyeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
+            const eyeX = elongated ? bodyLength * 1.15 : bodyLength * 0.72;
+            const eyeY = bodyRadius * 0.24;
+            const eyeZ = bodyRadius * 0.56;
+
+            [-1, 1].forEach(side => {
+                const ew = new THREE.Mesh(new THREE.SphereGeometry(bodyRadius * 0.16, 10, 10), eyeWhiteMat);
+                ew.position.set(eyeX, eyeY, side * eyeZ);
+                group.add(ew);
+
+                const pupil = new THREE.Mesh(new THREE.SphereGeometry(bodyRadius * 0.09, 8, 8), eyeMat);
+                pupil.position.set(eyeX + bodyRadius * 0.05, eyeY, side * (eyeZ + bodyRadius * 0.08));
+                group.add(pupil);
+            });
+
+            if (whiskers) {
+                const barbelMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.5 });
+                const barbelGeo = new THREE.CylinderGeometry(0.015, 0.006, bodyRadius * 1.6, 6);
+                [-1, 1].forEach(side => {
+                    const w1 = new THREE.Mesh(barbelGeo, barbelMat);
+                    w1.position.set(eyeX + 0.08, -bodyRadius * 0.12, side * (eyeZ + 0.08));
+                    w1.rotation.z = Math.PI * 0.35;
+                    w1.rotation.x = side * 0.45;
+                    group.add(w1);
+                });
+            }
+
+            if (crownCrest) {
+                const goldMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, metalness: 0.7, roughness: 0.25 });
+                const crest = new THREE.Mesh(new THREE.ConeGeometry(bodyRadius * 0.45, bodyRadius * 0.75, 6), goldMat);
+                crest.position.set(eyeX - 0.04, bodyRadius * 1.18, 0);
+                group.add(crest);
+            }
+
+            return group;
+        }
+
+        function createPondBootAssembly() {
+            const group = new THREE.Group();
+            const leatherMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.85 });
+            const soleMat = new THREE.MeshStandardMaterial({ color: 0x1e1b18, roughness: 0.92 });
+            const cuffMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.78 });
+
+            const sole = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.09, 0.32), soleMat);
+            sole.position.set(0.08, -0.22, 0);
+            sole.castShadow = true;
+            group.add(sole);
+
+            const foot = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.22, 0.28), leatherMat);
+            foot.position.set(0.08, -0.09, 0);
+            foot.castShadow = true;
+            group.add(foot);
+
+            const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.17, 0.48, 12), leatherMat);
+            shaft.position.set(-0.1, 0.18, 0);
+            shaft.rotation.z = 0.08;
+            shaft.castShadow = true;
+            group.add(shaft);
+
+            const cuff = new THREE.Mesh(new THREE.CylinderGeometry(0.175, 0.165, 0.11, 12), cuffMat);
+            cuff.position.set(-0.08, 0.41, 0);
+            group.add(cuff);
+
+            return group;
+        }
+
+        function createRoyalChaliceAssembly() {
+            const group = new THREE.Group();
+            const goldMat = new THREE.MeshStandardMaterial({ color: 0xf5b942, metalness: 0.78, roughness: 0.22 });
+            const rubyMat = new THREE.MeshStandardMaterial({ color: 0xe11d48, roughness: 0.2, metalness: 0.3 });
+
+            const base = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.3, 0.1, 16), goldMat);
+            base.position.y = -0.34;
+            base.castShadow = true;
+            group.add(base);
+
+            const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.32, 12), goldMat);
+            stem.position.y = -0.14;
+            group.add(stem);
+
+            const cup = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.32, 0.14, 0.36, 18, 1, true),
+                new THREE.MeshStandardMaterial({ color: 0xfbbf24, metalness: 0.78, roughness: 0.22, side: THREE.DoubleSide })
+            );
+            cup.position.y = 0.14;
+            cup.castShadow = true;
+            group.add(cup);
+
+            const gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.07, 0), rubyMat);
+            gem.position.set(0, 0.14, 0.24);
+            group.add(gem);
+
+            return group;
+        }
+
+        function buildCatchShowcaseSystem() {
+            catchDisplayGroup = new THREE.Group();
+            catchDisplayGroup.position.set(1.15, 2.25, 5.45);
+            catchDisplayGroup.visible = false;
+            scene.add(catchDisplayGroup);
+
+            catchModelsMap.silver_carp = createFishAssembly({
+                bodyColor: 0x94a3b8,
+                finColor: 0xbae6fd,
+                bellyColor: 0xf8fafc,
+                bodyLength: 0.95,
+                bodyRadius: 0.17
+            });
+            catchModelsMap.river_perch = createFishAssembly({
+                bodyColor: 0x65a30d,
+                finColor: 0xfb923c,
+                bellyColor: 0xfef08a,
+                bodyLength: 0.88,
+                bodyRadius: 0.16,
+                spinyDorsal: true
+            });
+            catchModelsMap.ancient_pond_boot = createPondBootAssembly();
+            catchModelsMap.emerald_pike = createFishAssembly({
+                bodyColor: 0x059669,
+                finColor: 0x34d399,
+                bellyColor: 0xd1fae5,
+                bodyLength: 1.05,
+                bodyRadius: 0.13,
+                elongated: true
+            });
+            catchModelsMap.golden_koi = createFishAssembly({
+                bodyColor: 0xf59e0b,
+                finColor: 0xfde68a,
+                bellyColor: 0xfffbeb,
+                bodyLength: 0.98,
+                bodyRadius: 0.17,
+                spotsColor: 0xffffff
+            });
+            catchModelsMap.royal_catfish = createFishAssembly({
+                bodyColor: 0x475569,
+                finColor: 0x94a3b8,
+                bellyColor: 0xcbd5e1,
+                bodyLength: 1.12,
+                bodyRadius: 0.2,
+                whiskers: true
+            });
+            catchModelsMap.crowned_pearl_carp = createFishAssembly({
+                bodyColor: 0xf1f5f9,
+                finColor: 0xfde047,
+                bellyColor: 0xffffff,
+                bodyLength: 1.02,
+                bodyRadius: 0.18,
+                crownCrest: true,
+                spotsColor: 0xf59e0b
+            });
+            catchModelsMap.jade_dragon_eel = createFishAssembly({
+                bodyColor: 0x047857,
+                finColor: 0x2dd4bf,
+                bellyColor: 0x99f6e4,
+                bodyLength: 1.18,
+                bodyRadius: 0.12,
+                elongated: true,
+                whiskers: true
+            });
+            catchModelsMap.sunken_royal_chalice = createRoyalChaliceAssembly();
+            catchModelsMap.sunburst_koi = createFishAssembly({
+                bodyColor: 0xf97316,
+                finColor: 0xfef08a,
+                bellyColor: 0xfde047,
+                bodyLength: 1.1,
+                bodyRadius: 0.19,
+                spotsColor: 0xfacc15
+            });
+
+            Object.values(catchModelsMap).forEach(mesh => {
+                mesh.visible = false;
+                catchDisplayGroup.add(mesh);
+            });
+        }
+
+        function spawnCatchSparkles(originVec, count = 26) {
+            const sparkGeo = new THREE.OctahedronGeometry(0.065, 0);
+            const palette = [0xffe08a, 0xf59e0b, 0xe0f2fe, 0x34d399];
+            for (let i = 0; i < count; i++) {
+                const colorHex = palette[i % palette.length];
+                const mat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 1 });
+                const mesh = new THREE.Mesh(sparkGeo, mat);
+                mesh.position.copy(originVec);
+
+                const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
+                const speed = 1.4 + Math.random() * 2.2;
+                const vel = new THREE.Vector3(
+                    Math.cos(angle) * speed,
+                    1.6 + Math.random() * 2.4,
+                    Math.sin(angle) * speed
+                );
+                scene.add(mesh);
+                celebrationParticles.push({ mesh, mat, vel, life: 1.0 });
+            }
+        }
+
+        function updateCelebrationParticles(dt) {
+            for (let i = celebrationParticles.length - 1; i >= 0; i--) {
+                const p = celebrationParticles[i];
+                p.life -= dt * 0.85;
+                p.vel.y -= 5.4 * dt;
+                p.mesh.position.addScaledVector(p.vel, dt);
+                p.mesh.rotation.x += dt * 5;
+                p.mesh.rotation.y += dt * 6;
+                p.mat.opacity = Math.max(0, p.life);
+                if (p.life <= 0) {
+                    scene.remove(p.mesh);
+                    p.mat.dispose();
+                    celebrationParticles.splice(i, 1);
+                }
+            }
+        }
+
+        function initScene() {
+            if (!window.THREE) {
+                showFatalError('Three.js r128 library failed to load from cdnjs.');
+                return false;
+            }
+
+            const testCanvas = document.createElement('canvas');
+            const gl = testCanvas.getContext('webgl2') || testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+            if (!gl) {
+                showFatalError('WebGL is not supported or is disabled in this browser.');
+                return false;
+            }
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87ceeb);
+            scene.fog = new THREE.FogExp2(0x9bd3e8, 0.016);
+
+            const width = window.innerWidth || 800;
+            const height = window.innerHeight || 600;
+
+            camera = new THREE.PerspectiveCamera(46, width / height, 0.1, 140);
+            camera.position.copy(cameraPresets[0].pos);
+            camera.lookAt(cameraPresets[0].target);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.08;
+            container.appendChild(renderer.domElement);
+
+            hemiLight = new THREE.HemisphereLight(0xdff4ff, 0x2d5a27, 0.95);
+            hemiLight.position.set(0, 25, 0);
+            scene.add(hemiLight);
+
+            sunLight = new THREE.DirectionalLight(0xfff1c9, 1.85);
+            sunLight.position.set(14, 22, 12);
+            sunLight.castShadow = true;
+            sunLight.shadow.mapSize.width = 2048;
+            sunLight.shadow.mapSize.height = 2048;
+            sunLight.shadow.camera.near = 2;
+            sunLight.shadow.camera.far = 65;
+            const d = 18;
+            sunLight.shadow.camera.left = -d;
+            sunLight.shadow.camera.right = d;
+            sunLight.shadow.camera.top = d;
+            sunLight.shadow.camera.bottom = -d;
+            sunLight.shadow.bias = -0.0005;
+            scene.add(sunLight);
+
+            const rimLight = new THREE.DirectionalLight(0x7dd3fc, 0.45);
+            rimLight.position.set(-12, 8, -10);
+            scene.add(rimLight);
+
+            buildPondAndBanks();
+            buildWoodenPier();
+            buildFoliageAndProps();
+            buildKingCharacter();
+            buildAimAndBobberSystem();
+            buildCatchShowcaseSystem();
+            applyLevelAtmosphere(getCurrentLevel());
+
+            return true;
+        }
+
+        function buildPondAndBanks() {
+            const bedGeo = new THREE.CircleGeometry(11.5, 48);
+            bedGeo.rotateX(-Math.PI / 2);
+            const bedMat = new THREE.MeshStandardMaterial({
+                color: 0x1b3b42,
+                roughness: 0.95
+            });
+            const bedMesh = new THREE.Mesh(bedGeo, bedMat);
+            bedMesh.position.y = -0.65;
+            scene.add(bedMesh);
+
+            const ringGeo = new THREE.RingGeometry(0.01, 10.8, 64, 18);
+            ringGeo.rotateX(-Math.PI / 2);
+
+            const waterMat = new THREE.MeshStandardMaterial({
+                color: 0x1d8ab0,
+                emissive: 0x072c3a,
+                emissiveIntensity: 0.35,
+                roughness: 0.18,
+                metalness: 0.25,
+                transparent: true,
+                opacity: 0.9
+            });
+            waterMesh = new THREE.Mesh(ringGeo, waterMat);
+            waterMesh.position.y = 0;
+            waterMesh.receiveShadow = true;
+            scene.add(waterMesh);
+
+            const posAttr = waterMesh.geometry.attributes.position;
+            waterBasePositions = new Float32Array(posAttr.array.length);
+            waterBasePositions.set(posAttr.array);
+
+            const groundShape = new THREE.Shape();
+            const outerSize = 48;
+            groundShape.moveTo(-outerSize, -outerSize);
+            groundShape.lineTo(outerSize, -outerSize);
+            groundShape.lineTo(outerSize, outerSize);
+            groundShape.lineTo(-outerSize, outerSize);
+            groundShape.closePath();
+
+            const pondHole = new THREE.Path();
+            pondHole.absarc(0, 0, 10.3, 0, Math.PI * 2, true);
+            groundShape.holes.push(pondHole);
+
+            const groundGeo = new THREE.ShapeGeometry(groundShape, 48);
+            groundGeo.rotateX(-Math.PI / 2);
+            const groundMat = new THREE.MeshStandardMaterial({
+                color: 0x3b7a2a,
+                roughness: 0.9
+            });
+            const groundMesh = new THREE.Mesh(groundGeo, groundMat);
+            groundMesh.position.y = 0.16;
+            groundMesh.receiveShadow = true;
+            scene.add(groundMesh);
+
+            const shoreGeo = new THREE.RingGeometry(10.05, 10.75, 64);
+            shoreGeo.rotateX(-Math.PI / 2);
+            const shoreMat = new THREE.MeshStandardMaterial({
+                color: 0x8c7a5b,
+                roughness: 0.92
+            });
+            const shoreMesh = new THREE.Mesh(shoreGeo, shoreMat);
+            shoreMesh.position.y = 0.08;
+            shoreMesh.receiveShadow = true;
+            scene.add(shoreMesh);
+        }
+
+        function buildWoodenPier() {
+            const pierGroup = new THREE.Group();
+            pierGroup.position.set(1.4, 0, 7.6);
+            pierGroup.rotation.y = 0.32;
+
+            const plankMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.82 });
+            const trimMat = new THREE.MeshStandardMaterial({ color: 0x6b421c, roughness: 0.88 });
+
+            const beamGeo = new THREE.BoxGeometry(0.22, 0.22, 5.4);
+            [-1.15, 1.15].forEach(bx => {
+                const beam = new THREE.Mesh(beamGeo, trimMat);
+                beam.position.set(bx, 0.36, 0);
+                beam.castShadow = true;
+                beam.receiveShadow = true;
+                pierGroup.add(beam);
+            });
+
+            const plankGeo = new THREE.BoxGeometry(2.75, 0.11, 0.34);
+            for (let i = -7; i <= 7; i++) {
+                const plank = new THREE.Mesh(plankGeo, plankMat);
+                plank.position.set(0, 0.5, i * 0.37);
+                plank.castShadow = true;
+                plank.receiveShadow = true;
+                pierGroup.add(plank);
+            }
+
+            const postGeo = new THREE.CylinderGeometry(0.14, 0.16, 1.35, 10);
+            const postCoords = [
+                [-1.15, -1.9], [1.15, -1.9],
+                [-1.15, 1.9], [1.15, 1.9]
+            ];
+            postCoords.forEach(([px, pz]) => {
+                const post = new THREE.Mesh(postGeo, trimMat);
+                post.position.set(px, -0.1, pz);
+                post.castShadow = true;
+                pierGroup.add(post);
+
+                const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.07, 10), plankMat);
+                cap.position.set(px, 0.6, pz);
+                pierGroup.add(cap);
+            });
+
+            scene.add(pierGroup);
+        }
+
+        function buildFoliageAndProps() {
+            const padGeo = new THREE.CylinderGeometry(0.62, 0.62, 0.04, 24, 1, false, 0.2, Math.PI * 1.82);
+            const padMat = new THREE.MeshStandardMaterial({ color: 0x2e8b3c, roughness: 0.65 });
+            const flowerMat = new THREE.MeshStandardMaterial({ color: 0xf472b6, roughness: 0.5 });
+            const centerMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.5 });
+
+            const padSpots = [
+                { x: -4.2, z: -1.6, scale: 1.05, flower: true },
+                { x: -5.1, z: -0.7, scale: 0.78, flower: false },
+                { x: 4.5, z: -2.4, scale: 1.1, flower: true },
+                { x: 5.3, z: -1.4, scale: 0.72, flower: false },
+                { x: -2.6, z: -5.2, scale: 0.95, flower: false },
+                { x: 2.8, z: -5.6, scale: 0.85, flower: true }
+            ];
+
+            padSpots.forEach((spot, idx) => {
+                const group = new THREE.Group();
+                group.position.set(spot.x, 0.03, spot.z);
+                group.rotation.y = idx * 1.1;
+                group.scale.setScalar(spot.scale);
+
+                const pad = new THREE.Mesh(padGeo, padMat);
+                pad.receiveShadow = true;
+                group.add(pad);
+
+                if (spot.flower) {
+                    const petalGeo = new THREE.ConeGeometry(0.14, 0.24, 6);
+                    for (let p = 0; p < 6; p++) {
+                        const angle = (p / 6) * Math.PI * 2;
+                        const petal = new THREE.Mesh(petalGeo, flowerMat);
+                        petal.position.set(Math.cos(angle) * 0.11, 0.1, Math.sin(angle) * 0.11);
+                        petal.rotation.z = -Math.cos(angle) * 0.55;
+                        petal.rotation.x = Math.sin(angle) * 0.55;
+                        group.add(petal);
+                    }
+                    const bud = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 10), centerMat);
+                    bud.position.y = 0.08;
+                    group.add(bud);
+                }
+
+                scene.add(group);
+                lilyPads.push({ group, baseY: 0.03, phase: idx * 1.3 });
+            });
+
+            const reedGeo = new THREE.ConeGeometry(0.06, 0.95, 5);
+            reedGeo.translate(0, 0.475, 0);
+            const reedMat = new THREE.MeshStandardMaterial({ color: 0x4d8c32, roughness: 0.8 });
+
+            for (let i = 0; i < 48; i++) {
+                const angle = (i / 48) * Math.PI * 2 + (Math.random() - 0.5) * 0.1;
+                const dist = 9.7 + Math.random() * 1.4;
+                const rx = Math.cos(angle) * dist;
+                const rz = Math.sin(angle) * dist;
+
+                if (Math.abs(rx - 1.4) < 2.2 && rz > 4.2) continue;
+
+                const tuft = new THREE.Group();
+                tuft.position.set(rx, 0.08, rz);
+                for (let b = 0; b < 3; b++) {
+                    const blade = new THREE.Mesh(reedGeo, reedMat);
+                    blade.position.set((b - 1) * 0.08, 0, ((b % 2) - 0.5) * 0.08);
+                    blade.rotation.z = (b - 1) * 0.18;
+                    blade.scale.y = 0.7 + Math.random() * 0.5;
+                    blade.castShadow = true;
+                    tuft.add(blade);
+                }
+                scene.add(tuft);
+                reeds.push({ tuft, phase: i * 0.65 });
+            }
+
+            const rockMat = new THREE.MeshStandardMaterial({ color: 0x6b7280, roughness: 0.88 });
+            const rockCoords = [
+                [-8.8, 3.8, 0.85], [-9.4, 4.5, 0.55],
+                [8.6, 2.2, 0.78], [-7.5, -6.8, 1.05],
+                [7.8, -6.2, 0.92], [0.2, -10.6, 0.7]
+            ];
+            rockCoords.forEach(([x, z, s], i) => {
+                const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(s, 1), rockMat);
+                rock.position.set(x, 0.22 * s, z);
+                rock.scale.set(1.2, 0.72, 1.0);
+                rock.rotation.y = i * 0.9;
+                rock.castShadow = true;
+                rock.receiveShadow = true;
+                scene.add(rock);
+            });
+
+            const stepStoneMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.78 });
+            const steppingStones = [
+                { x: 5.6, z: 8.6, rx: 0.68, rz: 0.52 },
+                { x: 4.5, z: 8.1, rx: 0.62, rz: 0.48 },
+                { x: 3.4, z: 7.7, rx: 0.58, rz: 0.46 }
+            ];
+            steppingStones.forEach((st, idx) => {
+                const stone = new THREE.Mesh(new THREE.CylinderGeometry(st.rx, st.rx * 1.12, 0.16, 10), stepStoneMat);
+                stone.position.set(st.x, 0.22, st.z);
+                stone.rotation.y = idx * 0.6;
+                stone.castShadow = true;
+                stone.receiveShadow = true;
+                scene.add(stone);
+            });
+
+            const castleGroup = new THREE.Group();
+            castleGroup.position.set(0.5, 0.15, -24.5);
+            const castleMat = new THREE.MeshStandardMaterial({ color: 0x52607a, roughness: 0.92 });
+            const roofMat = new THREE.MeshStandardMaterial({ color: 0x3b4d7a, roughness: 0.85 });
+
+            const keep = new THREE.Mesh(new THREE.BoxGeometry(5.2, 4.4, 3.6), castleMat);
+            keep.position.y = 2.2;
+            castleGroup.add(keep);
+
+            [-2.7, 2.7].forEach(tx => {
+                const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 1.05, 6.2, 12), castleMat);
+                tower.position.set(tx, 3.1, 0.3);
+                castleGroup.add(tower);
+
+                const cone = new THREE.Mesh(new THREE.ConeGeometry(1.18, 2.1, 12), roofMat);
+                cone.position.set(tx, 7.2, 0.3);
+                castleGroup.add(cone);
+            });
+
+            const centerSpire = new THREE.Mesh(new THREE.ConeGeometry(1.45, 2.6, 12), roofMat);
+            centerSpire.position.set(0, 5.7, 0);
+            castleGroup.add(centerSpire);
+
+            scene.add(castleGroup);
+
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21, roughness: 0.9 });
+            const foliageMat = new THREE.MeshStandardMaterial({ color: 0x2d6a27, roughness: 0.78 });
+            const treeSpots = [
+                { x: -11.8, z: -4.2, s: 1.05 },
+                { x: -12.4, z: 2.8, s: 0.92 },
+                { x: 11.6, z: -3.5, s: 1.12 },
+                { x: 12.2, z: 3.6, s: 0.95 },
+                { x: -5.4, z: -11.4, s: 1.0 }
+            ];
+
+            treeSpots.forEach((spot, idx) => {
+                const tree = new THREE.Group();
+                tree.position.set(spot.x, 0.16, spot.z);
+                tree.scale.setScalar(spot.s);
+
+                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.32, 1.8, 10), trunkMat);
+                trunk.position.y = 0.9;
+                trunk.castShadow = true;
+                tree.add(trunk);
+
+                const crownGroup = new THREE.Group();
+                crownGroup.position.y = 2.15;
+
+                const mainBall = new THREE.Mesh(new THREE.DodecahedronGeometry(1.15, 1), foliageMat);
+                mainBall.castShadow = true;
+                crownGroup.add(mainBall);
+
+                const sideBall1 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.82, 1), foliageMat);
+                sideBall1.position.set(0.75, -0.1, 0.45);
+                sideBall1.castShadow = true;
+                crownGroup.add(sideBall1);
+
+                const sideBall2 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.78, 1), foliageMat);
+                sideBall2.position.set(-0.75, 0.05, -0.5);
+                sideBall2.castShadow = true;
+                crownGroup.add(sideBall2);
+
+                tree.add(crownGroup);
+                scene.add(tree);
+                treeCrowns.push({ crownGroup, phase: idx * 1.1 });
+            });
+
+            const swimFishMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.4 });
+            for (let i = 0; i < 5; i++) {
+                const fishBody = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.45, 8), swimFishMat);
+                fishBody.rotation.x = Math.PI / 2;
+                fishBody.position.y = -0.28;
+                const holder = new THREE.Group();
+                holder.add(fishBody);
+                scene.add(holder);
+                ambientFish.push({
+                    holder,
+                    radius: 2.8 + i * 1.25,
+                    speed: (0.22 + i * 0.05) * (i % 2 === 0 ? 1 : -1),
+                    angle: i * 1.4
+                });
+            }
+        }
+
+        function buildKingCharacter() {
+            kingGroup = new THREE.Group();
+            kingGroup.position.set(1.4, 0.55, 7.6);
+            kingGroup.rotation.y = 0.32;
+
+            kingBodyGroup = new THREE.Group();
+            kingGroup.add(kingBodyGroup);
+
+            const bootMat = new THREE.MeshStandardMaterial({ color: 0x2c1810, roughness: 0.8 });
+            [-0.18, 0.18].forEach(lx => {
+                const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.12, 0.52, 10), bootMat);
+                leg.position.set(lx, 0.26, 0);
+                leg.castShadow = true;
+                kingBodyGroup.add(leg);
+            });
+
+            const tunicMat = new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.65 });
+            const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.4, 0.78, 14), tunicMat);
+            torso.position.y = 0.86;
+            torso.castShadow = true;
+            kingBodyGroup.add(torso);
+
+            const beltMat = new THREE.MeshStandardMaterial({ color: 0xf5b942, metalness: 0.55, roughness: 0.3 });
+            const belt = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.36, 0.12, 14), beltMat);
+            belt.position.y = 0.62;
+            kingBodyGroup.add(belt);
+
+            const capeMat = new THREE.MeshStandardMaterial({
+                color: 0x1e3a8a,
+                roughness: 0.7,
+                side: THREE.DoubleSide
+            });
+            const capeGeo = new THREE.CylinderGeometry(0.34, 0.58, 0.86, 14, 1, true, -Math.PI * 0.45, Math.PI * 0.9);
+            const cape = new THREE.Mesh(capeGeo, capeMat);
+            cape.position.set(0, 0.84, 0.06);
+            cape.castShadow = true;
+            kingBodyGroup.add(cape);
+
+            kingHeadGroup = new THREE.Group();
+            kingHeadGroup.position.set(0, 1.46, 0);
+            kingBodyGroup.add(kingHeadGroup);
+
+            const skinMat = new THREE.MeshStandardMaterial({ color: 0xfcd5b5, roughness: 0.65 });
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.27, 16, 16), skinMat);
+            head.castShadow = true;
+            kingHeadGroup.add(head);
+
+            const beardMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.85 });
+            const beard = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.32, 12), beardMat);
+            beard.rotation.x = Math.PI;
+            beard.position.set(0, -0.18, -0.1);
+            kingHeadGroup.add(beard);
+
+            const crownGroup = new THREE.Group();
+            crownGroup.position.set(0, 0.25, 0);
+            kingHeadGroup.add(crownGroup);
+
+            const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.21, 0.19, 0.14, 12), beltMat);
+            crownBase.castShadow = true;
+            crownGroup.add(crownBase);
+
+            const spikeGeo = new THREE.ConeGeometry(0.055, 0.14, 6);
+            for (let s = 0; s < 6; s++) {
+                const a = (s / 6) * Math.PI * 2;
+                const spike = new THREE.Mesh(spikeGeo, beltMat);
+                spike.position.set(Math.cos(a) * 0.17, 0.12, Math.sin(a) * 0.17);
+                crownGroup.add(spike);
+            }
+
+            leftArmPivot = new THREE.Group();
+            leftArmPivot.position.set(0.38, 1.15, 0);
+            kingBodyGroup.add(leftArmPivot);
+
+            const leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.52, 10), tunicMat);
+            leftArm.position.y = -0.22;
+            leftArm.castShadow = true;
+            leftArmPivot.add(leftArm);
+
+            rightArmPivot = new THREE.Group();
+            rightArmPivot.position.set(-0.38, 1.15, 0);
+            rightArmPivot.rotation.x = -0.55;
+            kingBodyGroup.add(rightArmPivot);
+
+            const rightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.52, 10), tunicMat);
+            rightArm.position.y = -0.22;
+            rightArm.castShadow = true;
+            rightArmPivot.add(rightArm);
+
+            rodPivot = new THREE.Group();
+            rodPivot.position.set(0, -0.44, -0.05);
+            rodPivot.rotation.x = 0.55;
+            rightArmPivot.add(rodPivot);
+
+            const handle = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.04, 0.045, 0.35, 8),
+                new THREE.MeshStandardMaterial({ color: 0x3f2310, roughness: 0.85 })
+            );
+            handle.rotation.x = Math.PI / 2;
+            handle.position.set(0, 0, -0.12);
+            rodPivot.add(handle);
+
+            const shaft = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.015, 0.032, 2.35, 8),
+                new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.5 })
+            );
+            shaft.position.set(0, 0.28, -1.25);
+            shaft.rotation.x = Math.PI / 2 - 0.24;
+            shaft.castShadow = true;
+            rodPivot.add(shaft);
+
+            rodTipMarker = new THREE.Object3D();
+            rodTipMarker.position.set(0, 0.54, -2.35);
+            rodPivot.add(rodTipMarker);
+
+            scene.add(kingGroup);
+        }
+
+        function buildAimAndBobberSystem() {
+            const hotGeo = new THREE.RingGeometry(1.15, 1.32, 40);
+            hotGeo.rotateX(-Math.PI / 2);
+            const hotMat = new THREE.MeshBasicMaterial({
+                color: 0xffe08a,
+                transparent: true,
+                opacity: 0.35,
+                side: THREE.DoubleSide
+            });
+            hotspotRingMesh = new THREE.Mesh(hotGeo, hotMat);
+            hotspotRingMesh.position.set(-0.4, 0.03, 1.2);
+            scene.add(hotspotRingMesh);
+
+            aimRingGroup = new THREE.Group();
+            aimRingGroup.position.copy(aimPoint);
+
+            const outerGeo = new THREE.RingGeometry(0.55, 0.72, 36);
+            outerGeo.rotateX(-Math.PI / 2);
+            const outerMat = new THREE.MeshBasicMaterial({
+                color: 0xffe08a,
+                transparent: true,
+                opacity: 0.88,
+                side: THREE.DoubleSide
+            });
+            aimOuterRing = new THREE.Mesh(outerGeo, outerMat);
+            aimRingGroup.add(aimOuterRing);
+
+            const innerGeo = new THREE.CircleGeometry(0.14, 20);
+            innerGeo.rotateX(-Math.PI / 2);
+            const innerMat = new THREE.MeshBasicMaterial({
+                color: 0xf5b942,
+                transparent: true,
+                opacity: 0.75,
+                side: THREE.DoubleSide
+            });
+            aimInnerDot = new THREE.Mesh(innerGeo, innerMat);
+            aimRingGroup.add(aimInnerDot);
+
+            scene.add(aimRingGroup);
+
+            bobberGroup = new THREE.Group();
+            bobberGroup.position.copy(bobberPos);
+            bobberGroup.visible = false;
+
+            const bottomHalf = new THREE.Mesh(
+                new THREE.SphereGeometry(0.16, 14, 12, 0, Math.PI * 2, Math.PI * 0.5, Math.PI * 0.5),
+                new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3 })
+            );
+            bobberGroup.add(bottomHalf);
+
+            const topHalf = new THREE.Mesh(
+                new THREE.SphereGeometry(0.16, 14, 12, 0, Math.PI * 2, 0, Math.PI * 0.5),
+                new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.3 })
+            );
+            bobberGroup.add(topHalf);
+
+            const antenna = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.025, 0.025, 0.24, 8),
+                new THREE.MeshStandardMaterial({ color: 0xfacc15, emissive: 0xf59e0b, emissiveIntensity: 0.35 })
+            );
+            antenna.position.y = 0.22;
+            bobberGroup.add(antenna);
+
+            scene.add(bobberGroup);
+
+            const lineGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, 2, 5),
+                new THREE.Vector3(0, 0, 2)
+            ]);
+            const lineMat = new THREE.LineBasicMaterial({
+                color: 0xf8fafc,
+                transparent: true,
+                opacity: 0.85
+            });
+            fishingLine = new THREE.Line(lineGeo, lineMat);
+            fishingLine.visible = false;
+            scene.add(fishingLine);
+        }
+
+        /**
+         * ============================================================================
+         * CONCENTRIC WATER RIPPLES
+         * ============================================================================
+         */
+        function spawnRipple(x, z, colorHex = 0xe0f2fe, maxScale = 3.2) {
+            if (!scene) return;
+            const geo = new THREE.RingGeometry(0.18, 0.28, 32);
+            geo.rotateX(-Math.PI / 2);
+            const mat = new THREE.MeshBasicMaterial({
+                color: colorHex,
+                transparent: true,
+                opacity: 0.8,
+                side: THREE.DoubleSide
+            });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(x, 0.035, z);
+            mesh.scale.setScalar(0.35);
+            scene.add(mesh);
+            ripples.push({ mesh, mat, scale: 0.35, maxScale, speed: 1.65 + maxScale * 0.35 });
+        }
+
+        function updateRipples(dt) {
+            for (let i = ripples.length - 1; i >= 0; i--) {
+                const r = ripples[i];
+                r.scale += r.speed * dt;
+                const progress = (r.scale - 0.35) / Math.max(0.1, r.maxScale - 0.35);
+                r.mesh.scale.setScalar(r.scale);
+                r.mat.opacity = Math.max(0, 0.8 * (1 - progress));
+                if (r.scale >= r.maxScale || r.mat.opacity <= 0.01) {
+                    scene.remove(r.mesh);
+                    r.mesh.geometry.dispose();
+                    r.mat.dispose();
+                    ripples.splice(i, 1);
+                }
+            }
+        }
+
+        /**
+         * ============================================================================
+         * LEVEL PROGRESSION, HUD & MODALS
+         * ============================================================================
+         */
+        function updateScoreHUD() {
+            const lvl = getCurrentLevel();
+            hudLevelLabelEl.textContent = `Lvl ${lvl.level}/20`;
+            hudLevelMobileEl.textContent = `${lvl.level}/20`;
+            hudCatchesEl.textContent = totalCatches;
+            hudScoreEl.textContent = totalScore;
+            hudCatchesMobileEl.textContent = totalCatches;
+            hudScoreMobileEl.textContent = totalScore;
+
+            levelNameBadgeEl.textContent = `${lvl.level}. ${lvl.title}`;
+            const pct = Math.max(0, Math.min(100, (totalScore / lvl.targetScore) * 100));
+            levelProgressBarEl.style.width = `${pct.toFixed(1)}%`;
+            levelGoalTextEl.textContent = `${totalScore} / ${lvl.targetScore} pts`;
+
+            const discovered = CATCH_SPECIES.filter(s => catchLogState[s.id].caughtCount > 0).length;
+            logCountPillEl.textContent = `${discovered}/${CATCH_SPECIES.length}`;
+        }
+
+        function selectLevel(idx) {
+            const bounded = Math.max(0, Math.min(LEVELS.length - 1, idx));
+            currentLevelIdx = bounded;
+            if (currentLevelIdx > unlockedLevelIdx) {
+                unlockedLevelIdx = currentLevelIdx;
+            }
+            hideActiveCatchShowcase();
+            catchModalEl.classList.add('hidden');
+            catchModalEl.classList.remove('flex');
+            bobberGroup.visible = false;
+            fishingLine.visible = false;
+            isHoldingReel = false;
+            activeFish = null;
+            phase = GamePhase.AIMING;
+            kingAnimState = 'IDLE';
+
+            applyLevelAtmosphere(getCurrentLevel());
+            updateScoreHUD();
+            syncPhaseUI();
+            saveGameData();
+        }
+
+        function checkLevelUpProgression() {
+            let leveledUp = false;
+            while (currentLevelIdx < LEVELS.length - 1 && totalScore >= LEVELS[currentLevelIdx].targetScore) {
+                currentLevelIdx += 1;
+                if (currentLevelIdx > unlockedLevelIdx) {
+                    unlockedLevelIdx = currentLevelIdx;
+                }
+                leveledUp = true;
+            }
+            if (leveledUp) {
+                applyLevelAtmosphere(getCurrentLevel());
+            }
+            return leveledUp;
+        }
+
+        function renderLevelSelectModal() {
+            levelSelectGridEl.innerHTML = '';
+            levelModalSubtitleEl.textContent = `Unlocked up to Level ${unlockedLevelIdx + 1} / 20 • High Score: ${highScore}`;
+
+            LEVELS.forEach((lvl, idx) => {
+                const isCurrent = idx === currentLevelIdx;
+                const isCleared = totalScore >= lvl.targetScore || (levelBestScores[idx] || 0) >= lvl.targetScore;
+                const bestForLvl = levelBestScores[idx] || 0;
+                const btn = document.createElement('button');
+                btn.className = `rounded-2xl p-3 text-left border transition flex flex-col justify-between cursor-pointer ${
+                    isCurrent
+                        ? 'bg-amber-400/20 border-amber-300 shadow-lg'
+                        : isCleared
+                        ? 'bg-emerald-950/45 border-emerald-400/40 hover:border-emerald-300'
+                        : 'bg-slate-900/75 border-slate-700/80 hover:border-amber-400/45'
+                }`;
+
+                const zoneLabel = (HOTSPOT_ZONES[lvl.hotspot] || HOTSPOT_ZONES.center).label;
+                btn.innerHTML = `
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span class="font-royal font-bold text-xs text-amber-300">LVL ${lvl.level}</span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-sky-200 capitalize">${lvl.mood}</span>
+                    </div>
+                    <div class="font-semibold text-xs text-white truncate">${lvl.title}</div>
+                    <div class="text-[10px] text-slate-400 mt-1">Goal: ${lvl.targetScore} pts</div>
+                    <div class="text-[10px] text-amber-200/85 tabular-nums">Best: ${bestForLvl} pts</div>
+                    <div class="text-[10px] text-emerald-300/90 truncate">Spot: ${zoneLabel}</div>
+                `;
+
+                btn.addEventListener('click', () => {
+                    selectLevel(idx);
+                    toggleLevelModal(false);
+                    audio.playNibbleTick();
+                });
+                levelSelectGridEl.appendChild(btn);
+            });
+        }
+
+        function syncPhaseUI() {
+            const lvl = getCurrentLevel();
+            biteBannerEl.classList.toggle('hidden', phase !== GamePhase.BITING);
+            reelHudEl.classList.toggle('hidden', phase !== GamePhase.REELING);
+
+            const showCancel = phase === GamePhase.WAITING || phase === GamePhase.BITING;
+            cancelLineBtn.classList.toggle('hidden', !showCancel);
+
+            if (phase === GamePhase.AIMING) {
+                statusSubtextEl.textContent = `Lvl ${lvl.level}: ${lvl.title} • Aim & click or Space to cast`;
+                actionPromptPillEl.textContent = 'Move cursor or tap water to aim • Right-drag to orbit • Keys 1/2/3 or C for camera';
+                primaryActionBtn.textContent = '🎣 Cast Line';
+                primaryActionBtn.disabled = false;
+                aimRingGroup.visible = true;
+            } else if (phase === GamePhase.CASTING) {
+                statusSubtextEl.textContent = 'Casting the royal line across the pond...';
+                actionPromptPillEl.textContent = 'Watch where the bobber splashes down!';
+                primaryActionBtn.textContent = '🎣 Casting...';
+                primaryActionBtn.disabled = true;
+                aimRingGroup.visible = false;
+            } else if (phase === GamePhase.WAITING) {
+                statusSubtextEl.textContent = 'Watching the bobber for nibbles & bites...';
+                actionPromptPillEl.textContent = 'Wait for a strong bite—click or press Space when the alert triggers!';
+                primaryActionBtn.textContent = '⏳ Waiting for Bite...';
+                primaryActionBtn.disabled = true;
+                aimRingGroup.visible = false;
+            } else if (phase === GamePhase.BITING) {
+                statusSubtextEl.textContent = 'A fish is biting! Hook it now!';
+                actionPromptPillEl.textContent = 'CLICK OR PRESS SPACE NOW TO SET THE HOOK!';
+                primaryActionBtn.textContent = '⚡ HOOK FISH!';
+                primaryActionBtn.disabled = false;
+                aimRingGroup.visible = false;
+            } else if (phase === GamePhase.REELING) {
+                statusSubtextEl.textContent = `Reeling in ${activeFish ? activeFish.name : 'catch'}!`;
+                actionPromptPillEl.textContent = 'Hold Click / Space to reel in • Ease off if tension gets too high!';
+                primaryActionBtn.textContent = '🎛️ Hold to Reel';
+                primaryActionBtn.disabled = false;
+                aimRingGroup.visible = false;
+            } else if (phase === GamePhase.CELEBRATING) {
+                statusSubtextEl.textContent = 'Royal catch held aloft!';
+                actionPromptPillEl.textContent = 'Click Cast Again or press Space to continue';
+                primaryActionBtn.textContent = '🎣 Cast Again';
+                primaryActionBtn.disabled = false;
+                aimRingGroup.visible = false;
+            }
+        }
+
+        function renderCatchLogModal() {
+            catchLogListEl.innerHTML = '';
+            CATCH_SPECIES.forEach(species => {
+                const stat = catchLogState[species.id];
+                const found = stat.caughtCount > 0;
+
+                const row = document.createElement('div');
+                row.className = `rounded-2xl p-3.5 border flex items-center justify-between gap-3 ${
+                    found
+                        ? 'bg-slate-900/75 border-amber-400/35'
+                        : 'bg-slate-950/60 border-slate-800 opacity-75'
+                }`;
+
+                row.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl bg-slate-800/90 border border-slate-700">
+                            ${found ? species.emoji : '❓'}
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-royal font-bold text-sm text-white">
+                                    ${found ? species.name : 'Undiscovered Catch'}
+                                </span>
+                                <span class="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full border ${species.badgeClass}">
+                                    ${species.rarity}
+                                </span>
+                                <span class="text-[10px] text-slate-400">From Lvl ${species.minLevel}+</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-0.5">
+                                ${found ? species.desc : `Reach Level ${species.minLevel}+ and cast to discover this catch.`}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <div class="text-xs font-bold text-amber-300 tabular-nums">
+                            ${found ? `×${stat.caughtCount}` : '0'}
+                        </div>
+                        <div class="text-[11px] text-slate-400 tabular-nums">
+                            ${found ? `Best: ${stat.bestWeight.toFixed(1)} kg` : `+${species.points} pts`}
+                        </div>
+                    </div>
+                `;
+                catchLogListEl.appendChild(row);
+            });
+        }
+
+        /**
+         * ============================================================================
+         * FISHING LOOP ACTIONS (AIM, CAST, HOOK, REEL, CATCH, MISS)
+         * ============================================================================
+         */
+        function updateAimFromNDC() {
+            if (phase !== GamePhase.AIMING || !camera) return;
+            raycaster.setFromCamera(pointerNDC, camera);
+            const hitPoint = new THREE.Vector3();
+            if (raycaster.ray.intersectPlane(waterPlane, hitPoint)) {
+                const dist = Math.hypot(hitPoint.x, hitPoint.z);
+                const maxRadius = 8.5;
+                if (dist > maxRadius) {
+                    hitPoint.x = (hitPoint.x / dist) * maxRadius;
+                    hitPoint.z = (hitPoint.z / dist) * maxRadius;
+                }
+                if (hitPoint.z > 5.3 && Math.abs(hitPoint.x - 1.4) < 2.2) {
+                    hitPoint.z = 5.3;
+                }
+                aimPoint.set(hitPoint.x, 0.04, hitPoint.z);
+                aimRingGroup.position.copy(aimPoint);
+            }
+        }
+
+        function startCast() {
+            if (phase !== GamePhase.AIMING) return;
+            phase = GamePhase.CASTING;
+            kingAnimState = 'CAST';
+            castElapsed = 0;
+
+            rodPivot.updateMatrixWorld(true);
+            rodTipMarker.getWorldPosition(castStartPos);
+            castTargetPos.copy(aimPoint);
+
+            bobberPos.copy(castStartPos);
+            bobberGroup.position.copy(bobberPos);
+            bobberGroup.visible = true;
+            fishingLine.visible = true;
+
+            audio.playCastSplash();
+            syncPhaseUI();
+        }
+
+        function pickRandomCatchForLevel() {
+            const lvlNum = getCurrentLevel().level;
+            const available = CATCH_SPECIES.filter(s => s.minLevel <= lvlNum);
+            const pool = available.length > 0 ? available : [CATCH_SPECIES[0]];
+
+            const weightedList = [];
+            pool.forEach((sp, idx) => {
+                const weightCount = Math.max(1, pool.length - idx + (idx >= pool.length - 2 ? 2 : 0));
+                for (let w = 0; w < weightCount; w++) weightedList.push(sp);
+            });
+
+            const chosen = weightedList[Math.floor(Math.random() * weightedList.length)] || pool[0];
+            const weight = chosen.minWeight + Math.random() * (chosen.maxWeight - chosen.minWeight);
+            return { species: chosen, weight };
+        }
+
+        function hookFish() {
+            if (phase !== GamePhase.BITING) return;
+            const rolled = pickRandomCatchForLevel();
+            activeFish = rolled.species;
+            activeFishWeight = rolled.weight;
+
+            phase = GamePhase.REELING;
+            kingAnimState = 'REEL';
+            reelProgress = 14;
+            reelTension = 35;
+            isHoldingReel = false;
+            reelTickAccum = 0;
+
+            reelFishLabelEl.textContent = `${activeFish.emoji} ${activeFish.name} (${activeFishWeight.toFixed(1)} kg)`;
+            spawnRipple(bobberPos.x, bobberPos.z, 0x34d399, 3.6);
+            audio.playNibbleTick();
+            syncPhaseUI();
+        }
+
+        function handleLineSnapOrEscape(reasonText) {
+            isHoldingReel = false;
+            activeFish = null;
+            bobberGroup.visible = false;
+            fishingLine.visible = false;
+            kingAnimState = 'MISS';
+            missRecoilTimer = 0.65;
+            phase = GamePhase.AIMING;
+
+            audio.playSnapOrMiss();
+            statusSubtextEl.textContent = reasonText;
+            syncPhaseUI();
+        }
+
+        function showActiveCatchModel(species) {
+            if (!catchDisplayGroup) return;
+            Object.entries(catchModelsMap).forEach(([id, model]) => {
+                model.visible = id === species.id;
+                if (id === species.id) {
+                    model.scale.setScalar(species.scale);
+                    model.rotation.set(0, 0.4, 0.25);
+                }
+            });
+            catchDisplayGroup.position.set(1.15, 2.25, 5.45);
+            catchDisplayGroup.visible = true;
+        }
+
+        function hideActiveCatchShowcase() {
+            if (!catchDisplayGroup) return;
+            catchDisplayGroup.visible = false;
+            Object.values(catchModelsMap).forEach(model => {
+                model.visible = false;
+            });
+        }
+
+        function completeCatch() {
+            isHoldingReel = false;
+            bobberGroup.visible = false;
+            fishingLine.visible = false;
+
+            const caughtSpecies = activeFish;
+            const weight = activeFishWeight;
+            activeFish = null;
+
+            const levelBonus = 1 + currentLevelIdx * 0.04;
+            const bonusPts = Math.round((caughtSpecies.points + weight * 18) * levelBonus);
+            totalCatches += 1;
+            totalScore += bonusPts;
+
+            const record = catchLogState[caughtSpecies.id];
+            record.caughtCount += 1;
+            if (weight > record.bestWeight) {
+                record.bestWeight = weight;
+            }
+
+            const leveledUp = checkLevelUpProgression();
+            saveGameData();
+            updateScoreHUD();
+
+            phase = GamePhase.CELEBRATING;
+            kingAnimState = 'CELEBRATE';
+            celebrateTimer = 3.2;
+            autoContinueEnabled = true;
+
+            showActiveCatchModel(caughtSpecies);
+            spawnCatchSparkles(catchDisplayGroup.position, 28);
+
+            catchEmojiEl.textContent = caughtSpecies.emoji;
+            catchRarityBadgeEl.textContent = caughtSpecies.rarity;
+            catchRarityBadgeEl.className = `inline-block px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider border ${caughtSpecies.badgeClass}`;
+            catchNameEl.textContent = caughtSpecies.name;
+            catchMetaEl.textContent = `Weight: ${weight.toFixed(1)} kg • +${bonusPts} pts`;
+            catchDescEl.textContent = caughtSpecies.desc;
+
+            if (leveledUp) {
+                catchLevelBannerEl.textContent = `✨ Level ${getCurrentLevel().level} Unlocked: ${getCurrentLevel().title}!`;
+                catchLevelBannerEl.classList.remove('hidden');
+                audio.playLevelUpFanfare();
+            } else {
+                catchLevelBannerEl.classList.add('hidden');
+            }
+
+            spawnRipple(aimPoint.x, aimPoint.z, 0xffe08a, 4.2);
+            audio.playCatchFanfare();
+            syncPhaseUI();
+
+            catchModalEl.classList.remove('hidden');
+            catchModalEl.classList.add('flex');
+        }
+
+        function returnToAiming() {
+            autoContinueEnabled = false;
+            catchModalEl.classList.add('hidden');
+            catchModalEl.classList.remove('flex');
+            hideActiveCatchShowcase();
+            bobberGroup.visible = false;
+            fishingLine.visible = false;
+            isHoldingReel = false;
+            activeFish = null;
+            phase = GamePhase.AIMING;
+            kingAnimState = 'IDLE';
+            syncPhaseUI();
+        }
+
+        function handlePrimaryInputPress() {
+            if (!catchLogModalEl.classList.contains('hidden') || !levelSelectModalEl.classList.contains('hidden')) return;
+            if (phase === GamePhase.AIMING) {
+                startCast();
+            } else if (phase === GamePhase.BITING) {
+                hookFish();
+            } else if (phase === GamePhase.REELING) {
+                isHoldingReel = true;
+            } else if (phase === GamePhase.CELEBRATING) {
+                returnToAiming();
+            }
+        }
+
+        function handlePrimaryInputRelease() {
+            if (phase === GamePhase.REELING) {
+                isHoldingReel = false;
+            }
+        }
+
+        /**
+         * ============================================================================
+         * PER-FRAME SIMULATION & ANIMATION UPDATE
+         * ============================================================================
+         */
+        function updateSimulation(dt, elapsed) {
+            const lvl = getCurrentLevel();
+
+            if (waterMesh && waterBasePositions) {
+                const posAttr = waterMesh.geometry.attributes.position;
+                const arr = posAttr.array;
+                for (let i = 0; i < arr.length; i += 3) {
+                    const bx = waterBasePositions[i];
+                    const bz = waterBasePositions[i + 2];
+                    const wave =
+                        Math.sin(bx * 1.45 + elapsed * 2.1) * 0.025 +
+                        Math.cos(bz * 1.65 + elapsed * 1.8) * 0.025;
+                    arr[i + 1] = wave;
+                }
+                posAttr.needsUpdate = true;
+            }
+
+            lilyPads.forEach(p => {
+                p.group.position.y = p.baseY + Math.sin(elapsed * 2.0 + p.phase) * 0.015;
+                p.group.rotation.z = Math.sin(elapsed * 1.5 + p.phase) * 0.03;
+            });
+
+            reeds.forEach(r => {
+                r.tuft.rotation.z = Math.sin(elapsed * 1.9 + r.phase) * 0.06;
+            });
+
+            treeCrowns.forEach(t => {
+                t.crownGroup.rotation.z = Math.sin(elapsed * 1.1 + t.phase) * 0.025;
+            });
+
+            ambientFish.forEach(f => {
+                f.angle += f.speed * dt;
+                const fx = Math.cos(f.angle) * f.radius;
+                const fz = Math.sin(f.angle) * f.radius;
+                f.holder.position.set(fx, -0.26, fz);
+                f.holder.rotation.y = -f.angle + (f.speed > 0 ? 0 : Math.PI);
+            });
+
+            if (hotspotRingMesh) {
+                hotspotRingMesh.scale.setScalar(1 + Math.sin(elapsed * 3.0) * 0.06);
+            }
+
+            if (phase === GamePhase.AIMING && aimRingGroup.visible) {
+                const pulse = 1 + Math.sin(elapsed * 5.2) * 0.08;
+                aimOuterRing.scale.setScalar(pulse);
+                aimInnerDot.scale.setScalar(1.05 - Math.sin(elapsed * 5.2) * 0.12);
+                aimRingGroup.rotation.y = elapsed * 0.7;
+            }
+
+            if (phase === GamePhase.CASTING) {
+                castElapsed += dt;
+                const t = Math.min(1, castElapsed / castDuration);
+                const easeT = 1 - Math.pow(1 - t, 2);
+
+                bobberPos.lerpVectors(castStartPos, castTargetPos, easeT);
+                bobberPos.y += Math.sin(t * Math.PI) * 1.85;
+                bobberGroup.position.copy(bobberPos);
+
+                if (t >= 1) {
+                    bobberPos.copy(castTargetPos);
+                    bobberGroup.position.copy(bobberPos);
+                    spawnRipple(bobberPos.x, bobberPos.z, 0xe0f2fe, 2.8);
+                    phase = GamePhase.WAITING;
+                    kingAnimState = 'WAIT';
+                    waitTimer = 0;
+                    nextNibbleAt = 0.85 + Math.random() * 1.25;
+                    syncPhaseUI();
+                }
+            } else if (phase === GamePhase.WAITING) {
+                waitTimer += dt;
+                bobberPos.x = castTargetPos.x + Math.sin(elapsed * 2.2) * 0.05;
+                bobberPos.z = castTargetPos.z + Math.cos(elapsed * 1.9) * 0.05;
+                bobberPos.y = 0.03 + Math.sin(elapsed * 3.6) * 0.025;
+
+                const zone = HOTSPOT_ZONES[lvl.hotspot] || HOTSPOT_ZONES.center;
+                const distToHotspot = Math.hypot(castTargetPos.x - zone.x, castTargetPos.z - zone.z);
+                const biteWaitThreshold = distToHotspot < 1.85 ? 1.85 : 2.75;
+
+                if (waitTimer >= nextNibbleAt) {
+                    bobberPos.y -= 0.08;
+                    spawnRipple(bobberPos.x, bobberPos.z, 0xbae6fd, 1.5);
+                    audio.playNibbleTick();
+                    nextNibbleAt = waitTimer + 1.0 + Math.random() * 1.1;
+                }
+
+                if (waitTimer >= biteWaitThreshold) {
+                    phase = GamePhase.BITING;
+                    biteTimer = 0;
+                    spawnRipple(bobberPos.x, bobberPos.z, 0xfbbf24, 3.3);
+                    audio.playBiteAlert();
+                    syncPhaseUI();
+                }
+                bobberGroup.position.copy(bobberPos);
+            } else if (phase === GamePhase.BITING) {
+                biteTimer += dt;
+                bobberPos.y = -0.04 + Math.sin(elapsed * 24) * 0.09;
+                bobberGroup.position.copy(bobberPos);
+                bobberGroup.rotation.z = Math.sin(elapsed * 28) * 0.35;
+
+                if (Math.floor((biteTimer - dt) * 4.5) !== Math.floor(biteTimer * 4.5)) {
+                    spawnRipple(bobberPos.x, bobberPos.z, 0xfde047, 2.2);
+                }
+
+                if (biteTimer >= lvl.biteWindow) {
+                    handleLineSnapOrEscape('The fish slipped off the hook! Aim and cast again.');
+                }
+            } else if (phase === GamePhase.REELING) {
+                const diff = (activeFish ? activeFish.pullDifficulty : 1.0) * lvl.pullScale;
+
+                if (isHoldingReel) {
+                    reelProgress += 28.5 * dt;
+                    reelTension += (31 * diff) * dt;
+                    reelTickAccum += dt;
+                    if (reelTickAccum >= 0.14) {
+                        reelTickAccum = 0;
+                        audio.playReelTick(reelTension / 100);
+                    }
+                } else {
+                    reelTension -= 27 * dt;
+                    reelProgress -= (4.2 * diff) * dt;
+                }
+
+                reelTension += Math.sin(elapsed * 6.5) * 9.0 * diff * dt;
+
+                reelProgress = Math.max(0, Math.min(100, reelProgress));
+                reelTension = Math.max(5, Math.min(100, reelTension));
+
+                const pullT = reelProgress / 100;
+                const kingAnchor = new THREE.Vector3(1.4, 0.04, 5.2);
+                bobberPos.lerpVectors(castTargetPos, kingAnchor, pullT * 0.78);
+                bobberPos.y = 0.03 + Math.sin(elapsed * 14) * 0.04;
+                bobberGroup.position.copy(bobberPos);
+
+                reelProgressFillEl.style.width = `${reelProgress.toFixed(1)}%`;
+                reelProgressPctEl.textContent = `${Math.round(reelProgress)}%`;
+                tensionFillEl.style.width = `${reelTension.toFixed(1)}%`;
+
+                if (reelTension >= 76) {
+                    tensionStatusLabelEl.textContent = 'DANGER! RELEASE!';
+                    tensionStatusLabelEl.className = 'text-rose-400 font-bold';
+                } else if (reelTension <= 22) {
+                    tensionStatusLabelEl.textContent = 'SLACK LINE';
+                    tensionStatusLabelEl.className = 'text-sky-300 font-bold';
+                } else {
+                    tensionStatusLabelEl.textContent = 'SAFE ZONE';
+                    tensionStatusLabelEl.className = 'text-emerald-300 font-bold';
+                }
+
+                if (reelTension >= 99.5) {
+                    handleLineSnapOrEscape('Snap! Line tension got too high—try holding in bursts.');
+                    return;
+                }
+
+                if (reelProgress >= 100) {
+                    completeCatch();
+                    return;
+                }
+            } else if (phase === GamePhase.CELEBRATING) {
+                if (catchDisplayGroup && catchDisplayGroup.visible) {
+                    catchDisplayGroup.position.y = 2.25 + Math.sin(elapsed * 4.2) * 0.1;
+                    catchDisplayGroup.rotation.y = Math.sin(elapsed * 3.8) * 0.45;
+                    catchDisplayGroup.rotation.z = Math.cos(elapsed * 6.2) * 0.14;
+                }
+
+                celebrateTimer -= dt;
+                if (autoContinueEnabled && celebrateTimer <= 0) {
+                    returnToAiming();
+                }
+            }
+
+            if (missRecoilTimer > 0) {
+                missRecoilTimer -= dt;
+                if (missRecoilTimer <= 0 && phase === GamePhase.AIMING) {
+                    kingAnimState = 'IDLE';
+                }
+            }
+
+            const breath = Math.sin(elapsed * 2.4);
+            kingBodyGroup.position.y = breath * 0.025;
+            kingHeadGroup.rotation.x = Math.sin(elapsed * 1.7) * 0.05;
+
+            if (kingAnimState === 'IDLE' || kingAnimState === 'WAIT') {
+                rightArmPivot.rotation.x = THREE.MathUtils.lerp(rightArmPivot.rotation.x, -0.58 + breath * 0.05, 0.14);
+                rodPivot.rotation.x = THREE.MathUtils.lerp(rodPivot.rotation.x, 0.48 + Math.sin(elapsed * 2.1) * 0.04, 0.14);
+                leftArmPivot.rotation.x = THREE.MathUtils.lerp(leftArmPivot.rotation.x, 0.12, 0.14);
+            } else if (kingAnimState === 'CAST') {
+                const t = Math.min(1, castElapsed / castDuration);
+                const swing = t < 0.35 ? -1.15 * (t / 0.35) : -1.15 + 1.55 * ((t - 0.35) / 0.65);
+                rightArmPivot.rotation.x = swing;
+                rodPivot.rotation.x = 0.35 + swing * 0.35;
+            } else if (kingAnimState === 'REEL') {
+                const tug = isHoldingReel ? Math.sin(elapsed * 15) * 0.22 : 0.05;
+                rightArmPivot.rotation.x = THREE.MathUtils.lerp(rightArmPivot.rotation.x, -0.78 + tug, 0.22);
+                rodPivot.rotation.x = THREE.MathUtils.lerp(rodPivot.rotation.x, 0.22 + tug * 0.6, 0.22);
+            } else if (kingAnimState === 'CELEBRATE') {
+                leftArmPivot.rotation.x = THREE.MathUtils.lerp(leftArmPivot.rotation.x, -2.35 + Math.sin(elapsed * 7) * 0.1, 0.18);
+                kingHeadGroup.rotation.y = Math.sin(elapsed * 4.5) * 0.18;
+            } else if (kingAnimState === 'MISS') {
+                rightArmPivot.rotation.x = THREE.MathUtils.lerp(rightArmPivot.rotation.x, -0.25, 0.2);
+                kingHeadGroup.rotation.x = THREE.MathUtils.lerp(kingHeadGroup.rotation.x, 0.22, 0.2);
+            }
+
+            if (fishingLine.visible && bobberGroup.visible) {
+                rodPivot.updateMatrixWorld(true);
+                const tipWorld = new THREE.Vector3();
+                rodTipMarker.getWorldPosition(tipWorld);
+
+                const midWorld = new THREE.Vector3().lerpVectors(tipWorld, bobberPos, 0.5);
+                const slack = phase === GamePhase.CASTING ? 0.08 : 0.24;
+                midWorld.y -= slack;
+
+                const curve = new THREE.QuadraticBezierCurve3(tipWorld, midWorld, bobberPos);
+                const pts = curve.getPoints(14);
+                fishingLine.geometry.setFromPoints(pts);
+            }
+
+            updateRipples(dt);
+            updateCelebrationParticles(dt);
+
+            const preset = cameraPresets[cameraPresetIdx];
+            const desiredTarget = preset.target.clone();
+            const offset = preset.pos.clone().sub(preset.target);
+
+            offset.multiplyScalar(orbitZoomScale);
+            if (Math.abs(orbitYawOffset) > 0.0001) {
+                offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), orbitYawOffset);
+            }
+            if (Math.abs(orbitPitchOffset) > 0.0001) {
+                const rightAxis = new THREE.Vector3().crossVectors(offset, new THREE.Vector3(0, 1, 0)).normalize();
+                offset.applyAxisAngle(rightAxis, orbitPitchOffset);
+            }
+
+            const desiredCamPos = desiredTarget.clone().add(offset);
+            camera.position.lerp(desiredCamPos, 0.1);
+            camera.lookAt(desiredTarget);
+
+            if (phase === GamePhase.AIMING) {
+                updateAimFromNDC();
+            }
+        }
+
+        /**
+         * ============================================================================
+         * EVENT LISTENERS (POINTER, KEYBOARD, CAMERA, LEVELS, CATCH LOG, AUDIO)
+         * ============================================================================
+         */
+        function attachEventListeners() {
+            window.addEventListener('resize', () => {
+                if (!camera || !renderer) return;
+                const w = window.innerWidth || 800;
+                const h = window.innerHeight || 600;
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, h);
+            });
+
+            renderer.domElement.addEventListener('pointermove', (e) => {
+                const rect = renderer.domElement.getBoundingClientRect();
+                pointerNDC.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                pointerNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+                if (isRightDragging) {
+                    const dx = e.clientX - lastPointerX;
+                    const dy = e.clientY - lastPointerY;
+                    orbitYawOffset -= dx * 0.0065;
+                    orbitPitchOffset = Math.max(-0.45, Math.min(0.45, orbitPitchOffset + dy * 0.005));
+                    lastPointerX = e.clientX;
+                    lastPointerY = e.clientY;
+                }
+            });
+
+            renderer.domElement.addEventListener('pointerdown', (e) => {
+                audio.ensureContext();
+                if (e.button === 2) {
+                    isRightDragging = true;
+                    lastPointerX = e.clientX;
+                    lastPointerY = e.clientY;
+                    return;
+                }
+                if (e.button === 0) {
+                    const rect = renderer.domElement.getBoundingClientRect();
+                    pointerNDC.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                    pointerNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+                    if (phase === GamePhase.AIMING) {
+                        updateAimFromNDC();
+                    }
+                    handlePrimaryInputPress();
+                }
+            });
+
+            window.addEventListener('pointerup', (e) => {
+                if (e.button === 2) {
+                    isRightDragging = false;
+                }
+                if (e.button === 0) {
+                    handlePrimaryInputRelease();
+                }
+            });
+
+            renderer.domElement.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+            });
+
+            renderer.domElement.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                orbitZoomScale = Math.max(0.72, Math.min(1.35, orbitZoomScale + Math.sign(e.deltaY) * 0.07));
+            }, { passive: false });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    if (!e.repeat) {
+                        handlePrimaryInputPress();
+                    }
+                } else if (e.key.toLowerCase() === 'c') {
+                    cycleCameraPreset();
+                } else if (e.key === '1') {
+                    setCameraPreset(0);
+                } else if (e.key === '2') {
+                    setCameraPreset(1);
+                } else if (e.key === '3') {
+                    setCameraPreset(2);
+                } else if (e.key.toLowerCase() === 'l') {
+                    toggleCatchLog();
+                } else if (e.key.toLowerCase() === 'm') {
+                    toggleMute();
+                } else if (e.key === 'Escape') {
+                    if (!catchLogModalEl.classList.contains('hidden')) toggleCatchLog(false);
+                    if (!levelSelectModalEl.classList.contains('hidden')) toggleLevelModal(false);
+                }
+            });
+
+            window.addEventListener('keyup', (e) => {
+                if (e.code === 'Space') {
+                    handlePrimaryInputRelease();
+                }
+            });
+
+            primaryActionBtn.addEventListener('pointerdown', (e) => {
+                e.stopPropagation();
+                handlePrimaryInputPress();
+            });
+            primaryActionBtn.addEventListener('pointerup', (e) => {
+                e.stopPropagation();
+                handlePrimaryInputRelease();
+            });
+
+            cancelLineBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (phase === GamePhase.WAITING || phase === GamePhase.BITING) {
+                    bobberGroup.visible = false;
+                    fishingLine.visible = false;
+                    phase = GamePhase.AIMING;
+                    kingAnimState = 'IDLE';
+                    audio.playNibbleTick();
+                    syncPhaseUI();
+                }
+            });
+
+            resetLevelBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectLevel(currentLevelIdx);
+                audio.playNibbleTick();
+            });
+
+            continueFishingBtn.addEventListener('click', () => {
+                returnToAiming();
+            });
+
+            function setCameraPreset(idx) {
+                cameraPresetIdx = Math.max(0, Math.min(cameraPresets.length - 1, idx));
+                orbitYawOffset = 0;
+                orbitPitchOffset = 0;
+                orbitZoomScale = 1.0;
+                cameraLabelEl.textContent = cameraPresets[cameraPresetIdx].name;
+                audio.playNibbleTick();
+            }
+
+            function cycleCameraPreset() {
+                setCameraPreset((cameraPresetIdx + 1) % cameraPresets.length);
+            }
+
+            cameraToggleBtn.addEventListener('click', cycleCameraPreset);
+
+            function toggleLevelModal(forceState) {
+                const nextOpen = typeof forceState === 'boolean'
+                    ? forceState
+                    : levelSelectModalEl.classList.contains('hidden');
+                if (nextOpen) {
+                    renderLevelSelectModal();
+                    levelSelectModalEl.classList.remove('hidden');
+                    levelSelectModalEl.classList.add('flex');
+                } else {
+                    levelSelectModalEl.classList.add('hidden');
+                    levelSelectModalEl.classList.remove('flex');
+                }
+            }
+
+            levelModalBtn.addEventListener('click', () => toggleLevelModal());
+            closeLevelModalBtn.addEventListener('click', () => toggleLevelModal(false));
+            levelSelectModalEl.addEventListener('click', (e) => {
+                if (e.target === levelSelectModalEl) toggleLevelModal(false);
+            });
+
+            function toggleCatchLog(forceState) {
+                const nextOpen = typeof forceState === 'boolean'
+                    ? forceState
+                    : catchLogModalEl.classList.contains('hidden');
+                if (nextOpen) {
+                    renderCatchLogModal();
+                    catchLogModalEl.classList.remove('hidden');
+                    catchLogModalEl.classList.add('flex');
+                } else {
+                    catchLogModalEl.classList.add('hidden');
+                    catchLogModalEl.classList.remove('flex');
+                }
+            }
+
+            logToggleBtn.addEventListener('click', () => toggleCatchLog());
+            closeLogBtn.addEventListener('click', () => toggleCatchLog(false));
+            catchLogModalEl.addEventListener('click', (e) => {
+                if (e.target === catchLogModalEl) toggleCatchLog(false);
+            });
+
+            function toggleMute() {
+                audio.muted = !audio.muted;
+                muteIconEl.textContent = audio.muted ? '🔇' : '🔊';
+                muteLabelEl.textContent = audio.muted ? 'Muted' : 'Sound';
+                if (!audio.muted) {
+                    audio.ensureContext();
+                    audio.playNibbleTick();
+                }
+            }
+
+            muteToggleBtn.addEventListener('click', toggleMute);
+        }
+
+        /**
+         * ============================================================================
+         * MAIN ANIMATION LOOP & INITIALIZATION
+         * ============================================================================
+         */
+        let clock = null;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            try {
+                if (!clock || !renderer || !scene || !camera) return;
+                const dt = Math.min(clock.getDelta(), 0.05);
+                const elapsed = clock.getElapsedTime();
+                updateSimulation(dt, elapsed);
+                renderer.render(scene, camera);
+            } catch (err) {
+                console.error('Render loop error:', err);
+            }
+        }
+
+        function startApp() {
+            try {
+                if (window.__royalPondInitialized) return;
+                const ok = initScene();
+                if (!ok) return;
+                window.__royalPondInitialized = true;
+                clock = new THREE.Clock();
+                attachEventListeners();
+                updateScoreHUD();
+                syncPhaseUI();
+                updateAimFromNDC();
+                animate();
+            } catch (err) {
+                showFatalError(`Failed to start 3D pond scene: ${err && err.message ? err.message : 'Unknown error'}`);
+            }
+        }
+
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            startApp();
+        } else {
+            window.addEventListener('load', startApp);
+        }
+    </script>
+</body>
+</html>
