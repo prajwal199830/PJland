@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -109,6 +108,12 @@
         rgba(13, 10, 7, .98)
       );
       box-shadow: 0 12px 30px rgba(0,0,0,.22);
+      transition: .2s;
+    }
+
+    .game-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(226, 190, 113, .6);
     }
 
     .game-card.featured {
@@ -150,26 +155,6 @@
     .play:hover {
       background: #ad813b;
       transform: translateY(-2px);
-    }
-
-    .loading {
-      color: #c39c5a;
-      font-size: 12px;
-      font-weight: bold;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-    }
-
-    .loading:after {
-      content: "";
-      animation: dots 1.3s steps(4,end) infinite;
-    }
-
-    @keyframes dots {
-      0% { content: ""; }
-      25% { content: "."; }
-      50% { content: ".."; }
-      75%, 100% { content: "..."; }
     }
 
     footer {
@@ -250,6 +235,7 @@
 
       <section class="games" aria-label="Games">
 
+        <!-- 1. Conquer PJLand -->
         <article class="game-card featured">
           <div class="game-icon">⚔️</div>
           <h2>Conquer PJLand</h2>
@@ -259,43 +245,126 @@
           </a>
         </article>
 
+        <!-- 2. Conquer PJ Territory -->
         <article class="game-card">
-          <div class="game-icon">🎮</div>
-          <div class="loading" href="the_king_s_hunt(1).html">The Kings Hunt</div>
+          <div class="game-icon">🏰</div>
+          <h2>Conquer PJ Territory</h2>
+          <p>Expand your territory and build your kingdom.</p>
+          <a class="play" href="conquer_pj_territory_strategy.html">
+            PLAY NOW&nbsp; →
+          </a>
         </article>
 
+        <!-- 3. Kings Builder -->
         <article class="game-card">
-          <div class="game-icon">🎮</div>
-          <div class="loading" href="conquer_pj_territory_strategy.html">Conquer PJ territory</div>
+          <div class="game-icon">🔨</div>
+          <h2>Kings Builder</h2>
+          <p>Build your kingdom from the ground up.</p>
+          <a class="play" href="source_1795442196114.html">
+            PLAY NOW&nbsp; →
+          </a>
         </article>
 
+        <!-- 4. KING'S NAVY -->
         <article class="game-card">
-          <div class="game-icon">🎮</div>
-          <div class="loading">Loading</div>
+          <div class="game-icon">⚓</div>
+          <h2>KING'S NAVY</h2>
+          <p>Command your fleet and rule the seas.</p>
+          <a class="play" href="source_1795442249651.html">
+            PLAY NOW&nbsp; →
+          </a>
         </article>
 
+        <!-- 5. Kings Sky Kingdom -->
         <article class="game-card">
-          <div class="game-icon">🎮</div>
-          <div class="loading">Loading</div>
+          <div class="game-icon">☁️</div>
+          <h2>Kings Sky Kingdom</h2>
+          <p>Rise above and build your kingdom in the skies.</p>
+          <a class="play" href="source_1795442249651.html">
+            PLAY NOW&nbsp; →
+          </a>
         </article>
 
+        <!-- 6. Kings Hunt -->
         <article class="game-card">
-          <div class="game-icon">🎮</div>
-          <div class="loading">Loading</div>
+          <div class="game-icon">🏹</div>
+          <h2>Kings Hunt</h2>
+          <p>Track your prey and prove yourself as the king.</p>
+          <a class="play" href="the_king_s_hunt%20(1).html">
+            PLAY NOW&nbsp; →
+          </a>
         </article>
 
-      </section>
-    </main>
+        <!-- 7. Save the Queen -->
+        <article class="game-card">
+          <div class="game-icon">👸</div>
+          <h2>Save the Queen</h2>
+          <p>Embark on a dangerous mission to save the queen.</p>
+          <a class="play" href="save_the_queen.html">
+            PLAY NOW&nbsp; →
+          </a>
+        </article>
 
-    <footer>
-      © <span id="year"></span> Rise2King
-    </footer>
+        <!-- 8. Royal Fishing Pond -->
+        <article class="game-card">
+          <div class="game-icon">🎣</div>
+          <h2>Royal Fishing Pond</h2>
+          <p>Relax by the royal pond and catch the biggest fish.</p>
+          <a class="play" href="royal_pond_fishing.html">
+            PLAY NOW&nbsp; →
+          </a>
+        </article>
 
-  </div>
+        <!-- 9. Kings Wild Ride -->
+        <article class="game-card">
+          <div class="game-icon">🏇</div>
+          <h2>Kings Wild Ride</h2>
+          <p>Race through the wild and claim victory.</p>
+          <a class="play" href="kings_wild_race.html">
+            PLAY NOW&nbsp; →
+          </a>
+        </article>
 
-  <script>
-    document.getElementById("year").textContent =
-      new Date().getFullYear();
-  </script>
-</body>
-</html>
+        <!-- 10. Kings Court -->
+        <article class="game-card">
+          <div class="game-icon">👑</div>
+          <h2>Kings Court</h2>
+          <p>Enter the royal court and make your decisions.</p>
+          <a class="play" href="source_1795445963967.html">
+            PLAY NOW&nbsp; →
+          </a>
+        </article>
+
+        <!-- 11. Kings Throne -->
+        <article class="game-card">
+          <div class="game-icon">🪑</div>
+          <h2>Kings Throne</h2>
+          <p>Take the throne and prove you are worthy to rule.</p>
+          <a class="play" href="source_1795446003012.html">
+            PLAY NOW&nbsp; →
+          </a>
+        </article>
+
+        <!-- 12. Kings Wild Hunt -->
+        <article class="game-card">
+          <div class="game-icon">🐺</div>
+          <h2>Kings Wild Hunt</h2>
+          <p>Enter the wilderness and master the hunt.</p>
+          <a class="play" href="source_1795446026973.html">
+            PLAY NOW&nbsp; →
+          </a>
+        </article>
+
+        <!-- 13. Kings Last Stand -->
+        <article class="game-card">
+          <div class="game-icon">🛡️</div>
+          <h2>Kings Last Stand</h2>
+          <p>Defend your kingdom when everything is on the line.</p>
+          <a class="play" href="source_1795446052132.html">
+            PLAY NOW&nbsp; →
+          </a>
+        </article>
+
+        <!-- 14. Kings Dungeon -->
+        <article class="game-card">
+          <div class="game-icon">⛓️</div
